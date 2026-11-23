@@ -288,3 +288,7 @@ What happens if our project dates change?
 Let us know as early as possible. Because we harvest to order rather than stockpiling, we can usually adjust the cut and delivery date if we have enough notice. Once turf has been harvested it needs to be laid quickly, so early communication protects your turf and your budget. Our team will always try to find a solution that works for your program.
 ## Ready to Source Turf Direct from the Grower?
 Get fast, obligation-free pricing and expert advice from the farm that has supplied Sydney projects for over 45 years, with every roll harvested to suit your program.
+
+### SITE META (captured from live header/footer)
+NAV: Home / | Turf Varieties: Turf Overview /turf-varieties/, Matilda Turf Soft Leaf Buffalo /matilda-soft-leaf-buffalo-turf/, Sir Walter Soft Leaf Buffalo /sir-walter-soft-leaf-buffalo-grass/, Kikuyu Turf Grass /kikuyu-grass-sydney/, Greenlees Park Couch Grass /greenlees-park-couch-grass/, Wintergreen Couch Grass /wintergreen-couch-grass/ | Turf Care: Turf Preparation /turf-preparation/, Maxi Turf Laying Service /maxi-turf-laying-service/, Turf Care /turf-care/, Watering /watering/, Common Insects and Weeds /turf-insects-weeds/ | Gallery /turf-gallery/ | Contact Us /contact/
+SOCIAL: https://www.facebook.com/Associated-Turf/ | https://twitter.com/AssociatedTurf | https://www.youtube.com/channel/UClzAkd4-Gyo1GORIMa2OdLw | https://www.instagram.com/associatedturf/ | https://www.linkedin.com/in/associated-turf/
