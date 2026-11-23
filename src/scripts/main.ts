@@ -279,3 +279,75 @@ $$<HTMLFormElement>("[data-quote-form]").forEach((form) => {
     }
   });
 });
+
+/* ───────────── Home scroll story ───────────── */
+const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
+const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+const scrubs = $$("[data-scrub]");
+const collages = $$("[data-collage]");
+const tileSeed = (i: number, k: number) => {
+  const x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453;
+  return x - Math.floor(x);
+};
+const story = () => {
+  const vh = window.innerHeight;
+  for (const s of scrubs) {
+    const r = s.getBoundingClientRect();
+    if (r.bottom < -vh || r.top > vh * 2) continue;
+    const span = Math.max(1, r.height - vh);
+    const p = motion ? clamp01(-r.top / span) : 1;
+
+    if (s.hasAttribute("data-words")) {
+      const words = $$("[data-w]", s);
+      const n = words.length;
+      words.forEach((w, i) => w.classList.toggle("on", p >= ((i + 1) / n) * 0.8));
+      s.style.setProperty("--ul", clamp01(p * 2.5).toFixed(3));
+      $("[data-chips]", s)?.classList.toggle("on", p > 0.82);
+      s.style.setProperty("--tail", clamp01((p - 0.82) / 0.12).toFixed(3));
+    }
+    if (s.hasAttribute("data-tiles")) {
+      const grid = $(".tl", s)!;
+      $$("[data-tile]", s).forEach((t, i) => {
+        const d = tileSeed(i, 1) * 0.3;
+        const e = ease(clamp01((p * 0.9 + 0.12 - d) / 0.45));
+        const dx = (tileSeed(i, 2) - 0.5) * 70, dy = (tileSeed(i, 3) - 0.5) * 60 + 30, rot = (tileSeed(i, 4) - 0.5) * 40;
+        t.style.transform = e >= 1 ? "" : `translate(${dx * (1 - e)}vw, ${dy * (1 - e)}vh) rotate(${rot * (1 - e)}deg)`;
+        t.style.opacity = String(Math.min(1, e * 1.6));
+      });
+      grid.classList.toggle("is-whole", p > 0.88);
+      grid.style.setProperty("--cap", clamp01((p - 0.88) / 0.1).toFixed(3));
+    }
+    if (s.hasAttribute("data-feats")) {
+      const items = $$("[data-feat]", s);
+      const imgs = $$("[data-feat-img]", s);
+      const k = Math.min(items.length - 1, Math.floor(p * items.length));
+      items.forEach((it, i) => it.classList.toggle("is-on", i === k));
+      imgs.forEach((im, i) => im.classList.toggle("is-on", i === k));
+      s.style.setProperty("--fp", p.toFixed(3));
+    }
+  }
+  for (const c of collages) {
+    const r = c.getBoundingClientRect();
+    c.style.setProperty("--cp", (motion ? ease(clamp01((vh - r.top) / (vh * 0.9))) : 1).toFixed(3));
+  }
+};
+if (scrubs.length || collages.length) {
+  let queued = false;
+  const q = () => { if (!queued) { queued = true; requestAnimationFrame(() => { story(); queued = false; }); } };
+  window.addEventListener("scroll", q, { passive: true });
+  window.addEventListener("resize", q);
+  story();
+}
+
+/* Sun / shade switch */
+$$("[data-sunshade]").forEach((sec) => {
+  const btn = $<HTMLButtonElement>("[data-sunshade-btn]", sec)!;
+  const set = (shade: boolean) => {
+    btn.setAttribute("aria-checked", String(shade));
+    $("[data-sunshade-state]", sec)!.textContent = shade ? "On" : "Off";
+    sec.classList.toggle("is-shade", shade);
+    $$("[data-sunshade-img]", sec).forEach((im) => im.classList.toggle("is-on", (im.dataset.sunshadeImg === "shade") === shade));
+    $$("[data-panel]", sec).forEach((p) => (p.hidden = (p.dataset.panel === "shade") !== shade));
+  };
+  btn.addEventListener("click", () => set(btn.getAttribute("aria-checked") !== "true"));
+});

@@ -1,17 +1,13 @@
 ---
 import Base from "../layouts/Base.astro";
-import Mow from "../components/Mow.astro";
 import Icon from "../components/Icon.astro";
 import Reviews from "../components/Reviews.astro";
 import VarietyGrid from "../components/VarietyGrid.astro";
-import Selector from "../components/Selector.astro";
-import WhyGrid from "../components/WhyGrid.astro";
-import Steps from "../components/Steps.astro";
 import Faq from "../components/Faq.astro";
 import PostCards from "../components/PostCards.astro";
 import QuoteSection from "../components/QuoteSection.astro";
-import { business } from "../data/site";
-import { all, firstImage } from "../lib/content";
+import { business, img, varieties } from "../data/site";
+import { all, firstImage, get, tokenize } from "../lib/content";
 
 const faqs = [
   { q: "Which turf type is best for shade?", a: "Buffalo grasses like Matilda, Sir Walter and Shademaster are the best performers in shady areas. Matilda and Sir Walter thrive with as little as 3 to 4 hours of direct sunlight. Kikuyu and Couch varieties such as Wintergreen and Greenlees Park need full sun (6+ hours daily)." },
@@ -23,126 +19,386 @@ const faqs = [
 ];
 const projects = ["New homes", "Lawn renovations", "Landscapers", "Builders", "Schools", "Councils", "Sporting fields", "Commercial developments", "Parks", "Display homes"];
 const posts = all("post").filter((p) => p.date && firstImage(p)).sort((a, b) => (b.date ?? "").localeCompare(a.date ?? "")).slice(0, 3);
+
+const statement = [
+  { line: "Choosing the right supplier matters", mark: true },
+  { line: "as much as choosing the right grass." },
+];
+type Seg = { t?: string; icon?: string; accent?: boolean };
+const story: Seg[] = [
+  { t: "For over 45 years Associated Turf", accent: true }, { icon: "award" },
+  { t: "has supplied homeowners," }, { icon: "home" },
+  { t: "landscapers, builders and councils with lush, healthy Buffalo, Kikuyu and Couch turf," }, { icon: "leaf" },
+  { t: "cut to order" }, { icon: "scissors" },
+  { t: "and delivered direct from our farm." }, { icon: "truck" },
+];
+const features = [
+  { icon: "scissors", title: "Harvested fresh to order", body: "Every roll is cut on demand with modern harvesting machinery, never stockpiled, so your turf arrives green, moist and ready to lay the same day.", image: "2023/01/maxi-5.jpg" },
+  { icon: "pin", title: "Grown on the Hawkesbury River", body: "Our farm sits on the Cornwallis Flats at Windsor, where the river has built up rich, fertile soil for dense turf with strong roots.", image: "2018/10/SFPP4050.jpg" },
+  { icon: "grid", title: "Six varieties for every yard", body: "Matilda, Sir Walter and Shademaster buffalo, Kikuyu, Greenlees Park and Wintergreen couch, matched to your sun, shade and lifestyle.", image: "2023/02/gal2023-7.jpg" },
+  { icon: "truck", title: "Delivered Monday to Saturday", body: "On time delivery across Sydney and Regional NSW, with pallets for building sites and machine-laid Maxi Turf rolls for large open areas.", image: "2023/01/maxi-4.jpg" },
+];
+const tiles = Array.from({ length: 15 }, (_, i) => i);
+const sun = varieties.filter((v) => ["kikuyu", "wintergreen", "greenlees-park"].includes(v.slug));
+const shade = varieties.filter((v) => ["matilda", "sir-walter", "shademaster"].includes(v.slug));
+const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table") as { head: string[]; rows: string[][] };
 ---
 <Base title="Associated Turf Supplies Sydney | Instant Turf Supplier Sydney" description="Associated Turf Supplies Sydney - Farm fresh turf grass suppliers. Matilda Soft Leaf Buffalo, Kikuyu grass supplies. Delivery to Sydney metro" faqs={faqs}>
-  <section class="hero">
-    <div class="wrap">
-      <div class="hero__top">
-        <div class="hero__copy">
-          <p class="label">Sydney's trusted turf supplier</p>
-          <h1 class="hero__h1">Premium Instant Turf, Harvested Fresh and Delivered Across Sydney</h1>
+
+  <section class="hx">
+    <img class="hx__bg" src={img("2026/05/home-banner-sunrise.jpg")} alt="Sunrise over freshly mown turf at the Associated Turf farm" width="1920" height="1080" fetchpriority="high" />
+    <div class="hx__shade" aria-hidden="true"></div>
+    <div class="wrap hx__in">
+      <p class="tape">Sydney's trusted turf supplier</p>
+      <h1 class="hx__h1">Premium Instant Turf, Harvested Fresh and Delivered Across Sydney</h1>
+      <div class="hx__btns">
+        <a class="btn" href="#quote">Get a Free Quote</a>
+        <a class="btn btn--outline-light" href={business.phoneHref}><Icon name="phone" size={18} />{business.phone}</a>
+      </div>
+    </div>
+    <a class="hx__card" href="/maxi-turf-laying-service/">
+      <img src={img("2023/01/maxi-4.jpg")} alt="" width="320" height="200" />
+      <span><Icon name="play" size={14} />See Maxi Turf laying in action</span>
+    </a>
+  </section>
+
+  <section class="pin pin--statement" data-scrub data-words>
+    <div class="pin__stick dots">
+      <div class="wrap-narrow">
+        <p class="st__text display">
+          {statement.map((l) => (
+            <span class:list={["st__line", l.mark && "st__line--mark"]}>{l.line.split(" ").map((w) => <span class="w" data-w>{w} </span>)}</span>
+          ))}
+        </p>
+        <ul class="st__chips" data-chips>
+          <li><span><Icon name="scissors" size={15} /></span>Cut fresh to order</li>
+          <li><span><Icon name="truck" size={15} /></span>Sydney wide delivery</li>
+          <li><span><Icon name="chat" size={15} /></span>Expert lawn advice</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="pin pin--tiles" data-scrub data-tiles>
+    <div class="pin__stick dots">
+      <div class="tl">
+        {tiles.map((i) => (
+          <span class="tl__t" style={`--c:${i % 5};--r:${Math.floor(i / 5)};background-image:url(${img("2018/10/Turf-pics-048.jpg")})`} data-tile={i}></span>
+        ))}
+        <div class="tl__cap" data-tiles-cap>
+          <p class="tl__kicker">Meet</p>
+          <p class="tl__name display">Associated Turf</p>
+          <p class="tl__sub">Grown at Windsor. Laid across Sydney.</p>
         </div>
-        <div class="hero__side">
-          <p class="lede">For over 45 years Associated Turf has supplied homeowners, landscapers, builders and councils with lush, healthy Buffalo, Kikuyu and Couch turf, cut to order and delivered direct from our farm.</p>
-          <div class="btn-row">
-            <a class="btn" href="#quote">Get a Free Quote</a>
-            <a class="btn btn--ghost" href={business.phoneHref}><Icon name="phone" size={18} />Call {business.phone}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="pin pin--story" data-scrub data-words>
+    <div class="pin__stick dots">
+      <div class="wrap">
+        <p class="sy__text display">
+          {story.map((s) => s.icon
+            ? <span class="sy__ic w" data-w aria-hidden="true"><Icon name={s.icon} size={26} /></span>
+            : s.t!.split(" ").map((w) => <span class:list={["w", s.accent && "w--accent"]} data-w>{w} </span>)
+          )}
+        </p>
+        <div class="sy__tail">
+          <p class="sy__more">Our range includes Sir Walter Buffalo, Matilda Soft Leaf Buffalo, Kikuyu, Wintergreen Couch and Greenlees Park Couch, harvested fresh to order and grown to the highest standards for long lasting results.</p>
+          <div class="btn-row sy__btns">
+            <a class="btn" href="/turf-varieties/">Explore Our Turf</a>
+            <a class="btn btn--ghost" href="/turf-farms/">About Our Farm</a>
           </div>
         </div>
       </div>
-      <div class="hero__media">
-        <Mow src="2026/05/home-banner-sunrise.jpg" alt="Sunrise over freshly mown turf at the Associated Turf farm" eager class="hero__img" width={1880} height={820} bands={8} />
-        <ul class="hero__chips chips">
-          <li><Icon name="scissors" size={16} />Cut fresh to order</li>
-          <li><Icon name="truck" size={16} />Sydney wide delivery</li>
-          <li><Icon name="chat" size={16} />Expert lawn advice</li>
-        </ul>
-        <div class="hero__ticket">
-          <p class="hero__ticket-n display">45+</p>
-          <p>years growing turf on the Hawkesbury River at Windsor</p>
+    </div>
+  </section>
+
+  <section class="pin pin--feat" data-scrub data-feats>
+    <div class="pin__stick dots">
+      <div class="wrap ft">
+        <div class="ft__copy">
+          <h2 class="ft__h">Better lawns start at the farm:</h2>
+          <div class="ft__list">
+            <span class="ft__rail" aria-hidden="true"><i></i></span>
+            {features.map((f, i) => (
+              <div class:list={["ft__item", i === 0 && "is-on"]} data-feat>
+                <h3 class="ft__t"><Icon name={f.icon} size={20} />{f.title}</h3>
+                <p class="ft__b">{f.body}</p>
+              </div>
+            ))}
+          </div>
+          <div class="btn-row ft__btns"><a class="btn" href="#quote">Get a Free Quote</a><a class="btn btn--ghost" href="/turf-supply/">How We Supply</a></div>
         </div>
+        <div class="ft__media">
+          {features.map((f, i) => <img class:list={["ft__img", i === 0 && "is-on"]} src={img(f.image)} alt="" width="1000" height="1000" loading="lazy" data-feat-img />)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sw" data-sunshade>
+    <div class="wrap sw__in">
+      <div class="sw__scene">
+        <img class="sw__img is-on" src={img("2026/10/wintergreen-couch-golf-course.jpg")} alt="A couch lawn in full sun" width="1000" height="700" loading="lazy" data-sunshade-img="sun" />
+        <img class="sw__img" src={img("2024/03/sir-walter-2.jpg")} alt="A soft leaf buffalo lawn in part shade" width="1000" height="700" loading="lazy" data-sunshade-img="shade" />
+        <button class="sw__toggle" type="button" role="switch" aria-checked="false" aria-label="Shady yard" data-sunshade-btn>
+          <span>Shade</span>
+          <span class="sw__track"><span class="sw__knob"></span><span data-sunshade-state>Off</span></span>
+        </button>
+      </div>
+      <div class="sw__copy">
+        <div class="sw__panel" data-panel="sun">
+          <p class="label">Full sun, 6+ hours a day</p>
+          <h2>When your yard is in full sun:</h2>
+          <p>Kikuyu and couch varieties such as Wintergreen and Greenlees Park need full sun to stay thick. Kikuyu is hardy and fast repairing, while the couches give a premium fine leaf finish.</p>
+          <ul class="sw__picks">{sun.map((v) => <li><a href={v.href}>{v.name}<Icon name="arrow" size={16} /></a></li>)}</ul>
+        </div>
+        <div class="sw__panel" data-panel="shade" hidden>
+          <p class="label">Part shade, 3 to 4 hours of sun</p>
+          <h2>When your yard is shaded:</h2>
+          <p>Buffalo grasses are the best performers in shady areas. Matilda and Sir Walter thrive with as little as 3 to 4 hours of direct sunlight, while Shademaster is up to 85% shade tolerant.</p>
+          <ul class="sw__picks">{shade.map((v) => <li><a href={v.href}>{v.name}<Icon name="arrow" size={16} /></a></li>)}</ul>
+        </div>
+        <p class="sw__hint">Flip the shade switch to compare.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ho section dots">
+    <div class="wrap">
+      <h2 class="ho__h">How to order:</h2>
+      <ol class="ho__list">
+        <li data-fade><span class="ho__n">1</span><h3>Choose your turf</h3><p>Compare varieties or ask our team to recommend the best fit for your yard.</p></li>
+        <li data-fade><span class="ho__n">2</span><h3>Request a quote</h3><p>Send your measurements and receive a fast, obligation free quote.</p></li>
+        <li data-fade><span class="ho__n">3</span><h3>We harvest fresh</h3><p>Your turf is cut to order on our farm for peak health and colour.</p></li>
+        <li data-fade><span class="ho__n">4</span><h3>Delivered and laid</h3><p>We deliver on time, with optional Maxi Turf laying service.</p></li>
+      </ol>
+      <div class="ho__cta"><a class="btn" href="#quote">Get a Free Quote</a></div>
+    </div>
+  </section>
+
+  <VarietyGrid />
+
+  <section class="cl section dots" data-collage>
+    <div class="wrap cl__in">
+      <div class="cl__copy">
+        <p class="label">Residential and commercial</p>
+        <h2>No Project Too Large or Too Small</h2>
+        <p class="lede">Whether you need a few square metres for your backyard or thousands of square metres for a major development, our experienced team will recommend the best turf for your project.</p>
+        <ul class="cl__tags">{projects.map((p) => <li>{p}</li>)}</ul>
+        <div class="btn-row"><a class="btn" href="#quote">Request a Quote</a><a class="btn btn--ghost" href="/commercial-turf-supply/">Commercial Supply</a></div>
+      </div>
+      <div class="cl__stack">
+        <figure class="pol pol--1"><img src={img("2018/10/Turf-pics-050.jpg")} alt="Fresh Matilda turf" width="500" height="400" loading="lazy" /></figure>
+        <figure class="pol pol--2"><img src={img("2018/10/IMG_1699.jpg")} alt="Maxi Turf rolls being laid" width="500" height="400" loading="lazy" /></figure>
+        <figure class="pol pol--3"><img src={img("2018/10/QYUM2745.jpg")} alt="Turf growing at the farm" width="500" height="400" loading="lazy" /></figure>
+        <figure class="pol pol--4"><img src={img("2018/10/Turf-pics-052.jpg")} alt="A freshly laid lawn" width="500" height="400" loading="lazy" /><figcaption>Delivery Monday to Saturday</figcaption></figure>
+        <span class="cl__tape" aria-hidden="true"></span>
       </div>
     </div>
   </section>
 
   <Reviews />
 
-  <section class="intro section">
-    <div class="wrap intro__in">
-      <div class="intro__media">
-        <Mow src="2018/10/SFPP4050.jpg" alt="Associated Turf" class="intro__a" width={900} height={1100} />
-        <Mow src="2023/01/maxi-4.jpg" alt="Turf being laid at a Sydney home" class="intro__b" width={800} height={600} />
-        <div class="intro__badge"><span class="display">45+</span><small>Years of turf excellence</small></div>
+  <section class="sp section">
+    <div class="wrap">
+      <div class="sp__head">
+        <h2>Turf at a Glance</h2>
+        <a class="link" href="/turf-varieties/">Full Variety Guide <Icon name="arrow" size={18} /></a>
       </div>
-      <div class="intro__copy">
-        <p class="label">Fresh turf direct from the farm</p>
-        <h2>Sydney's Trusted Turf Supplier for Over 45 Years</h2>
-        <p class="lede">Associated Turf has been supplying premium quality natural turf to homeowners, landscapers, builders, councils and commercial clients across Sydney for over 45 years. Whether you are creating a new lawn, replacing tired grass or completing a large scale landscaping project, we provide fresh, healthy turf backed by expert advice and exceptional service.</p>
-        <p>Our range includes Sir Walter Buffalo, Matilda Soft Leaf Buffalo, Kikuyu, Wintergreen Couch and Greenlees Park Couch, harvested fresh to order and grown to the highest standards for long lasting results.</p>
-        <div class="btn-row"><a class="btn" href="/turf-varieties/">Explore Our Turf</a><a class="btn btn--ghost" href="/turf-farms/">About Our Farm</a></div>
-      </div>
-    </div>
-  </section>
-
-  <VarietyGrid />
-  <Selector />
-  <WhyGrid />
-  <Steps />
-
-  <section class="proj section">
-    <div class="wrap proj__in">
-      <div class="proj__copy">
-        <p class="label">Residential and commercial</p>
-        <h2>No Project Too Large or Too Small</h2>
-        <p class="lede">Whether you need a few square metres for your backyard or thousands of square metres for a major development, our experienced team will recommend the best turf for your project.</p>
-        <ul class="proj__tags">{projects.map((p) => <li>{p}</li>)}</ul>
-        <div class="btn-row"><a class="btn" href="#quote">Request a Quote</a><a class="btn btn--ghost" href="/commercial-turf-supply/">Commercial Supply</a></div>
-      </div>
-      <div class="proj__media">
-        <Mow src="2018/10/Turf-pics-048.jpg" alt="Sydney lawn and turf supplies" width={1000} height={900} />
-        <div class="proj__badge"><Icon name="truck" size={26} /><p><strong>Delivery Monday to Saturday</strong>Across Sydney and Regional NSW</p></div>
+      <div class="sp__grid">
+        {cmp.rows.map((r) => {
+          const v = varieties.find((x) => r[0].toLowerCase().startsWith(x.short.toLowerCase()));
+          return (
+            <article class="sp__card">
+              <h3><a href={v?.href ?? "/turf-varieties/"}>{r[0]}</a></h3>
+              <dl>{cmp.head.slice(1).map((h, i) => <div><dt>{h}</dt><dd>{r[i + 1]}</dd></div>)}</dl>
+            </article>
+          );
+        })}
       </div>
     </div>
   </section>
 
-  <Faq items={faqs} intro="Not sure which turf suits your property? Here are the questions we hear most. Our team is always happy to help." />
+  <Faq title="Got Questions? We've Got Answers" items={faqs} intro="Not sure which turf suits your property? Here are the questions we hear most. Our team is always happy to help." />
   <PostCards posts={posts} />
-  <QuoteSection title="Ready to Transform Your Lawn?" text="Contact our friendly team today for expert advice, an obligation free quote or help choosing the perfect turf for your home or project." label="Get started" />
+
+  <section class="end">
+    <img class="end__bg" src={img("2026/10/kikuyu-backyard-lawn.jpg")} alt="" width="1920" height="900" loading="lazy" />
+    <div class="wrap end__in">
+      <h2>Ready to Transform Your Lawn?</h2>
+      <p>Contact our friendly team today for expert advice, an obligation free quote or help choosing the perfect turf for your home or project.</p>
+      <div class="btn-row"><a class="btn btn--light" href="#quote">Get a Free Quote</a><a class="btn btn--outline-light" href={business.phoneHref}><Icon name="phone" size={18} />{business.phone}</a></div>
+    </div>
+  </section>
+
+  <QuoteSection title="Let's Talk About Your New Lawn" label="Free quote" />
 </Base>
 
 <style>
-  .hero { padding: clamp(2.25rem, 5vw, 4.5rem) 0 clamp(3rem, 6vw, 5rem); position: relative; }
-  .hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 42%; z-index: -1; background: repeating-linear-gradient(90deg, var(--color-stripe-a) 0 var(--stripe-w), var(--color-stripe-b) var(--stripe-w) calc(var(--stripe-w) * 2)); background-position: calc(var(--drift, 0) * 1px) 0; }
-  .hero__top { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 4.5rem); align-items: end; margin-bottom: clamp(2rem, 4vw, 3rem); }
-  .hero__h1 { font-size: clamp(2.6rem, 6vw, 5.8rem); margin: 0; letter-spacing: -0.025em; }
-  .hero__side .lede { margin-bottom: 1.5rem; }
-  .hero__side .btn-row > .btn { min-width: 220px; }
-  .hero__media { position: relative; }
-  .hero__media :global(.hero__img) { aspect-ratio: 21 / 9; border-radius: clamp(18px, 2.5vw, 34px); box-shadow: var(--shadow); }
-  .hero__chips { position: absolute; left: clamp(1rem, 2.5vw, 2rem); bottom: clamp(1rem, 2.5vw, 2rem); z-index: 3; }
-  .hero__chips li { background: rgba(255, 255, 255, 0.94); border: 0; }
-  .hero__ticket { position: absolute; right: clamp(1rem, 3vw, 3rem); top: 0; transform: translateY(-50%); z-index: 3; background: var(--color-forest); color: #cfe0d4; border-radius: var(--radius-md); padding: 1rem 1.25rem; display: flex; align-items: center; gap: 0.9rem; max-width: 330px; box-shadow: var(--shadow); }
-  .hero__ticket p { margin: 0; font-size: 0.9rem; line-height: 1.35; }
-  .hero__ticket .hero__ticket-n { font-size: 2.5rem; color: var(--color-sprout); line-height: 1; }
-  @media (max-width: 1000px) { .hero__top { grid-template-columns: minmax(0, 1fr); } .hero__media :global(.hero__img) { aspect-ratio: 16 / 9; } .hero__ticket { display: none; } }
-  @media (max-width: 720px) {
-    .hero__copy, .hero__side { text-align: center; }
-    .hero__side .lede { margin-inline: auto; }
-    .hero__media :global(.hero__img) { aspect-ratio: 4 / 3.4; }
-    .hero__chips { position: static; justify-content: center; margin-top: 1rem; }
-    .hero__chips li { background: #fff; border: 1px solid var(--color-line); }
+  .dots { background-color: var(--color-paper); background-image: radial-gradient(rgba(12, 36, 25, 0.07) 1px, transparent 1.2px); background-size: 14px 14px; }
+
+  /* Hero */
+  .hx { position: relative; min-height: calc(100svh - var(--header-h) - 38px); display: flex; align-items: flex-end; color: #fff; overflow: hidden; isolation: isolate; }
+  .hx__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+  :global(html.js-motion) .hx__bg { animation: hx-in 2.4s var(--ease) both; }
+  @keyframes hx-in { from { transform: scale(1.08); } }
+  .hx__shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(8, 22, 15, 0.1) 0%, rgba(8, 22, 15, 0.25) 45%, rgba(8, 22, 15, 0.8) 100%), linear-gradient(90deg, rgba(8, 22, 15, 0.55), transparent 65%); }
+  .hx__in { padding-block: clamp(3rem, 8vw, 6rem); }
+  .tape { display: inline-block; background: var(--color-field); color: #fff; font-family: var(--font-display); font-style: italic; font-weight: 600; font-size: 1.05rem; padding: 0.3rem 0.95rem; transform: rotate(-3deg); clip-path: polygon(2% 0, 100% 5%, 98% 100%, 0 94%); margin-bottom: 1.25rem; }
+  .hx__h1 { color: #fff; font-size: clamp(2.6rem, 6.2vw, 6rem); max-width: 15ch; margin-bottom: 0.45em; letter-spacing: -0.025em; }
+  .hx__btns { display: flex; flex-wrap: wrap; gap: 0.85rem; }
+  .hx__btns .btn { min-width: 230px; }
+  .hx__card { position: absolute; right: clamp(1rem, 3vw, 2.5rem); bottom: clamp(1rem, 3vw, 2.5rem); width: clamp(220px, 20vw, 300px); border-radius: var(--radius-md); overflow: hidden; text-decoration: none; color: #fff; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45); border: 3px solid rgba(255, 255, 255, 0.85); transition: transform 0.4s var(--ease); }
+  .hx__card:hover { transform: translateY(-4px) rotate(-1deg); }
+  .hx__card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+  .hx__card span { position: absolute; left: 0.6rem; bottom: 0.6rem; display: inline-flex; align-items: center; gap: 0.45rem; background: rgba(12, 36, 25, 0.85); padding: 0.4rem 0.75rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+  @media (max-width: 900px) { .hx__card { display: none; } }
+  @media (max-width: 720px) { .hx { min-height: 80svh; text-align: center; } .hx__h1 { margin-inline: auto; } .hx__btns { flex-direction: column; } .hx__btns .btn { min-width: 0; width: 100%; } }
+
+  /* Pinned scenes */
+  .pin { position: relative; }
+  .pin--statement { height: 220vh; }
+  .pin--tiles { height: 230vh; }
+  .pin--story { height: 250vh; }
+  .pin--feat { height: 420vh; }
+  .pin__stick { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; padding-top: calc(var(--header-h) * 0.5); }
+  :global(html:not(.js-motion)) .pin { height: auto; }
+  :global(html:not(.js-motion)) .pin__stick { position: relative; height: auto; padding-block: 6rem; }
+
+  .w { transition: filter 0.3s linear, opacity 0.3s linear; }
+  :global(html.js-motion) [data-words] .w { opacity: 0.16; filter: blur(7px); }
+  :global(html.js-motion) [data-words] .w.on { opacity: 1; filter: none; }
+
+  .st__text { font-size: clamp(2rem, 4.6vw, 4.1rem); line-height: 1.15; color: var(--color-forest); margin: 0 0 2rem; text-transform: none; }
+  .st__line { display: block; }
+  .st__line--mark { position: relative; width: fit-content; }
+  .st__line--mark::after { content: ""; position: absolute; left: 0; right: 0.25em; bottom: -0.04em; height: 0.11em; background: var(--color-field); border-radius: 50% 40% 60% 45% / 60% 50% 40% 50%; transform-origin: left; transform: scaleX(var(--ul, 1)); }
+  .st__chips { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 1rem; }
+  .st__chips li { position: relative; display: inline-flex; align-items: center; background: #fff; border-radius: 10px; padding: 0.7rem 1rem 0.7rem 1.4rem; font-weight: 600; font-size: 0.92rem; color: var(--color-forest-2); box-shadow: 0 10px 24px -18px rgba(12, 36, 25, 0.6); transition: opacity 0.5s, transform 0.5s var(--ease); }
+  .st__chips li span { position: absolute; left: -0.65rem; top: -0.65rem; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--color-stripe-b); color: var(--color-field-deep); }
+  :global(html.js-motion) .st__chips:not(.on) li { opacity: 0; transform: translateY(12px); }
+  .st__chips li:nth-child(2) { transition-delay: 0.1s; }
+  .st__chips li:nth-child(3) { transition-delay: 0.2s; }
+
+  .tl { position: relative; width: min(100% - var(--gutter) * 2, 1300px); aspect-ratio: 16 / 8.5; margin-inline: auto; }
+  .tl__t { position: absolute; left: calc(var(--c) * 20%); top: calc(var(--r) * 33.333%); width: calc(20% - 10px); height: calc(33.333% - 10px); margin: 5px; border-radius: 12px; background-size: 500% 300%; background-position: calc(var(--c) * 25%) calc(var(--r) * 50%); will-change: transform, opacity; transition: border-radius 0.45s, margin 0.45s, width 0.45s, height 0.45s; }
+  .tl.is-whole .tl__t { border-radius: 0; margin: 0; width: 20%; height: 33.333%; }
+  .tl.is-whole .tl__t:nth-of-type(1) { border-top-left-radius: var(--radius-lg); }
+  .tl.is-whole .tl__t:nth-of-type(5) { border-top-right-radius: var(--radius-lg); }
+  .tl.is-whole .tl__t:nth-of-type(11) { border-bottom-left-radius: var(--radius-lg); }
+  .tl.is-whole .tl__t:nth-of-type(15) { border-bottom-right-radius: var(--radius-lg); }
+  .tl__cap { position: absolute; left: clamp(1rem, 4vw, 3rem); bottom: clamp(1rem, 4vw, 3rem); z-index: 2; color: #fff; text-shadow: 0 2px 24px rgba(0, 0, 0, 0.5); opacity: var(--cap, 1); transform: translateY(calc((1 - var(--cap, 1)) * 24px)); }
+  .tl__kicker { font-family: var(--font-display); font-style: italic; font-size: 1.35rem; margin: 0; }
+  .tl__name { font-size: clamp(2.3rem, 6vw, 5.5rem); color: #fff; margin: 0; line-height: 1; }
+  .tl__sub { margin: 0.4rem 0 0; }
+  @media (max-width: 720px) { .tl { aspect-ratio: 4 / 5; } }
+
+  .sy__text { font-size: clamp(1.55rem, 3vw, 2.8rem); line-height: 1.32; color: var(--color-forest); margin: 0 0 1.75rem; max-width: 34ch; text-transform: none; }
+  .w--accent { color: var(--color-field-deep); }
+  .sy__ic { display: inline-grid; place-items: center; width: 1.45em; height: 1.1em; vertical-align: -0.14em; margin-right: 0.25em; border-radius: 0.3em; background: var(--color-stripe-b); color: var(--color-field-deep); }
+  .sy__ic :global(svg) { width: 0.62em; height: 0.62em; }
+  .sy__more { font-size: 1.08rem; max-width: 60ch; }
+  .sy__btns { margin-top: 1.5rem; }
+  @media (max-width: 720px) { .sy__text { font-size: 1.45rem; } .sy__more { font-size: 0.98rem; } .sy__btns .btn--ghost { display: none; } .st__text { font-size: 1.9rem; } }
+  :global(html.js-motion) .sy__tail { opacity: var(--tail, 0); transform: translateY(calc((1 - var(--tail, 0)) * 16px)); }
+
+  .ft { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+  .ft__h { font-size: clamp(2rem, 3.4vw, 3.1rem); margin-bottom: 1.5rem; max-width: 14ch; }
+  .ft__list { position: relative; padding-left: 1.75rem; display: grid; gap: 0.25rem; }
+  .ft__rail { position: absolute; left: 0; top: 0.4rem; bottom: 0.4rem; width: 5px; border-radius: 3px; background: var(--color-line); overflow: hidden; }
+  .ft__rail i { display: block; width: 100%; height: calc(var(--fp, 0) * 100%); background: repeating-linear-gradient(180deg, var(--color-field) 0 18px, #34c25e 18px 36px); }
+  .ft__item { padding: 0.7rem 0; }
+  .ft__t { display: flex; align-items: center; gap: 0.6rem; margin: 0; font-family: var(--font-sans); font-weight: 600; font-size: 1.05rem; letter-spacing: 0; color: var(--color-muted); transition: color 0.3s, font-size 0.3s; }
+  .ft__t :global(svg) { flex: none; }
+  .ft__b { margin: 0; max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.5s var(--ease), opacity 0.4s, margin 0.4s; }
+  .ft__item.is-on .ft__t { color: var(--color-forest); font-family: var(--font-display); font-size: 1.4rem; }
+  .ft__item.is-on .ft__t :global(svg) { color: var(--color-field); }
+  .ft__item.is-on .ft__b { max-height: 9em; opacity: 1; margin-top: 0.4rem; }
+  :global(html:not(.js-motion)) .ft__b { max-height: none; opacity: 1; margin-top: 0.4rem; }
+  .ft__btns { margin-top: 1.75rem; }
+  .ft__media { position: relative; aspect-ratio: 1 / 1; max-height: 78svh; width: 100%; border-radius: var(--radius-lg); overflow: hidden; background: var(--color-stripe-b); box-shadow: var(--shadow); }
+  .ft__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.06); transition: opacity 0.7s var(--ease), transform 1.2s var(--ease); }
+  .ft__img.is-on { opacity: 1; transform: none; }
+  @media (max-width: 900px) {
+    .ft { grid-template-columns: minmax(0, 1fr); gap: 1.1rem; }
+    .ft__media { order: -1; aspect-ratio: 16 / 10; max-height: 32svh; }
+    .ft__h { font-size: 1.7rem; margin-bottom: 0.6rem; max-width: none; }
+    .ft__btns { display: none; }
+    .ft__item { padding: 0.45rem 0; }
+    .ft__item.is-on .ft__t { font-size: 1.2rem; }
   }
 
-  .intro__in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
-  .intro__media { position: relative; padding: 0 12% 14% 0; }
-  .intro__media :global(.intro__a) { aspect-ratio: 4 / 4.6; }
-  .intro__media :global(.intro__b) { position: absolute; right: 0; bottom: 0; width: 52%; aspect-ratio: 4 / 3; border: 8px solid var(--color-paper); }
-  .intro__badge { position: absolute; left: -1rem; top: 12%; z-index: 3; background: var(--color-field); color: #fff; border-radius: 50%; width: 132px; height: 132px; display: grid; place-content: center; text-align: center; box-shadow: var(--shadow); }
-  .intro__badge span { font-size: 2.6rem; line-height: 1; color: #fff; }
-  .intro__badge small { font-size: 0.78rem; line-height: 1.2; max-width: 10ch; margin-inline: auto; font-weight: 500; }
-  .intro__copy .btn-row { margin-top: 1.75rem; }
-  @media (max-width: 900px) { .intro__in { grid-template-columns: minmax(0, 1fr); } .intro__media { max-width: 620px; } }
-  @media (max-width: 720px) { .intro__copy { text-align: center; } .intro__copy .lede { margin-inline: auto; } .intro__media { margin-inline: auto; } .intro__badge { left: 0; width: 108px; height: 108px; } .intro__badge span { font-size: 2.1rem; } }
+  .sw { background: var(--color-forest); color: #cfe0d4; padding-block: clamp(4rem, 8vw, 7rem); transition: background 0.6s; }
+  .sw.is-shade { background: #081a12; }
+  .sw__in { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.9fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+  .sw__scene { position: relative; aspect-ratio: 16 / 11; border-radius: var(--radius-lg); overflow: hidden; background: #071610; }
+  .sw__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.8s var(--ease); }
+  .sw__img.is-on { opacity: 1; }
+  .sw__toggle { position: absolute; right: 1rem; top: 1rem; display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.45rem 0.5rem 0.45rem 0.85rem; border: 0; border-radius: 12px; background: #fff; color: var(--color-forest); font-weight: 700; font-size: 0.9rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+  .sw__track { position: relative; width: 80px; height: 34px; border-radius: 999px; background: #b99a2a; display: flex; align-items: center; justify-content: flex-end; padding: 0 0.75rem; color: #fff; font-size: 0.82rem; transition: background 0.35s; }
+  .sw__knob { position: absolute; left: 4px; top: 4px; width: 26px; height: 26px; border-radius: 50%; background: #fff; transition: transform 0.4s var(--ease); }
+  .sw__toggle[aria-checked="true"] .sw__track { background: var(--color-forest-2); justify-content: flex-start; }
+  .sw__toggle[aria-checked="true"] .sw__knob { transform: translateX(46px); }
+  .sw__copy h2 { color: #fff; font-size: clamp(2rem, 3.3vw, 3rem); }
+  .sw__copy .label { color: var(--color-sprout); }
+  .sw__panel[hidden] { display: none; }
+  :global(html.js-motion) .sw__panel:not([hidden]) { animation: swin 0.6s var(--ease); }
+  @keyframes swin { from { opacity: 0; transform: translateY(10px); } }
+  .sw__picks { list-style: none; padding: 0; margin: 1.5rem 0 0; display: grid; gap: 0.5rem; }
+  .sw__picks a { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-radius: 12px; background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.14); color: #fff; text-decoration: none; font-weight: 600; transition: background 0.25s, transform 0.3s var(--ease); }
+  .sw__picks a:hover { background: rgba(255, 255, 255, 0.14); transform: translateX(4px); }
+  .sw__hint { margin-top: 1rem; font-size: 0.88rem; color: #9db5a5; }
+  @media (max-width: 900px) { .sw__in { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 720px) { .sw__copy { text-align: center; } .sw__copy .label { justify-content: center; } .sw__picks a { text-align: left; } }
 
-  .proj__in { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
-  .proj__tags { list-style: none; padding: 0; margin: 1.5rem 0 2rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .proj__tags li { padding: 0.5rem 0.95rem; border-radius: 999px; border: 1.5px solid var(--color-line); background: #fff; font-weight: 500; color: var(--color-forest); font-size: 0.95rem; }
-  .proj__media { position: relative; }
-  .proj__media :global(.mow) { aspect-ratio: 1 / 1; }
-  .proj__badge { position: absolute; left: -1.5rem; bottom: 2rem; z-index: 3; display: flex; align-items: center; gap: 0.9rem; background: #fff; border-radius: var(--radius-md); padding: 1rem 1.25rem; box-shadow: var(--shadow); max-width: 320px; }
-  .proj__badge :global(svg) { color: var(--color-field); flex: none; }
-  .proj__badge p { margin: 0; display: grid; font-size: 0.9rem; line-height: 1.35; }
-  .proj__badge strong { color: var(--color-forest); font-size: 1rem; }
-  @media (max-width: 900px) { .proj__in { grid-template-columns: minmax(0, 1fr); } .proj__media { max-width: 620px; } }
-  @media (max-width: 720px) { .proj__copy { text-align: center; } .proj__copy .lede { margin-inline: auto; } .proj__tags { justify-content: center; } .proj__media { margin-inline: auto; } .proj__badge { left: 50%; transform: translateX(-50%); bottom: -1.5rem; width: max-content; max-width: 92%; } }
+  .ho__h { font-size: clamp(2rem, 3.6vw, 3.2rem); margin-bottom: clamp(2rem, 5vw, 4rem); }
+  .ho__list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(1.25rem, 3vw, 3rem); }
+  .ho__list li { position: relative; padding-left: 1.75rem; }
+  .ho__list li::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 4px; background: repeating-linear-gradient(180deg, var(--color-field) 0 16px, var(--color-sprout) 16px 32px); transform: rotate(1.5deg); }
+  .ho__n { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fff; color: var(--color-forest); font-weight: 700; font-size: 0.9rem; box-shadow: 0 6px 16px -10px rgba(12, 36, 25, 0.6); margin-bottom: 0.9rem; }
+  .ho__list h3 { font-size: 1.45rem; margin-bottom: 0.4rem; }
+  .ho__list p { margin: 0; }
+  .ho__cta { display: flex; justify-content: center; margin-top: clamp(2rem, 4vw, 3rem); }
+  @media (max-width: 960px) { .ho__list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .ho__h { text-align: center; } .ho__list { grid-template-columns: minmax(0, 1fr); } }
+
+  .cl { overflow-x: clip; }
+  .cl__in { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+  .cl__tags { list-style: none; padding: 0; margin: 1.5rem 0 2rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .cl__tags li { padding: 0.45rem 0.9rem; border-radius: 999px; background: #fff; border: 1px solid var(--color-line); font-weight: 500; font-size: 0.93rem; color: var(--color-forest); }
+  .cl__stack { position: relative; aspect-ratio: 1 / 0.92; }
+  .pol { position: absolute; margin: 0; background: #fff; padding: 10px 10px 34px; box-shadow: 0 24px 50px -24px rgba(12, 36, 25, 0.55); transition: transform 1s var(--ease); }
+  .pol img { width: 100%; aspect-ratio: 5 / 4; object-fit: cover; }
+  .pol figcaption { position: absolute; left: 12px; bottom: 7px; font-family: var(--font-display); font-style: italic; font-size: 0.95rem; color: var(--color-forest); }
+  .pol--1 { width: 46%; left: 0; top: 2%; transform: rotate(-5deg) translateY(calc((1 - var(--cp, 1)) * 60px)); }
+  .pol--2 { width: 42%; right: 2%; top: 0; transform: rotate(4deg) translateY(calc((1 - var(--cp, 1)) * 100px)); }
+  .pol--3 { width: 44%; left: 8%; bottom: 0; z-index: 2; transform: rotate(3deg) translateY(calc((1 - var(--cp, 1)) * 140px)); }
+  .pol--4 { width: 48%; right: 0; bottom: 6%; z-index: 3; transform: rotate(-3deg) translateY(calc((1 - var(--cp, 1)) * 180px)); }
+  .cl__tape { position: absolute; right: 30%; top: 42%; width: 120px; height: 34px; background: rgba(255, 255, 255, 0.6); transform: rotate(-18deg); z-index: 4; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06); }
+  @media (max-width: 900px) { .cl__in { grid-template-columns: minmax(0, 1fr); } .cl__stack { max-width: 560px; width: 100%; margin-inline: auto; } }
+  @media (max-width: 720px) { .cl__copy { text-align: center; } .cl__copy .lede { margin-inline: auto; } .cl__tags { justify-content: center; } }
+
+  .sp { background: #fff; border-block: 1px solid var(--color-line); }
+  .sp__head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .sp__head h2 { margin: 0; }
+  .sp__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+  .sp__card { border: 1px solid var(--color-line); border-radius: var(--radius-md); padding: 1.25rem 1.35rem; background: var(--color-paper); }
+  .sp__card h3 { font-size: 1.25rem; margin-bottom: 0.75rem; }
+  .sp__card h3 a { text-decoration: none; }
+  .sp__card h3 a:hover { color: var(--color-field-deep); }
+  .sp__card dl { margin: 0; display: grid; }
+  .sp__card dl div { display: flex; justify-content: space-between; gap: 1rem; padding: 0.45rem 0; border-top: 1px dashed var(--color-line); font-size: 0.9rem; }
+  .sp__card dt { color: var(--color-muted); font-size: 0.85rem; font-weight: 500; }
+  .sp__card dd { margin: 0; color: var(--color-forest); font-weight: 600; text-align: right; }
+  @media (max-width: 1000px) { .sp__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 620px) { .sp__grid { grid-template-columns: minmax(0, 1fr); } .sp__head { justify-content: center; text-align: center; } }
+
+  .end { position: relative; isolation: isolate; overflow: hidden; padding-block: clamp(5rem, 12vw, 9rem); color: #e2eee5; text-align: center; }
+  .end__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+  .end::before { content: ""; position: absolute; inset: 0; z-index: -1; background: rgba(8, 22, 15, 0.62); }
+  .end h2 { color: #fff; font-size: clamp(2.2rem, 5vw, 4.5rem); max-width: 16ch; margin-inline: auto; }
+  .end p { max-width: 56ch; margin: 0 auto 2rem; }
+  .end .btn-row { justify-content: center; }
 </style>
