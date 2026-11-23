@@ -242,6 +242,11 @@ html.js-motion [data-fade].is-in { opacity: 1; transform: none; }
   html.is-inner main :is(.ticks, ul.ticks) { justify-items: center; text-align: center; margin-inline: auto; }
   html.is-inner main .ticks li { padding-left: 0; }
   html.is-inner main .ticks li::before { position: relative; top: 0.22em; display: inline-block; margin-right: 0.55rem; }
+  html.is-inner main .prose { text-align: center; margin-inline: auto; }
+  html.is-inner main .prose :is(ul, ol) { justify-items: center; }
+  html.is-inner main .prose :is(ul, ol) li { padding-left: 0; }
+  html.is-inner main .prose :is(ul, ol) li::before { position: relative; left: auto; top: auto; display: inline-block; vertical-align: 0.2em; margin-right: 0.6rem; }
+  html.is-inner main .prose ol li::before { vertical-align: baseline; margin-right: 0.45rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

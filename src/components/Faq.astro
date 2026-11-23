@@ -51,4 +51,8 @@ const { title = "Expert Answers to Common Turf Questions", intro, items, label =
   .faq__a :global(ul) { padding-left: 1.1rem; }
   @media (max-width: 900px) { .faq__in { grid-template-columns: minmax(0, 1fr); } .faq__side { position: static; } }
   @media (max-width: 720px) { .faq__side { text-align: center; } .faq__side .lede { margin-inline: auto; } }
+  @media (max-width: 720px) {
+    :global(html.is-inner) .faq__item summary > span:first-child, :global(html.is-inner) .faq__a { text-align: center; }
+    :global(html.is-inner) .faq__a :global(ul) { padding-left: 0; list-style-position: inside; }
+  }
 </style>
