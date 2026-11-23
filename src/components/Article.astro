@@ -3,17 +3,52 @@ import Mow from "./Mow.astro";
 import Meters from "./Meters.astro";
 import Icon from "./Icon.astro";
 import { mdc, md } from "../lib/md";
-import { img, business, varieties, type Variety } from "../data/site";
+import { img, business, type Variety } from "../data/site";
 import type { Block } from "../lib/content";
 interface Props { blocks: Block[]; variety?: Variety; related?: { label: string; href: string }[]; asideTitle?: string }
-const { blocks, variety, related = [], asideTitle = "Talk to the Grower" } = Astro.props;
+const { blocks, variety } = Astro.props;
+/** Split rendered prose at each H2 so the heading sits left and its copy right. */
+const chunks = (html: string) => html.split(/(?=<h2[\s>])/).filter((c) => c.trim()).map((c) => {
+  const m = c.match(/^<h2[^>]*>[\s\S]*?<\/h2>/);
+  return m ? { h: m[0], body: c.slice(m[0].length) } : { h: "", body: c };
+});
+const introIdx = blocks.findIndex((b) => b.b === "html");
+const introFirst = introIdx >= 0 && blocks.slice(0, introIdx).every((b) => b.b === "overview") && !chunks(mdc((blocks[introIdx] as { md: string }).md))[0]?.h;
+const metersInIntro = Boolean(variety && introFirst);
+const showMeters = variety && !metersInIntro && !blocks.some((b) => b.b === "overview");
+const isLogo = (src: string) => /logo/i.test(src);
+const empty = (h: string) => !h.replace(/<[^>]+>|&nbsp;|\s/g, "");
+const endsPage = (bi: number) => blocks.slice(bi + 1).every((b) => b.b === "faq");
 ---
 <section class="art section">
   <div class="wrap art__in">
     <article class="art__main">
-      {blocks.map((b) => {
-        if (b.b === "html") return <div class="prose" set:html={mdc(b.md)} />;
-        if (b.b === "figure") return <figure class="art__fig"><Mow src={b.src} alt={b.alt} width={1200} height={800} /></figure>;
+      {showMeters && <div class="art__meters"><Meters v={variety!} /></div>}
+      {blocks.map((b, bi) => {
+        if (b.b === "html") return chunks(mdc(b.md)).map((c, ci) => bi === introIdx && ci === 0 && introFirst ? (
+          <div class:list={["art__intro", metersInIntro && "art__intro--meters"]}>
+            {metersInIntro && <div class="art__intro-m"><Meters v={variety!} /></div>}
+            <div class="art__intro-t prose" set:html={c.body} />
+          </div>
+        ) : c.h && empty(c.body) && !endsPage(bi) ? (
+          <div class="art__lead prose" set:html={c.h} />
+        ) : c.h && empty(c.body) ? (
+          <div class="art__call">
+            <div class="art__call-h" set:html={c.h} />
+            <div class="art__call-b">
+              <a class="btn" href="#quote">Get a Free Quote</a>
+              <a class="btn btn--outline-light" href={business.phoneHref}><Icon name="phone" size={18} />{business.phone}</a>
+            </div>
+          </div>
+        ) : (
+          <div class:list={["art__row", !c.h && "art__row--cont"]}>
+            {c.h && <div class="art__h prose" set:html={c.h} />}
+            <div class="art__body prose" set:html={c.body} />
+          </div>
+        ));
+        if (b.b === "figure") return isLogo(b.src)
+          ? <figure class="art__logo"><img src={img(b.src)} alt={b.alt} loading="lazy" decoding="async" /></figure>
+          : <figure class="art__fig"><Mow src={b.src} alt={b.alt} width={1200} height={800} /></figure>;
         if (b.b === "gallery") return (
           <div class:list={["art__gal", b.images.length === 2 && "art__gal--2"]}>
             {b.images.map((im) => <a href={img(im.src)} class="art__gal-item" data-lightbox><img src={img(im.src)} alt={im.alt} width="600" height="450" loading="lazy" decoding="async" /></a>)}
@@ -27,7 +62,7 @@ const { blocks, variety, related = [], asideTitle = "Talk to the Grower" } = Ast
             </table>
           </div>
         );
-        if (b.b === "overview") return variety ? <div class="art__meters"><Meters v={variety} /></div> : null;
+        if (b.b === "overview") return variety && !metersInIntro ? <div class="art__meters"><Meters v={variety} /></div> : null;
         if (b.b === "button") return <p class="art__btn"><a class="btn btn--ghost" href={b.href}>{b.text}<Icon name="arrow" size={18} /></a></p>;
         if (b.b === "faq") return (
           <div class="art__faq">
@@ -44,75 +79,64 @@ const { blocks, variety, related = [], asideTitle = "Talk to the Grower" } = Ast
       })}
     </article>
 
-    <aside class="art__aside">
-      <div class="art__stick">
-        {variety && !blocks.some((b) => b.b === "overview") && <Meters v={variety} />}
-        <div class="art__card">
-          <p class="art__card-t">{asideTitle}</p>
-          <p>Every roll is cut to order on our Windsor farm. Get honest advice and fast pricing from the people who grow it.</p>
-          <a class="btn" href="#quote">Get a Free Quote</a>
-          <a class="art__phone" href={business.phoneHref}><Icon name="phone" size={18} />{business.phone}</a>
-        </div>
-        {related.length > 0 && (
-          <nav class="art__rel" aria-label="Related">
-            <p class="art__rel-t">Keep Reading</p>
-            <ul>{related.map((r) => <li><a href={r.href}>{r.label}<Icon name="arrow" size={16} /></a></li>)}</ul>
-          </nav>
-        )}
-        {!related.length && (
-          <nav class="art__rel" aria-label="Turf varieties">
-            <p class="art__rel-t">Our Turf Varieties</p>
-            <ul>{varieties.filter((v) => v.slug !== variety?.slug).map((v) => <li><a href={v.href}>{v.name}<Icon name="arrow" size={16} /></a></li>)}</ul>
-          </nav>
-        )}
-      </div>
-    </aside>
   </div>
 </section>
 
 <style>
   .art { padding-top: clamp(3rem, 6vw, 5rem); }
-  .art__in { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: clamp(2rem, 5vw, 5rem); align-items: start; }
   .art__main { min-width: 0; }
-  .art__main > * + * { margin-top: 1.75rem; }
-  .art__main :global(.prose) { max-width: 74ch; }
-  .art__fig { margin: 2rem 0; }
-  .art__fig :global(.mow) { aspect-ratio: 16 / 10; }
-  .art__gal { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; margin: 2rem 0; }
+  .art__main > * + * { margin-top: clamp(1.75rem, 3vw, 2.5rem); }
+  .art__row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(1.5rem, 5vw, 5rem); align-items: start; }
+  .art__row + .art__row:not(.art__row--cont) { padding-top: clamp(2rem, 4vw, 3rem); border-top: 1px solid var(--color-line); }
+  .art__row--cont .art__body { grid-column: 2; }
+  .art__h :global(h2) { margin: 0; font-size: clamp(1.75rem, 3vw, 2.6rem); line-height: 1.12; }
+  .art__h { position: sticky; top: calc(var(--header-h) + 1.5rem); }
+  .art__body { max-width: 72ch; }
+  .art__body > :global(:first-child) { margin-top: 0; }
+  .art__body :global(h3) { margin-top: 1.75rem; }
+  .art__fig { margin: clamp(2.5rem, 5vw, 4rem) 0; }
+  .art__fig :global(.mow) { aspect-ratio: 21 / 9; border-radius: var(--radius-lg); }
+  .art__fig :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .art__gal { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: clamp(2.5rem, 5vw, 4rem) 0; }
   .art__gal--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .art__gal-item { display: block; border-radius: var(--radius-md); overflow: hidden; aspect-ratio: 4 / 3; background: var(--color-stripe-b); }
-  .art__gal-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s var(--ease); }
-  .art__gal-item:hover img { transform: scale(1.05); }
-  .art__meters { max-width: 560px; }
-  .art__btn { margin: 0.5rem 0 2rem; }
-  .art__faq { margin-top: 3rem; }
-  .art__faq h2 { font-size: clamp(1.7rem, 2.6vw, 2.35rem); }
+  .art__gal-item img { width: 100%; height: 100%; object-fit: cover; }
+  .art__main > :global(.table-wrap) { margin-block: clamp(2rem, 4vw, 3rem); }
+  .art__meters { max-width: 720px; margin-inline: auto; }
+  .art__lead :global(h2) { margin: 0; font-size: clamp(1.75rem, 3vw, 2.6rem); line-height: 1.12; }
+  .art__main > .art__lead { margin-top: clamp(2.5rem, 5vw, 4rem); }
+  .art__intro { max-width: 820px; margin-inline: auto; }
+  .art__call { margin-block: clamp(2.5rem, 5vw, 4rem) !important; background: var(--color-forest); border-radius: var(--radius-lg); padding: clamp(2rem, 5vw, 3.5rem); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2rem; align-items: center; }
+  .art__call-h :global(h2) { color: #fff; margin: 0; font-size: clamp(1.6rem, 2.8vw, 2.4rem); line-height: 1.15; }
+  .art__call-b { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .art__intro-t { font-size: 1.15rem; }
+  .art__intro-t > :global(:first-child) { margin-top: 0; }
+  .art__intro--meters { max-width: none; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(1.5rem, 5vw, 5rem); align-items: center; text-align: left; }
+  .art__intro--meters .art__intro-t { max-width: 72ch; }
+  .art__logo { margin: 2rem auto; display: grid; place-items: center; }
+  .art__logo img { max-height: 120px; width: auto; object-fit: contain; }
+  .art__btn { text-align: center; margin: 0.5rem 0 2rem; }
+  .art__faq { margin-top: clamp(3rem, 6vw, 5rem); max-width: 900px; margin-inline: auto; }
+  .art__faq h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); text-align: center; margin-bottom: 1.5rem; }
   .art__q { background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-md); margin-top: 0.65rem; }
   .art__q[open] { border-color: var(--color-field); }
-  .art__q summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 1rem; align-items: center; padding: 1rem 1.2rem; font-weight: 600; color: var(--color-forest); }
+  .art__q summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 1rem; align-items: center; padding: 1.1rem 1.3rem; font-weight: 600; color: var(--color-forest); }
   .art__q summary::-webkit-details-marker { display: none; }
   .art__qi { flex: none; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--color-stripe-a); color: var(--color-field-deep); transition: transform 0.3s var(--ease); }
   .art__q[open] .art__qi { transform: rotate(45deg); }
-  .art__q .prose { padding: 0 1.2rem 1.1rem; }
-  .art__stick { position: sticky; top: calc(var(--header-h) + 1.75rem); display: grid; gap: 1rem; }
-  .art__card { background: var(--color-forest); color: #cfe0d4; border-radius: var(--radius-lg); padding: 1.6rem; position: relative; overflow: hidden; }
-  .art__card::before { content: ""; position: absolute; inset: auto 0 0 0; height: 8px; background: repeating-linear-gradient(90deg, var(--color-field) 0 30px, var(--color-sprout) 30px 60px); }
-  .art__card-t { font-family: var(--font-display); font-weight: 650; font-size: 1.45rem; color: #fff; margin-bottom: 0.4rem; }
-  .art__card .btn { width: 100%; margin-top: 0.5rem; }
-  .art__phone { display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: #fff; font-weight: 600; text-decoration: none; margin-top: 0.9rem; }
-  .art__rel { background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-md); padding: 1.2rem 1.3rem; }
-  .art__rel-t { font-family: var(--font-display); font-weight: 650; color: var(--color-forest); font-size: 1.15rem; margin-bottom: 0.5rem; }
-  .art__rel ul { list-style: none; padding: 0; margin: 0; }
-  .art__rel a { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 0.6rem 0; border-top: 1px solid var(--color-line); text-decoration: none; color: var(--color-ink); font-size: 0.95rem; }
-  .art__rel li:first-child a { border-top: 0; }
-  .art__rel a:hover { color: var(--color-field-deep); }
-  .art__rel :global(svg) { flex: none; color: var(--color-field); }
-  @media (max-width: 1080px) {
-    .art__in { grid-template-columns: minmax(0, 1fr); }
-    .art__stick { position: static; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .art__q .prose { padding: 0 1.3rem 1.2rem; }
+  @media (max-width: 900px) {
+    .art__row { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+    .art__row--cont .art__body { grid-column: 1; }
+    .art__h { position: static; }
+    .art__body { max-width: none; }
+    .art__fig :global(.mow) { aspect-ratio: 16 / 10; }
+    .art__intro--meters { grid-template-columns: minmax(0, 1fr); }
   }
+  @media (max-width: 900px) { .art__call { grid-template-columns: minmax(0, 1fr); text-align: center; } .art__call-b { justify-content: center; } }
+  @media (max-width: 720px) { .art__intro, .art__intro--meters, .art__lead { text-align: center; } .art__call-b .btn { width: 100%; } }
   @media (max-width: 720px) {
-    .art__gal { grid-template-columns: 1fr 1fr; }
-    .art__card { text-align: center; }
+    .art__gal { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    .art__h { text-align: center; }
   }
 </style>

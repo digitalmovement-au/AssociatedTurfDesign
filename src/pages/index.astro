@@ -73,9 +73,9 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
           ))}
         </p>
         <ul class="st__chips" data-chips>
-          <li><span><Icon name="scissors" size={15} /></span>Cut fresh to order</li>
-          <li><span><Icon name="truck" size={15} /></span>Sydney wide delivery</li>
-          <li><span><Icon name="chat" size={15} /></span>Expert lawn advice</li>
+          <li><span><Icon name="scissors" size={17} /></span>Cut fresh to order</li>
+          <li><span><Icon name="truck" size={17} /></span>Sydney wide delivery</li>
+          <li><span><Icon name="chat" size={17} /></span>Expert lawn advice</li>
         </ul>
       </div>
     </div>
@@ -277,12 +277,18 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
   .st__line { display: block; }
   .st__line--mark { color: var(--color-field); }
   .st__line--mark .w { background: linear-gradient(var(--color-field), var(--color-field)) no-repeat 0 96% / calc(var(--ul, 1) * 100%) 0.08em; padding-bottom: 0.06em; }
-  .st__chips { list-style: none; padding: 0; margin: 0; display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; }
-  .st__chips li { position: relative; display: inline-flex; align-items: center; background: #fff; border-radius: 10px; padding: 0.7rem 1rem 0.7rem 1.4rem; font-weight: 600; font-size: 0.92rem; color: var(--color-forest-2); box-shadow: 0 10px 24px -18px rgba(12, 36, 25, 0.6); transition: opacity 0.5s, transform 0.5s var(--ease); }
-  .st__chips li span { position: absolute; left: -0.65rem; top: -0.65rem; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--color-stripe-b); color: var(--color-field-deep); }
-  :global(html.js-motion) .st__chips:not(.on) li { opacity: 0; transform: translateY(12px); }
+  .st__chips { list-style: none; padding: 0.4rem; margin: 0 auto; display: inline-flex; align-items: stretch; background: #fff; border: 1px solid var(--color-line); border-radius: 999px; box-shadow: 0 18px 40px -26px rgba(12, 36, 25, 0.45); }
+  .st__chips li { display: inline-flex; align-items: center; gap: 0.65rem; padding: 0.45rem 1.35rem 0.45rem 0.5rem; font-weight: 600; font-size: 0.95rem; color: var(--color-forest); transition: opacity 0.5s, transform 0.5s var(--ease); }
+  .st__chips li + li { border-left: 1px solid var(--color-line); padding-left: 1.1rem; }
+  .st__chips li span { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--color-field); color: #fff; }
+  :global(html.js-motion) .st__chips:not(.on) li { opacity: 0; transform: translateY(10px); }
   .st__chips li:nth-child(2) { transition-delay: 0.1s; }
   .st__chips li:nth-child(3) { transition-delay: 0.2s; }
+  @media (max-width: 720px) {
+    .st__chips { display: flex; flex-direction: column; align-items: stretch; width: min(100%, 320px); border-radius: 22px; padding: 0.35rem 0.9rem; }
+    .st__chips li { padding: 0.75rem 0.25rem; }
+    .st__chips li + li { border-left: 0; border-top: 1px solid var(--color-line); padding-left: 0.25rem; }
+  }
 
   .tl { position: relative; width: min(100% - var(--gutter) * 2, 1300px); aspect-ratio: 16 / 8.5; margin-inline: auto; }
   .tl__t { position: absolute; left: calc(var(--c) * 20%); top: calc(var(--r) * 33.333%); width: calc(20% - 10px); height: calc(33.333% - 10px); margin: 5px; border-radius: 12px; background-size: 500% 300%; background-position: calc(var(--c) * 25%) calc(var(--r) * 50%); will-change: transform, opacity; transition: border-radius 0.45s, margin 0.45s, width 0.45s, height 0.45s; }

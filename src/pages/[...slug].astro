@@ -66,7 +66,7 @@ const noindex = path === "/seo-page-template/";
   ) : e.kind === "post" ? (
     <>
       <PageHero title={intro!.h1} label="Lawn news and tips" meta={date} image={heroImg ?? "2018/10/Turf-pics-048.jpg"} imageAlt={intro!.imageAlt} crumbs={crumbs} ctas={false} badge={false} />
-      <Article blocks={blocks} related={related} asideTitle="Planning a New Lawn?" />
+      <Article blocks={blocks} />
       {posts.length > 0 && <PostCards posts={posts} title="More From the Farm" />}
       <QuoteSection />
     </>
