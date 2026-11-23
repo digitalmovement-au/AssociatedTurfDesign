@@ -1,0 +1,15 @@
+<a href="#top" class="totop" aria-label="Back to top" data-totop>
+  <svg viewBox="0 0 52 52" aria-hidden="true"><circle class="totop__track" cx="26" cy="26" r="23" /><circle class="totop__ring" cx="26" cy="26" r="23" pathLength="100" /></svg>
+  <svg class="totop__arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6" /></svg>
+</a>
+<style>
+  .totop { position: fixed; right: clamp(1rem, 2.5vw, 2rem); bottom: clamp(1rem, 2.5vw, 2rem); z-index: 36; width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: var(--color-forest); box-shadow: var(--shadow); opacity: 0; transform: translateY(16px) scale(0.9); pointer-events: none; transition: opacity 0.35s, transform 0.45s var(--ease), background 0.25s, color 0.25s; }
+  .totop.is-on { opacity: 1; transform: none; pointer-events: auto; }
+  .totop:hover { background: var(--color-forest); color: #fff; }
+  .totop svg:first-child { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+  .totop__track { fill: none; stroke: var(--color-stripe-b); stroke-width: 4; }
+  .totop__ring { fill: none; stroke: var(--color-field); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: calc(100 - var(--p, 0) * 100); }
+  .totop__arrow { position: relative; transition: transform 0.3s var(--ease); }
+  .totop:hover .totop__arrow { transform: translateY(-3px); }
+  @media (max-width: 720px) { .totop { bottom: calc(86px + env(safe-area-inset-bottom)); width: 48px; height: 48px; } }
+</style>

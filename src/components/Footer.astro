@@ -1,0 +1,84 @@
+---
+import { business, footerCols, img } from "../data/site";
+import Icon from "./Icon.astro";
+const year = new Date().getFullYear();
+---
+<footer class="ftr lawn lawn--forest" data-drift>
+  <div class="wrap">
+    <div class="ftr__cta">
+      <p class="ftr__big display">Fresh turf, cut to order and on your lawn this week.</p>
+      <div class="btn-row">
+        <a class="btn" href="#quote">Get a Free Quote</a>
+        <a class="btn btn--outline-light" href={business.phoneHref}><Icon name="phone" size={18} />Call {business.phone}</a>
+      </div>
+    </div>
+
+    <div class="ftr__grid">
+      <div class="ftr__brand">
+        <a href="/" class="ftr__logo" aria-label="Associated Turf home"><img src={img(business.logo)} alt="Associated Turf" width="200" height="66" loading="lazy" /></a>
+        <p>Growing premium natural turf on the Hawkesbury River at Windsor and delivering it farm fresh across Sydney and Regional NSW for over 45 years.</p>
+        <ul class="ftr__social">
+          {business.social.map((s) => <li><a href={s.href} target="_blank" rel="noopener" aria-label={s.name}><Icon name={s.icon} size={18} /></a></li>)}
+        </ul>
+      </div>
+      {footerCols.map((col) => (
+        <nav class="ftr__col" aria-label={col.title}>
+          <p class="ftr__h">{col.title}</p>
+          <ul>{col.links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+        </nav>
+      ))}
+      <div class="ftr__col ftr__contact">
+        <p class="ftr__h">Visit the Farm</p>
+        <ul class="ftr__details">
+          <li><Icon name="phone" size={18} /><a href={business.phoneHref}>{business.phone}</a></li>
+          <li><Icon name="mail" size={18} /><a href={`mailto:${business.email}`}>{business.email}</a></li>
+          <li><Icon name="pin" size={18} /><a href={business.mapUrl} target="_blank" rel="noopener">{business.address}</a></li>
+          <li><Icon name="clock" size={18} /><span>Mon to Fri 8am to 4.30pm<br />Saturday 7am to 12pm</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ftr__base">
+      <p>&copy; {year} {business.legalName}. All rights reserved.</p>
+      <p><a href="/image-credits/">Image Credits</a><a href="/sitemap-index.xml">Sitemap</a><a href="#top" class="ftr__top">Back to Top <Icon name="arrow" size={16} /></a></p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ftr { color: #b9cdbf; padding: clamp(4rem, 8vw, 6.5rem) 0 calc(2rem + env(safe-area-inset-bottom)); font-size: 0.97rem; }
+  .ftr a { color: #e6f0e8; text-decoration: none; }
+  .ftr a:hover { color: var(--color-sprout); }
+  .ftr__cta { display: grid; grid-template-columns: minmax(0, 1.3fr) auto; gap: 2rem; align-items: center; padding-bottom: clamp(2.75rem, 5vw, 4rem); border-bottom: 1px solid rgba(255, 255, 255, 0.12); }
+  .ftr__big { font-size: clamp(1.9rem, 3.6vw, 3.1rem); color: #fff; margin: 0; max-width: 18ch; text-transform: none; }
+  .ftr__grid { display: grid; grid-template-columns: 1.35fr repeat(3, 1fr) 1.25fr; gap: 2.5rem; padding-block: clamp(2.75rem, 5vw, 4rem); }
+  .ftr__logo { display: inline-block; background: #fff; padding: 0.7rem 1rem; border-radius: 14px; margin-bottom: 1.1rem; }
+  .ftr__logo img { height: 50px; width: auto; }
+  .ftr__brand p { max-width: 36ch; }
+  .ftr__social { display: flex; gap: 0.55rem; list-style: none; padding: 0; margin: 1.25rem 0 0; }
+  .ftr .ftr__social a { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; border: 1px solid rgba(255, 255, 255, 0.22); color: #fff; transition: background 0.25s, border-color 0.25s, color 0.25s, transform 0.3s var(--ease); }
+  .ftr .ftr__social a:hover { background: var(--color-field); border-color: var(--color-field); color: #fff; transform: translateY(-3px); }
+  .ftr__h { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; color: #fff; margin-bottom: 1rem; }
+  .ftr__col ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.55rem; }
+  .ftr__details li { display: grid; grid-template-columns: 22px 1fr; gap: 0.7rem; align-items: start; }
+  .ftr__details :global(svg) { color: var(--color-sprout); margin-top: 0.2rem; }
+  .ftr__base { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.12); font-size: 0.88rem; }
+  .ftr__base p { margin: 0; display: flex; gap: 1.25rem; flex-wrap: wrap; align-items: center; }
+  .ftr__top { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .ftr__top :global(svg) { transform: rotate(-90deg); }
+  @media (max-width: 1180px) { .ftr__grid { grid-template-columns: 1fr 1fr 1fr; } .ftr__brand { grid-column: 1 / -1; } }
+  @media (max-width: 860px) { .ftr__cta { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 720px) {
+    .ftr { text-align: center; }
+    .ftr__big { margin-inline: auto; }
+    .ftr__grid { grid-template-columns: 1fr 1fr; }
+    .ftr__brand p { margin-inline: auto; }
+    .ftr__social { justify-content: center; }
+    .ftr__contact { grid-column: 1 / -1; }
+    .ftr__details { justify-items: center; }
+    .ftr__details li { grid-template-columns: auto; justify-items: center; gap: 0.3rem; }
+    .ftr__base { justify-content: center; text-align: center; }
+    .ftr__base p { justify-content: center; }
+  }
+  @media (max-width: 460px) { .ftr__grid { grid-template-columns: minmax(0, 1fr); } }
+</style>

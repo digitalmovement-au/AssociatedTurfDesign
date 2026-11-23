@@ -1,0 +1,77 @@
+---
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import QuoteSection from "../components/QuoteSection.astro";
+import { img } from "../data/site";
+import { all, firstImage, excerpt, headingOf } from "../lib/content";
+const posts = all("post").filter((p) => p.date).sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
+const [lead, ...rest] = posts;
+const fmt = (d?: string) => (d ? new Date(d).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" }) : "");
+---
+<Base title="Latest News | Associated Turf" description="Lawn news, seasonal tips and turf advice from Associated Turf, growing premium turf at Windsor for over 45 years." breadcrumb={[{ name: "News", path: "/blog/" }]}>
+  <section class="bl-hero">
+    <div class="wrap">
+      <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><span aria-current="page">News</span></li></ol></nav>
+      <p class="label">Lawn news and tips</p>
+      <h1>Latest News</h1>
+      <p class="lede">Seasonal advice on choosing, laying, watering and caring for your lawn, straight from the people who grow it.</p>
+    </div>
+  </section>
+  <section class="section bl">
+    <div class="wrap">
+      <a class="bl-lead" href={lead.path}>
+        <div class="bl-lead__img"><img src={img(firstImage(lead) || "2018/10/Turf-pics-048.jpg")} alt="" width="1100" height="700" loading="eager" /></div>
+        <div class="bl-lead__body">
+          <p class="bl-date">Latest, {fmt(lead.date)}</p>
+          <h2>{headingOf(lead)}</h2>
+          <p>{excerpt(lead, 260)}</p>
+          <span class="link">Read Article <Icon name="arrow" size={18} /></span>
+        </div>
+      </a>
+      <ul class="bl-grid">
+        {rest.map((p) => {
+          const im = firstImage(p);
+          return (
+            <li>
+              <a href={p.path} class="bl-card">
+                <div class:list={["bl-card__img", !im && "bl-card__img--none"]}>
+                  {im ? <img src={img(im)} alt="" width="600" height="400" loading="lazy" decoding="async" /> : <Icon name="leaf" size={38} />}
+                </div>
+                <div class="bl-card__body">
+                  <p class="bl-date"><time datetime={p.date}>{fmt(p.date)}</time></p>
+                  <h3>{headingOf(p)}</h3>
+                  <p>{excerpt(p, 120)}</p>
+                </div>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </section>
+  <QuoteSection />
+</Base>
+<style>
+  .bl-hero { padding: clamp(2.25rem, 5vw, 4rem) 0 clamp(1rem, 3vw, 2rem); }
+  .bl-hero .crumbs ol { list-style: none; display: flex; gap: 0.35rem; padding: 0; margin: 0 0 1.25rem; font-size: 0.88rem; color: var(--color-muted); }
+  .bl-hero .crumbs li + li::before { content: "/"; margin-right: 0.35rem; opacity: 0.6; }
+  .bl-hero .crumbs a { color: var(--color-muted); text-decoration: none; }
+  .bl { padding-top: clamp(1.5rem, 3vw, 2.5rem); }
+  .bl-lead { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; text-decoration: none; color: inherit; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+  .bl-lead__img { border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 16 / 10; background: var(--color-stripe-b); }
+  .bl-lead__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.9s var(--ease); }
+  .bl-lead:hover .bl-lead__img img { transform: scale(1.04); }
+  .bl-date { color: var(--color-field-deep); font-weight: 600; font-size: 0.88rem; margin-bottom: 0.45rem; }
+  .bl-grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1rem, 2vw, 1.5rem); }
+  .bl-card { display: flex; flex-direction: column; height: 100%; text-decoration: none; color: inherit; background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-lg); overflow: hidden; transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease); }
+  .bl-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+  .bl-card__img { aspect-ratio: 16 / 10; overflow: hidden; background: var(--color-stripe-b); }
+  .bl-card__img img { width: 100%; height: 100%; object-fit: cover; }
+  .bl-card__img--none { display: grid; place-items: center; color: var(--color-field); background: repeating-linear-gradient(90deg, var(--color-stripe-a) 0 30px, var(--color-stripe-b) 30px 60px); }
+  .bl-card__body { padding: 1.25rem 1.35rem 1.5rem; }
+  .bl-card h3 { font-size: 1.22rem; margin-bottom: 0.45rem; }
+  .bl-card__body > p:last-child { font-size: 0.94rem; margin: 0; }
+  @media (max-width: 1000px) { .bl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 760px) { .bl-lead { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 620px) { .bl-grid { grid-template-columns: minmax(0, 1fr); } .bl-hero, .bl-lead__body, .bl-card__body { text-align: center; } .bl-hero .crumbs ol, .bl-hero .label { justify-content: center; } .bl-hero .lede { margin-inline: auto; } }
+</style>

@@ -1,0 +1,32 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHero from "../components/PageHero.astro";
+import QuoteSection from "../components/QuoteSection.astro";
+import { img } from "../data/site";
+import { allImages } from "../lib/content";
+const skip = /(logo|favico|dot\.jpg|phone-cover|\/small\.|april-fools|easter|autmn|grass-cutting|turf-choice|beaut-lawn|nutgrass|clover|bindii|wintergrass|crowsfoot|oxalis|turf-supplies-[a-z-]+\.png|energy-generic)/i;
+const list = allImages().filter((p) => !skip.test(p));
+const base = (p: string) => p.replace(/-\d+x\d+(?=\.\w+$)/, "").replace(/-scaled(?=\.\w+$)/, "");
+const seen = new Set<string>();
+const photos = list.filter((p) => { const b = base(p); if (seen.has(b)) return false; seen.add(b); return true; });
+---
+<Base title="Gallery | Associated Turf" description="Photos of farm fresh turf from Associated Turf: our Windsor farm, Maxi Turf laying, and Matilda, Sir Walter, Kikuyu, Wintergreen and Greenlees Park lawns across Sydney." breadcrumb={[{ name: "Gallery", path: "/turf-gallery/" }]}>
+  <PageHero title="Turf Gallery" label="From our paddocks to Sydney lawns" lede="A look at our farm, our harvest and laying crews, and the lawns we have grown for Sydney homes, schools, parks and sporting grounds." image="2023/01/maxi-5.jpg" crumbs={[{ name: "Gallery", path: "/turf-gallery/" }]} />
+  <section class="gal section">
+    <div class="wrap">
+      <ul class="gal__grid">
+        {photos.map((p, i) => (
+          <li><a href={img(p)} data-lightbox data-index={i} aria-label="View larger photo"><img src={img(p)} alt="Associated Turf lawn and farm photo" width="600" height="450" loading="lazy" decoding="async" /></a></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+  <QuoteSection />
+</Base>
+<style>
+  .gal__grid { list-style: none; padding: 0; margin: 0; columns: 4 260px; column-gap: 0.9rem; }
+  .gal__grid li { break-inside: avoid; margin-bottom: 0.9rem; }
+  .gal__grid a { display: block; border-radius: var(--radius-md); overflow: hidden; background: var(--color-stripe-b); }
+  .gal__grid img { width: 100%; height: auto; transition: transform 0.8s var(--ease), filter 0.4s; }
+  .gal__grid a:hover img { transform: scale(1.04); }
+</style>

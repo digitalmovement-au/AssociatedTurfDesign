@@ -1,0 +1,148 @@
+---
+import Base from "../layouts/Base.astro";
+import Mow from "../components/Mow.astro";
+import Icon from "../components/Icon.astro";
+import Reviews from "../components/Reviews.astro";
+import VarietyGrid from "../components/VarietyGrid.astro";
+import Selector from "../components/Selector.astro";
+import WhyGrid from "../components/WhyGrid.astro";
+import Steps from "../components/Steps.astro";
+import Faq from "../components/Faq.astro";
+import PostCards from "../components/PostCards.astro";
+import QuoteSection from "../components/QuoteSection.astro";
+import { business } from "../data/site";
+import { all, firstImage } from "../lib/content";
+
+const faqs = [
+  { q: "Which turf type is best for shade?", a: "Buffalo grasses like Matilda, Sir Walter and Shademaster are the best performers in shady areas. Matilda and Sir Walter thrive with as little as 3 to 4 hours of direct sunlight. Kikuyu and Couch varieties such as Wintergreen and Greenlees Park need full sun (6+ hours daily)." },
+  { q: "Which turf has the best drought tolerance?", a: "Sir Walter and Matilda Soft Leaf Buffalo are both excellent for drought tolerance due to their deep root systems and broad leaf blades that retain moisture. Kikuyu is also drought tough, though it may brown off more quickly in extreme heat." },
+  { q: "What is the best turf for high wear areas or pets?", a: "Kikuyu is very hardy and fast repairing, making it a top choice for active families, pets and high traffic lawns. Sir Walter and Matilda are also durable but recover more slowly from heavy wear." },
+  { q: "Which turf is the lowest maintenance?", a: "Sir Walter and Matilda Soft Leaf Buffalo are considered low maintenance due to their low thatch build up, slow vertical growth and minimal fertiliser needs. Kikuyu and Couch varieties grow quickly and require more frequent mowing and edging." },
+  { q: "What is the difference between Matilda and Sir Walter?", a: "Both are premium soft leaf Buffalo varieties with similar traits, but Matilda is a semi dwarf variety with finer leaves and a denser growth habit. It can feel softer underfoot and may need slightly less mowing." },
+  { q: "Which turf establishes the fastest after laying?", a: "Kikuyu establishes the fastest thanks to its vigorous growth habit. Couch grasses also establish quickly in warm weather. Buffalo varieties establish more slowly but form a dense, weed resistant lawn once mature." },
+];
+const projects = ["New homes", "Lawn renovations", "Landscapers", "Builders", "Schools", "Councils", "Sporting fields", "Commercial developments", "Parks", "Display homes"];
+const posts = all("post").filter((p) => p.date && firstImage(p)).sort((a, b) => (b.date ?? "").localeCompare(a.date ?? "")).slice(0, 3);
+---
+<Base title="Associated Turf Supplies Sydney | Instant Turf Supplier Sydney" description="Associated Turf Supplies Sydney - Farm fresh turf grass suppliers. Matilda Soft Leaf Buffalo, Kikuyu grass supplies. Delivery to Sydney metro" faqs={faqs}>
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero__top">
+        <div class="hero__copy">
+          <p class="label">Sydney's trusted turf supplier</p>
+          <h1 class="hero__h1">Premium Instant Turf, Harvested Fresh and Delivered Across Sydney</h1>
+        </div>
+        <div class="hero__side">
+          <p class="lede">For over 45 years Associated Turf has supplied homeowners, landscapers, builders and councils with lush, healthy Buffalo, Kikuyu and Couch turf, cut to order and delivered direct from our farm.</p>
+          <div class="btn-row">
+            <a class="btn" href="#quote">Get a Free Quote</a>
+            <a class="btn btn--ghost" href={business.phoneHref}><Icon name="phone" size={18} />Call {business.phone}</a>
+          </div>
+        </div>
+      </div>
+      <div class="hero__media">
+        <Mow src="2026/05/home-banner-sunrise.jpg" alt="Sunrise over freshly mown turf at the Associated Turf farm" eager class="hero__img" width={1880} height={820} bands={8} />
+        <ul class="hero__chips chips">
+          <li><Icon name="scissors" size={16} />Cut fresh to order</li>
+          <li><Icon name="truck" size={16} />Sydney wide delivery</li>
+          <li><Icon name="chat" size={16} />Expert lawn advice</li>
+        </ul>
+        <div class="hero__ticket">
+          <p class="hero__ticket-n display">45+</p>
+          <p>years growing turf on the Hawkesbury River at Windsor</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Reviews />
+
+  <section class="intro section">
+    <div class="wrap intro__in">
+      <div class="intro__media">
+        <Mow src="2018/10/SFPP4050.jpg" alt="Associated Turf" class="intro__a" width={900} height={1100} />
+        <Mow src="2023/01/maxi-4.jpg" alt="Turf being laid at a Sydney home" class="intro__b" width={800} height={600} />
+        <div class="intro__badge"><span class="display">45+</span><small>Years of turf excellence</small></div>
+      </div>
+      <div class="intro__copy">
+        <p class="label">Fresh turf direct from the farm</p>
+        <h2>Sydney's Trusted Turf Supplier for Over 45 Years</h2>
+        <p class="lede">Associated Turf has been supplying premium quality natural turf to homeowners, landscapers, builders, councils and commercial clients across Sydney for over 45 years. Whether you are creating a new lawn, replacing tired grass or completing a large scale landscaping project, we provide fresh, healthy turf backed by expert advice and exceptional service.</p>
+        <p>Our range includes Sir Walter Buffalo, Matilda Soft Leaf Buffalo, Kikuyu, Wintergreen Couch and Greenlees Park Couch, harvested fresh to order and grown to the highest standards for long lasting results.</p>
+        <div class="btn-row"><a class="btn" href="/turf-varieties/">Explore Our Turf</a><a class="btn btn--ghost" href="/turf-farms/">About Our Farm</a></div>
+      </div>
+    </div>
+  </section>
+
+  <VarietyGrid />
+  <Selector />
+  <WhyGrid />
+  <Steps />
+
+  <section class="proj section">
+    <div class="wrap proj__in">
+      <div class="proj__copy">
+        <p class="label">Residential and commercial</p>
+        <h2>No Project Too Large or Too Small</h2>
+        <p class="lede">Whether you need a few square metres for your backyard or thousands of square metres for a major development, our experienced team will recommend the best turf for your project.</p>
+        <ul class="proj__tags">{projects.map((p) => <li>{p}</li>)}</ul>
+        <div class="btn-row"><a class="btn" href="#quote">Request a Quote</a><a class="btn btn--ghost" href="/commercial-turf-supply/">Commercial Supply</a></div>
+      </div>
+      <div class="proj__media">
+        <Mow src="2018/10/Turf-pics-048.jpg" alt="Sydney lawn and turf supplies" width={1000} height={900} />
+        <div class="proj__badge"><Icon name="truck" size={26} /><p><strong>Delivery Monday to Saturday</strong>Across Sydney and Regional NSW</p></div>
+      </div>
+    </div>
+  </section>
+
+  <Faq items={faqs} intro="Not sure which turf suits your property? Here are the questions we hear most. Our team is always happy to help." />
+  <PostCards posts={posts} />
+  <QuoteSection title="Ready to Transform Your Lawn?" text="Contact our friendly team today for expert advice, an obligation free quote or help choosing the perfect turf for your home or project." label="Get started" />
+</Base>
+
+<style>
+  .hero { padding: clamp(2.25rem, 5vw, 4.5rem) 0 clamp(3rem, 6vw, 5rem); position: relative; }
+  .hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 42%; z-index: -1; background: repeating-linear-gradient(90deg, var(--color-stripe-a) 0 var(--stripe-w), var(--color-stripe-b) var(--stripe-w) calc(var(--stripe-w) * 2)); background-position: calc(var(--drift, 0) * 1px) 0; }
+  .hero__top { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 4.5rem); align-items: end; margin-bottom: clamp(2rem, 4vw, 3rem); }
+  .hero__h1 { font-size: clamp(2.6rem, 6vw, 5.8rem); margin: 0; letter-spacing: -0.025em; }
+  .hero__side .lede { margin-bottom: 1.5rem; }
+  .hero__side .btn-row > .btn { min-width: 220px; }
+  .hero__media { position: relative; }
+  .hero__media :global(.hero__img) { aspect-ratio: 21 / 9; border-radius: clamp(18px, 2.5vw, 34px); box-shadow: var(--shadow); }
+  .hero__chips { position: absolute; left: clamp(1rem, 2.5vw, 2rem); bottom: clamp(1rem, 2.5vw, 2rem); z-index: 3; }
+  .hero__chips li { background: rgba(255, 255, 255, 0.94); border: 0; }
+  .hero__ticket { position: absolute; right: clamp(1rem, 3vw, 3rem); top: 0; transform: translateY(-50%); z-index: 3; background: var(--color-forest); color: #cfe0d4; border-radius: var(--radius-md); padding: 1rem 1.25rem; display: flex; align-items: center; gap: 0.9rem; max-width: 330px; box-shadow: var(--shadow); }
+  .hero__ticket p { margin: 0; font-size: 0.9rem; line-height: 1.35; }
+  .hero__ticket .hero__ticket-n { font-size: 2.5rem; color: var(--color-sprout); line-height: 1; }
+  @media (max-width: 1000px) { .hero__top { grid-template-columns: minmax(0, 1fr); } .hero__media :global(.hero__img) { aspect-ratio: 16 / 9; } .hero__ticket { display: none; } }
+  @media (max-width: 720px) {
+    .hero__copy, .hero__side { text-align: center; }
+    .hero__side .lede { margin-inline: auto; }
+    .hero__media :global(.hero__img) { aspect-ratio: 4 / 3.4; }
+    .hero__chips { position: static; justify-content: center; margin-top: 1rem; }
+    .hero__chips li { background: #fff; border: 1px solid var(--color-line); }
+  }
+
+  .intro__in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+  .intro__media { position: relative; padding: 0 12% 14% 0; }
+  .intro__media :global(.intro__a) { aspect-ratio: 4 / 4.6; }
+  .intro__media :global(.intro__b) { position: absolute; right: 0; bottom: 0; width: 52%; aspect-ratio: 4 / 3; border: 8px solid var(--color-paper); }
+  .intro__badge { position: absolute; left: -1rem; top: 12%; z-index: 3; background: var(--color-field); color: #fff; border-radius: 50%; width: 132px; height: 132px; display: grid; place-content: center; text-align: center; box-shadow: var(--shadow); }
+  .intro__badge span { font-size: 2.6rem; line-height: 1; color: #fff; }
+  .intro__badge small { font-size: 0.78rem; line-height: 1.2; max-width: 10ch; margin-inline: auto; font-weight: 500; }
+  .intro__copy .btn-row { margin-top: 1.75rem; }
+  @media (max-width: 900px) { .intro__in { grid-template-columns: minmax(0, 1fr); } .intro__media { max-width: 620px; } }
+  @media (max-width: 720px) { .intro__copy { text-align: center; } .intro__copy .lede { margin-inline: auto; } .intro__media { margin-inline: auto; } .intro__badge { left: 0; width: 108px; height: 108px; } .intro__badge span { font-size: 2.1rem; } }
+
+  .proj__in { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+  .proj__tags { list-style: none; padding: 0; margin: 1.5rem 0 2rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .proj__tags li { padding: 0.5rem 0.95rem; border-radius: 999px; border: 1.5px solid var(--color-line); background: #fff; font-weight: 500; color: var(--color-forest); font-size: 0.95rem; }
+  .proj__media { position: relative; }
+  .proj__media :global(.mow) { aspect-ratio: 1 / 1; }
+  .proj__badge { position: absolute; left: -1.5rem; bottom: 2rem; z-index: 3; display: flex; align-items: center; gap: 0.9rem; background: #fff; border-radius: var(--radius-md); padding: 1rem 1.25rem; box-shadow: var(--shadow); max-width: 320px; }
+  .proj__badge :global(svg) { color: var(--color-field); flex: none; }
+  .proj__badge p { margin: 0; display: grid; font-size: 0.9rem; line-height: 1.35; }
+  .proj__badge strong { color: var(--color-forest); font-size: 1rem; }
+  @media (max-width: 900px) { .proj__in { grid-template-columns: minmax(0, 1fr); } .proj__media { max-width: 620px; } }
+  @media (max-width: 720px) { .proj__copy { text-align: center; } .proj__copy .lede { margin-inline: auto; } .proj__tags { justify-content: center; } .proj__media { margin-inline: auto; } .proj__badge { left: 50%; transform: translateX(-50%); bottom: -1.5rem; width: max-content; max-width: 92%; } }
+</style>

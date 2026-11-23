@@ -1,0 +1,30 @@
+---
+import { all } from "../lib/content";
+import Icon from "./Icon.astro";
+interface Props { current?: string; title?: string }
+const { current, title = "Turf Delivered Across Sydney and Regional NSW" } = Astro.props;
+const areas = all("suburb")
+  .filter((e) => e.path !== "/turf-supplies/")
+  .map((e) => ({ path: e.path, name: (e.suburb ?? e.title.replace(/^Turf Supplies( for| in| to|\s-)?\s*/i, "").replace(/\s*[-|].*$/, "").replace(/ from Associated Turf$/i, "")).replace(/^(the|The)\s/, "").replace(/’s Upper/, "’s Upper").trim() }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+---
+<section class="areas section">
+  <div class="wrap">
+    <div class="head head--center">
+      <p class="label">Areas we deliver</p>
+      <h2>{title}</h2>
+      <p class="lede">Fresh turf leaves our Windsor farm Monday to Saturday. Find your area below, or call us to check delivery to your street.</p>
+    </div>
+    <ul class="areas__list">
+      {areas.map((a) => <li><a href={a.path} aria-current={a.path === current ? "page" : undefined}><Icon name="pin" size={15} />{a.name}</a></li>)}
+    </ul>
+  </div>
+</section>
+<style>
+  .areas__list { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.55rem; }
+  .areas__list a { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.55rem 1rem; border-radius: 999px; background: #fff; border: 1px solid var(--color-line); text-decoration: none; color: var(--color-forest); font-weight: 500; font-size: 0.94rem; transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.3s var(--ease); }
+  .areas__list a:hover { transform: translateY(-2px); border-color: var(--color-field); }
+  .areas__list a[aria-current] { background: var(--color-forest); border-color: var(--color-forest); color: #fff; }
+  .areas__list :global(svg) { color: var(--color-field); }
+  .areas__list a[aria-current] :global(svg) { color: var(--color-sprout); }
+</style>

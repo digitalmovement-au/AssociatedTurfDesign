@@ -1,0 +1,59 @@
+---
+import Mow from "./Mow.astro";
+import Icon from "./Icon.astro";
+import { mdi } from "../lib/md";
+import type { Feature } from "../lib/content";
+interface Props { f: Feature; flip?: boolean; index?: number }
+const { f, flip = false } = Astro.props;
+---
+{f.image ? (
+  <section class:list={["feat section", flip && "feat--flip"]}>
+    <div class="wrap feat__in">
+      <div class="feat__media">
+        <Mow src={f.image.src} alt={f.image.alt || f.title} width={1000} height={800} />
+      </div>
+      <div class="feat__copy">
+        {f.eyebrow && <p class="label">{f.eyebrow}</p>}
+        <h2>{f.title}</h2>
+        {f.paras.map((p) => <p set:html={mdi(p)} />)}
+        {f.bullets.length > 0 && <ul class="ticks">{f.bullets.map((b) => <li set:html={mdi(b)} />)}</ul>}
+        {f.cta && <div class="btn-row feat__cta"><a class="btn" href="#quote">{f.cta}</a></div>}
+      </div>
+    </div>
+  </section>
+) : (
+  <section class="feat feat--intro section">
+    <div class="wrap feat__intro">
+      <div>
+        {f.eyebrow && <p class="label">{f.eyebrow}</p>}
+        <h2>{f.title}</h2>
+        {f.bullets.length > 0 && <ul class="ticks feat__ticks">{f.bullets.map((b) => <li set:html={mdi(b)} />)}</ul>}
+      </div>
+      <div class="feat__text">
+        {f.paras.map((p, i) => <p class:list={[i === 0 && "lede"]} set:html={mdi(p)} />)}
+        <a class="link" href="#quote">Ask our team for advice <Icon name="arrow" size={18} /></a>
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .feat__in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+  .feat--flip .feat__media { order: 2; }
+  .feat__media :global(.mow) { aspect-ratio: 5 / 4; }
+  .feat__copy h2 { font-size: clamp(1.9rem, 3vw, 2.85rem); }
+  .feat__cta { margin-top: 1.75rem; }
+  .feat + .feat { padding-top: 0; }
+  .feat__intro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+  .feat__ticks { margin-top: 1.75rem; }
+  .feat__text .lede { color: var(--color-ink); }
+  .feat__text .link { margin-top: 0.5rem; }
+  @media (max-width: 900px) {
+    .feat__in, .feat__intro { grid-template-columns: minmax(0, 1fr); }
+    .feat--flip .feat__media { order: 0; }
+  }
+  @media (max-width: 720px) {
+    .feat__copy, .feat__intro { text-align: center; }
+    .feat__copy .ticks, .feat__intro .ticks { max-width: 440px; margin-inline: auto; }
+  }
+</style>

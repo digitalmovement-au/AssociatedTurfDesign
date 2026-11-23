@@ -1,0 +1,99 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHero from "../components/PageHero.astro";
+import Mow from "../components/Mow.astro";
+import Meters from "../components/Meters.astro";
+import Icon from "../components/Icon.astro";
+import Selector from "../components/Selector.astro";
+import Steps from "../components/Steps.astro";
+import QuoteSection from "../components/QuoteSection.astro";
+import { varieties } from "../data/site";
+import { get, tokenize } from "../lib/content";
+import { mdi } from "../lib/md";
+
+const e = get("/turf-varieties/")!;
+const toks = tokenize(e.lines);
+const table = toks.find((t) => t.t === "table") as { head: string[]; rows: string[][] };
+// Bullet points per variety from the live page ("## Matilda Soft Leaf Buffalo Turf" followed by "- " lines).
+const points: Record<string, string[]> = {};
+let cur = "";
+for (const t of toks) {
+  if (t.t === "h" && t.level === 2) cur = t.text;
+  else if (t.t === "li" && cur) (points[cur] ??= []).push(t.text);
+}
+const pointsFor = (name: string) => {
+  const key = Object.keys(points).find((k) => k.toLowerCase().startsWith(name.toLowerCase().split(" ").slice(0, 2).join(" ")));
+  return key ? points[key] : [];
+};
+const split = (s: string) => {
+  const m = s.match(/^([^:]{3,40}):\s*(.*)$/);
+  return m ? `<strong>${m[1]}.</strong> ${m[2]}` : s;
+};
+---
+<Base title={e.title} description={e.desc} breadcrumb={[{ name: "Turf Varieties", path: "/turf-varieties/" }]}>
+  <PageHero title="Lush Green Turf Direct From the Grower" label="Turf varieties" lede="We grow six proven varieties on the rich Hawkesbury River soils at Windsor. Compare them side by side, then match the right grass to your sun, traffic and how much mowing you want to do." image="2023/02/gal2023-3.jpg" chips={["6 varieties grown on our farm", "Cut fresh to order", "Honest advice"]} crumbs={[{ name: "Turf Varieties", path: "/turf-varieties/" }]} />
+
+  <section class="cmp section lawn" data-drift>
+    <div class="wrap">
+      <div class="head head--split">
+        <div><p class="label">Overview</p><h2>Compare Our Turf Varieties</h2></div>
+        <p class="lede">Sunlight is the first thing to check. Buffalo grasses handle shade, while Kikuyu and the couch grasses need full sun to stay thick.</p>
+      </div>
+      <div class="table-wrap cmp__table">
+        <table>
+          <thead><tr>{table.head.map((h) => <th scope="col">{h}</th>)}</tr></thead>
+          <tbody>
+            {table.rows.map((r) => {
+              const v = varieties.find((x) => r[0].toLowerCase().startsWith(x.short.toLowerCase()));
+              return <tr>{r.map((c, i) => (i === 0 ? <th scope="row">{v ? <a href={v.href}>{c}</a> : c}</th> : <td>{c}</td>))}</tr>;
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p class="cmp__note">Swipe the table sideways on smaller screens.</p>
+    </div>
+  </section>
+
+  {varieties.map((v, i) => (
+    <section class:list={["vr section", i % 2 === 1 && "vr--flip"]} id={v.slug}>
+      <div class="wrap vr__in">
+        <div class="vr__media">
+          <Mow src={v.image} alt={`${v.name} turf`} width={1000} height={800} />
+          <span class="vr__tag">{v.tag}</span>
+        </div>
+        <div class="vr__copy">
+          <p class="label">{String(i + 1).padStart(2, "0")} {v.family}</p>
+          <h2>{v.name}</h2>
+          <p class="lede">{v.teaser}</p>
+          {pointsFor(v.name).length > 0 && <ul class="ticks">{pointsFor(v.name).slice(0, 5).map((p) => <li set:html={mdi(split(p))} />)}</ul>}
+          <div class="vr__meters"><Meters v={v} /></div>
+          <div class="btn-row">
+            <a class="btn" href={v.href}>Explore {v.short}</a>
+            <a class="btn btn--ghost" href="#quote">Get a Quote</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <Selector />
+  <Steps />
+  <QuoteSection />
+</Base>
+
+<style>
+  .cmp__table table { min-width: 980px; }
+  .cmp__table th a { color: var(--color-forest); text-decoration: none; font-weight: 600; }
+  .cmp__table th a:hover { color: var(--color-field-deep); text-decoration: underline; }
+  .cmp__note { display: none; font-size: 0.85rem; color: var(--color-muted); text-align: center; }
+  @media (max-width: 1100px) { .cmp__note { display: block; } }
+  .vr__in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+  .vr--flip .vr__media { order: 2; }
+  .vr__media { position: sticky; top: calc(var(--header-h) + 2rem); }
+  .vr__media :global(.mow) { aspect-ratio: 5 / 4; }
+  .vr__tag { position: absolute; left: 1.25rem; top: 1.25rem; z-index: 3; background: rgba(12, 36, 25, 0.85); color: #fff; font-size: 0.85rem; font-weight: 600; padding: 0.4rem 0.85rem; border-radius: 999px; }
+  .vr__meters { margin: 1.75rem 0; }
+  .vr + .vr { padding-top: 0; }
+  @media (max-width: 900px) { .vr__in { grid-template-columns: minmax(0, 1fr); } .vr--flip .vr__media { order: 0; } .vr__media { position: relative; top: 0; } }
+  @media (max-width: 720px) { .vr__copy { text-align: center; } .vr__copy .lede { margin-inline: auto; } .vr__copy .ticks { max-width: 460px; margin-inline: auto; } .vr__meters { text-align: left; } }
+</style>

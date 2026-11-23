@@ -1,0 +1,24 @@
+---
+import PageHero from "./PageHero.astro";
+import Reviews from "./Reviews.astro";
+import Feature from "./Feature.astro";
+import VarietyGrid from "./VarietyGrid.astro";
+import CtaBand from "./CtaBand.astro";
+import WhyGrid from "./WhyGrid.astro";
+import Steps from "./Steps.astro";
+import Faq from "./Faq.astro";
+import QuoteSection from "./QuoteSection.astro";
+import type { Landing } from "../lib/content";
+interface Props { l: Landing; crumbs: { name: string; path: string }[]; heroImage?: string; exclude?: string }
+const { l, crumbs, heroImage, exclude } = Astro.props;
+const img = l.hero.image ?? heroImage ?? l.features.find((f) => f.image)?.image?.src;
+---
+<PageHero title={l.hero.title} label={l.hero.eyebrow} lede={l.hero.lede} chips={l.hero.chips} image={img} crumbs={crumbs} />
+<Reviews title={l.reviewsTitle} />
+{l.features.map((f, i) => <Feature f={f} flip={i % 2 === 0} index={i} />)}
+<VarietyGrid title={l.varieties?.title} text={l.varieties?.text} exclude={exclude} />
+{l.midCta && <CtaBand title={l.midCta.title} text={l.midCta.text} image={l.finalImage} />}
+<WhyGrid title={l.why?.title} text={l.why?.text} />
+<Steps title={l.steps?.title} text={l.steps?.text} />
+{l.faq && l.faq.items.length > 0 && <Faq title={l.faq.title} intro={l.faq.intro} items={l.faq.items} />}
+<QuoteSection title={l.final?.title} text={l.final?.text} formTitle={l.quote.title} formSub={l.quote.text} />

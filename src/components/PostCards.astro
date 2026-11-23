@@ -1,0 +1,46 @@
+---
+import { img } from "../data/site";
+import { firstImage, excerpt, headingOf, type Entry } from "../lib/content";
+import Icon from "./Icon.astro";
+interface Props { posts: Entry[]; title?: string; label?: string; link?: boolean }
+const { posts, title = "Lawn News and Tips", label = "From the farm", link = true } = Astro.props;
+const fmt = (d?: string) => (d ? new Date(d).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" }) : "");
+---
+<section class="pc section">
+  <div class="wrap">
+    <div class="head head--split">
+      <div><p class="label">{label}</p><h2>{title}</h2></div>
+      {link && <div><p class="lede">Seasonal advice on laying, watering and caring for your lawn, straight from the people who grow it.</p><a class="link" href="/blog/">View All Articles <Icon name="arrow" size={18} /></a></div>}
+    </div>
+    <ul class="pc__grid">
+      {posts.map((p) => (
+        <li>
+          <a href={p.path} class="pc__card">
+            <div class="pc__img"><img src={img(firstImage(p) || "2018/10/Turf-pics-048.jpg")} alt="" width="600" height="400" loading="lazy" decoding="async" /></div>
+            <div class="pc__body">
+              <p class="pc__date"><time datetime={p.date}>{fmt(p.date)}</time></p>
+              <h3>{headingOf(p)}</h3>
+              <p class="pc__ex">{excerpt(p, 130)}</p>
+              <span class="pc__more">Read Article <Icon name="arrow" size={16} /></span>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+<style>
+  .pc__grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1rem, 2vw, 1.6rem); }
+  .pc__card { display: flex; flex-direction: column; height: 100%; text-decoration: none; color: inherit; background: #fff; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--color-line); transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease); }
+  .pc__card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+  .pc__img { aspect-ratio: 16 / 10; overflow: hidden; background: var(--color-stripe-b); }
+  .pc__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.9s var(--ease); }
+  .pc__card:hover .pc__img img { transform: scale(1.05); }
+  .pc__body { padding: 1.3rem 1.4rem 1.5rem; display: flex; flex-direction: column; flex: 1; }
+  .pc__date { font-size: 0.85rem; color: var(--color-field-deep); font-weight: 600; margin-bottom: 0.4rem; }
+  .pc__body h3 { font-size: 1.28rem; margin-bottom: 0.5rem; }
+  .pc__ex { font-size: 0.95rem; margin-bottom: 1rem; }
+  .pc__more { margin-top: auto; display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 600; color: var(--color-field-deep); }
+  @media (max-width: 1000px) { .pc__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 620px) { .pc__grid { grid-template-columns: minmax(0, 1fr); } .pc__body { text-align: center; align-items: center; } }
+</style>

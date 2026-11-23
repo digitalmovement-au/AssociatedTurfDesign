@@ -1,0 +1,83 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHero from "../components/PageHero.astro";
+import Landing from "../components/Landing.astro";
+import Article from "../components/Article.astro";
+import VarietyGrid from "../components/VarietyGrid.astro";
+import Steps from "../components/Steps.astro";
+import WhyGrid from "../components/WhyGrid.astro";
+import QuoteSection from "../components/QuoteSection.astro";
+import Areas from "../components/Areas.astro";
+import PostCards from "../components/PostCards.astro";
+import { all, get, landing, article, faqsOf, splitIntro, cleanTitle, firstImage, type Entry } from "../lib/content";
+import { varietyByPath, varieties } from "../data/site";
+
+
+export function getStaticPaths() {
+  const special = new Set(["/", "/contact/", "/turf-quote/", "/thank-you/", "/turf-gallery/", "/blog/", "/turf-varieties/"]);
+  return all()
+    .filter((e) => !special.has(e.path))
+    .map((e) => ({ params: { slug: e.path.replace(/^\/|\/$/g, "") }, props: { path: e.path } }));
+}
+
+const { path } = Astro.props as { path: string };
+const e = get(path) as Entry;
+const v = varietyByPath(path);
+const title = e.title || cleanTitle(e.h1 ?? "");
+const desc = e.desc || "";
+const L = e.kind !== "post" ? landing(e) : null;
+
+let crumbs: { name: string; path: string }[] = [];
+let blocks: ReturnType<typeof article> = [];
+let intro: ReturnType<typeof splitIntro> | null = null;
+let faqs = L?.faq?.items ?? [];
+let related: { label: string; href: string }[] = [];
+let posts: Entry[] = [];
+
+if (L) {
+  crumbs = v ? [{ name: "Turf Varieties", path: "/turf-varieties/" }, { name: v.short, path }] : [{ name: L.hero.title.length > 40 ? cleanTitle(e.title) : L.hero.title, path }];
+} else {
+  intro = splitIntro(e, { lede: e.kind !== "post" });
+  blocks = article({ ...e, lines: intro.lines });
+  faqs = faqsOf(blocks);
+  if (e.kind === "suburb") crumbs = [{ name: "Turf Supplies", path: "/turf-supplies/" }, ...(path === "/turf-supplies/" ? [] : [{ name: e.suburb ?? intro.h1, path }])];
+  else if (e.kind === "post") crumbs = [{ name: "News", path: "/blog/" }, { name: intro.h1, path }];
+  else if (v) crumbs = [{ name: "Turf Varieties", path: "/turf-varieties/" }, { name: v.short, path }];
+  else crumbs = [{ name: intro.h1, path }];
+  if (path === "/turf-supplies/") crumbs = [{ name: "Turf Supplies", path }];
+  if (e.kind === "post") {
+    const others = all("post").filter((p) => p.path !== path && p.date).sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
+    posts = others.filter((p) => firstImage(p)).slice(0, 3);
+    related = [
+      { label: "Turf Preparation", href: "/turf-preparation/" },
+      { label: "Watering Your Lawn", href: "/watering/" },
+      { label: "Turf Care Through the Seasons", href: "/turf-care/" },
+      { label: "Compare Turf Varieties", href: "/turf-varieties/" },
+    ];
+  }
+}
+const date = e.date ? new Date(e.date).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" }) : undefined;
+const heroImg = intro?.image ?? v?.image ?? (firstImage(e) || undefined);
+const noindex = path === "/seo-page-template/";
+---
+<Base title={title} description={desc || (intro?.lede ?? "").slice(0, 160)} ogImage={e.og || heroImg} breadcrumb={crumbs} faqs={faqs} noindex={noindex} article={e.kind === "post" ? { headline: intro?.h1 ?? title, date: e.date, image: heroImg } : undefined}>
+  {L ? (
+    <Landing l={L} crumbs={crumbs} heroImage={v?.image} exclude={v?.slug} />
+  ) : e.kind === "post" ? (
+    <>
+      <PageHero title={intro!.h1} label="Lawn news and tips" meta={date} image={heroImg ?? "2018/10/Turf-pics-048.jpg"} imageAlt={intro!.imageAlt} crumbs={crumbs} ctas={false} badge={false} />
+      <Article blocks={blocks} related={related} asideTitle="Planning a New Lawn?" />
+      {posts.length > 0 && <PostCards posts={posts} title="More From the Farm" />}
+      <QuoteSection />
+    </>
+  ) : (
+    <>
+      <PageHero title={intro!.h1} label={intro!.label ?? (e.kind === "suburb" ? "Turf supplies" : v ? `${v.family} turf` : undefined)} lede={intro!.lede} image={heroImg ?? "2018/10/Turf-pics-048.jpg"} imageAlt={intro!.imageAlt} crumbs={crumbs} />
+      <Article blocks={blocks} variety={v} />
+      <VarietyGrid exclude={v?.slug} title={v ? "Compare Our Other Varieties" : undefined} />
+      {e.kind === "suburb" ? <Steps /> : <WhyGrid />}
+      {e.kind === "suburb" && <Areas current={path} />}
+      <QuoteSection />
+    </>
+  )}
+</Base>

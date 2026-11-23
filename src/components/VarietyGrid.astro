@@ -1,0 +1,71 @@
+---
+import { varieties, img } from "../data/site";
+import Icon from "./Icon.astro";
+interface Props { title?: string; text?: string; label?: string; exclude?: string; striped?: boolean; id?: string }
+const {
+  title = "Find the Perfect Lawn for Your Lifestyle",
+  text = "Every lawn is different, which is why we grow a range of premium varieties suited to different lifestyles, budgets and growing conditions.",
+  label = "Premium turf varieties",
+  exclude,
+  striped = true,
+  id,
+} = Astro.props;
+const list = varieties.filter((v) => v.slug !== exclude);
+---
+<section class:list={["vg section", striped && "lawn"]} data-drift={striped ? "" : undefined} id={id}>
+  <div class="wrap">
+    <div class="head head--split">
+      <div><p class="label">{label}</p><h2>{title}</h2></div>
+      <div><p class="lede">{text}</p><a class="link" href="/turf-varieties/">Compare All Turf Varieties <Icon name="arrow" size={18} /></a></div>
+    </div>
+    <ul class="vg__grid">
+      {list.map((v, i) => (
+        <li class="vcard">
+          <a href={v.href} class="vcard__link">
+            <div class="vcard__img">
+              <img src={img(v.image)} alt={`${v.name} turf`} width="640" height="460" loading="lazy" decoding="async" />
+              <span class="vcard__tag">{v.tag}</span>
+            </div>
+            <div class="vcard__body">
+              <p class="vcard__num">{String(i + 1).padStart(2, "0")} <span>{v.family}</span></p>
+              <h3>{v.name}</h3>
+              <p class="vcard__teaser">{v.teaser}</p>
+              <ul class="vcard__meta">
+                <li><Icon name={v.ratings[0].score >= 4 ? "shade" : "sun"} size={16} />{v.sun}</li>
+                <li><Icon name="feather" size={16} />{v.texture}</li>
+              </ul>
+              <span class="vcard__more">View Variety <Icon name="arrow" size={16} /></span>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .vg__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1rem, 2vw, 1.6rem); }
+  .vcard__link { display: flex; flex-direction: column; height: 100%; background: #fff; border-radius: var(--radius-lg); overflow: hidden; text-decoration: none; color: inherit; border: 1px solid var(--color-line); transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease); }
+  .vcard__link:hover { transform: translateY(-6px); box-shadow: var(--shadow); }
+  .vcard__img { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--color-stripe-b); }
+  .vcard__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.9s var(--ease); }
+  .vcard__link:hover .vcard__img img { transform: scale(1.06); }
+  .vcard__tag { position: absolute; left: 1rem; top: 1rem; background: rgba(12, 36, 25, 0.82); color: #fff; font-size: 0.8rem; font-weight: 600; padding: 0.35rem 0.75rem; border-radius: 999px; backdrop-filter: blur(4px); }
+  .vcard__body { padding: 1.35rem 1.4rem 1.5rem; display: flex; flex-direction: column; flex: 1; }
+  .vcard__num { font-family: var(--font-display); font-weight: 650; color: var(--color-field); margin: 0 0 0.4rem; font-size: 1rem; display: flex; gap: 0.6rem; align-items: center; }
+  .vcard__num span { font-family: var(--font-sans); font-weight: 500; font-size: 0.8rem; color: var(--color-muted); padding: 0.15rem 0.55rem; border: 1px solid var(--color-line); border-radius: 999px; }
+  .vcard h3 { margin-bottom: 0.5rem; }
+  .vcard__teaser { font-size: 0.97rem; margin-bottom: 1rem; }
+  .vcard__meta { list-style: none; padding: 0; margin: auto 0 1rem; display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; font-size: 0.85rem; color: var(--color-muted); }
+  .vcard__meta li { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .vcard__meta :global(svg) { color: var(--color-field); }
+  .vcard__more { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 600; color: var(--color-field-deep); }
+  .vcard__more :global(svg) { transition: transform 0.35s var(--ease); }
+  .vcard__link:hover .vcard__more :global(svg) { transform: translateX(4px); }
+  @media (max-width: 1024px) { .vg__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 620px) {
+    .vg__grid { grid-template-columns: minmax(0, 1fr); }
+    .vcard__body { text-align: center; align-items: center; }
+    .vcard__meta { justify-content: center; }
+  }
+</style>

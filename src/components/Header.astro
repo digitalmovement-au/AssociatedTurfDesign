@@ -1,0 +1,149 @@
+---
+import { nav, business, img } from "../data/site";
+import Icon from "./Icon.astro";
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+const path = (Astro.url.pathname.slice(baseUrl.length) || "/").replace(/\/?$/, "/");
+const active = (href: string) => {
+  const h = href.replace(/\/?$/, "/");
+  return h === "/" ? path === "/" : path.startsWith(h);
+};
+const isActive = (item: (typeof nav)[number]) => active(item.href) || !!item.children?.some((c) => active(c.href));
+---
+<div class="topbar">
+  <div class="wrap topbar__in">
+    <p class="topbar__msg"><Icon name="truck" size={16} />{business.topline}</p>
+    <p class="topbar__hours"><Icon name="clock" size={15} />Mon to Fri 8am to 4.30pm, Sat 7am to 12pm</p>
+  </div>
+</div>
+
+<header class="hdr" data-header>
+  <div class="wrap hdr__in">
+    <a href="/" class="hdr__logo" aria-label="Associated Turf home">
+      <img src={img(business.logo)} alt="Associated Turf" width="190" height="62" />
+    </a>
+
+    <nav class="hdr__nav" aria-label="Main">
+      <ul>
+        {nav.map((item) => (
+          <li class:list={[item.children && "has-sub"]}>
+            <a href={item.href} aria-current={isActive(item) ? "page" : undefined}>
+              {item.label}
+              {item.children && <Icon name="chevron" size={14} />}
+            </a>
+            {item.children && (
+              <div class="sub">
+                <ul>
+                  {item.children.map((c) => <li><a href={c.href} aria-current={active(c.href) ? "page" : undefined}>{c.label}</a></li>)}
+                </ul>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="hdr__cta">
+      <a class="hdr__phone" href={business.phoneHref} aria-label={`Call ${business.phone}`}><span class="hdr__phone-ic pulse"><Icon name="phone" size={18} /></span><span class="hdr__phone-txt"><small>Free call</small>{business.phone}</span></a>
+      <a class="btn hdr__quote" href="#quote">Get a Free Quote</a>
+      <button class="hdr__burger" type="button" aria-expanded="false" aria-controls="mnav" aria-label="Open menu" data-burger>
+        <span class="burger" aria-hidden="true"><i></i><i></i><i></i></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mnav" id="mnav" hidden data-mnav data-lenis-prevent>
+  <nav aria-label="Mobile">
+    <ul>
+      {nav.map((item, i) => (
+        <li style={`--i:${i}`}>
+          {item.children ? (
+            <details>
+              <summary>{item.label}<Icon name="chevron" size={18} /></summary>
+              <ul>{item.children.map((c) => <li><a href={c.href} aria-current={active(c.href) ? "page" : undefined}>{c.label}</a></li>)}</ul>
+            </details>
+          ) : (
+            <a href={item.href} aria-current={active(item.href) ? "page" : undefined}>{item.label}</a>
+          )}
+        </li>
+      ))}
+    </ul>
+    <div class="mnav__cta">
+      <a class="btn" href="#quote">Get a Free Quote</a>
+      <a class="btn btn--ghost" href={business.phoneHref}><Icon name="phone" size={18} />{business.phone}</a>
+    </div>
+    <p class="mnav__hours">Mon to Fri 8am to 4.30pm<br />Saturday 7am to 12pm</p>
+  </nav>
+</div>
+
+<style>
+  .topbar { background: var(--color-forest); color: #cfe0d4; font-size: 0.85rem; }
+  .topbar__in { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 38px; }
+  .topbar p { margin: 0; display: inline-flex; align-items: center; gap: 0.5rem; }
+  .topbar :global(svg) { color: var(--color-sprout); }
+  @media (max-width: 760px) { .topbar .topbar__hours { display: none; } .topbar__in { justify-content: center; min-height: 34px; } .topbar__msg { font-size: 0.78rem; white-space: nowrap; } }
+  @media (max-width: 400px) { .topbar__msg :global(svg) { display: none; } }
+
+  .hdr { position: sticky; top: 0; z-index: 40; background: rgba(251, 252, 248, 0.96); backdrop-filter: blur(10px); border-bottom: 1px solid transparent; transition: transform 0.35s var(--ease), border-color 0.3s, box-shadow 0.3s; }
+  :global(html.hdr-solid) .hdr { border-color: var(--color-line); box-shadow: 0 10px 30px -24px rgba(12, 36, 25, 0.5); }
+  :global(html.hdr-hidden) .hdr { transform: translateY(-100%); }
+  .hdr__in { height: var(--header-h); display: flex; align-items: center; gap: 1.5rem; }
+  .hdr__logo { flex: none; display: block; }
+  .hdr__logo img { height: 58px; width: auto; }
+  .hdr__nav { margin-inline: auto; }
+  .hdr__nav > ul { display: flex; align-items: center; gap: 0.15rem; list-style: none; margin: 0; padding: 0; }
+  .hdr__nav > ul > li { position: relative; }
+  .hdr__nav > ul > li > a { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.6rem 0.8rem; font-weight: 500; font-size: 0.98rem; color: var(--color-forest); text-decoration: none; border-radius: 999px; position: relative; }
+  .hdr__nav > ul > li > a::after { content: ""; position: absolute; left: 0.8rem; right: 0.8rem; bottom: 0.2rem; height: 4px; border-radius: 2px; background: repeating-linear-gradient(90deg, var(--color-field) 0 8px, var(--color-sprout) 8px 16px); transform: scaleX(0); transform-origin: left; transition: transform 0.45s var(--ease); }
+  .hdr__nav > ul > li > a:hover::after, .hdr__nav > ul > li > a[aria-current]::after { transform: scaleX(1); }
+  .sub { position: absolute; top: 100%; left: 50%; translate: -50% 0; padding-top: 0.6rem; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity 0.25s, transform 0.3s var(--ease), visibility 0.25s; }
+  .has-sub:hover .sub, .has-sub:focus-within .sub { opacity: 1; visibility: visible; transform: none; }
+  .sub ul { list-style: none; margin: 0; padding: 0.5rem; min-width: 280px; background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-md); box-shadow: var(--shadow); }
+  .sub a { display: block; padding: 0.6rem 0.85rem; border-radius: 10px; text-decoration: none; color: var(--color-ink); font-size: 0.95rem; }
+  .sub a:hover, .sub a[aria-current] { background: var(--color-stripe-a); color: var(--color-field-deep); }
+
+  .hdr__cta { display: flex; align-items: center; gap: 0.9rem; flex: none; }
+  .hdr__phone { display: inline-flex; align-items: center; gap: 0.6rem; text-decoration: none; color: var(--color-forest); font-weight: 600; }
+  .hdr__phone-ic { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--color-field); color: #fff; flex: none; }
+  .hdr__phone-txt { display: grid; line-height: 1.15; font-size: 1.02rem; }
+  .hdr__phone-txt small { font-size: 0.72rem; font-weight: 500; color: var(--color-muted); }
+  .hdr__quote { min-height: 48px; padding-inline: 1.3rem; }
+
+  .hdr__burger { display: none; width: 48px; height: 48px; border-radius: 50%; border: 1.5px solid var(--color-line); background: #fff; place-items: center; }
+  .burger { position: relative; width: 20px; height: 14px; display: block; }
+  .burger i { position: absolute; left: 0; width: 100%; height: 2px; border-radius: 2px; background: var(--color-forest); transition: transform 0.35s var(--ease), opacity 0.2s, top 0.35s var(--ease); }
+  .burger i:nth-child(1) { top: 0; }
+  .burger i:nth-child(2) { top: 6px; }
+  .burger i:nth-child(3) { top: 12px; }
+  .hdr__burger[aria-expanded="true"] .burger i:nth-child(1) { top: 6px; transform: rotate(45deg); }
+  .hdr__burger[aria-expanded="true"] .burger i:nth-child(2) { opacity: 0; }
+  .hdr__burger[aria-expanded="true"] .burger i:nth-child(3) { top: 6px; transform: rotate(-45deg); }
+
+  @media (max-width: 1360px) { .hdr__nav > ul > li > a { padding-inline: 0.6rem; font-size: 0.94rem; } .hdr__phone-txt { display: none; } }
+  @media (max-width: 1180px) {
+    .hdr__nav { display: none; }
+    .hdr__burger { display: grid; }
+    .hdr__cta { margin-left: auto; }
+    .hdr__phone-txt { display: grid; }
+  }
+  @media (max-width: 640px) {
+    .hdr__logo img { height: 46px; }
+    .hdr__quote, .hdr__phone-txt { display: none; }
+    .hdr__cta { gap: 0.6rem; }
+  }
+
+  .mnav { position: fixed; inset: var(--header-h) 0 0; z-index: 38; background: var(--color-paper); overflow-y: auto; overscroll-behavior: contain; padding: 1.25rem var(--gutter) 6rem; }
+  .mnav[hidden] { display: none; }
+  .mnav > nav > ul { list-style: none; margin: 0; padding: 0; }
+  .mnav > nav > ul > li { border-bottom: 1px solid var(--color-line); opacity: 0; transform: translateY(8px); animation: mnav-in 0.45s var(--ease) forwards; animation-delay: calc(var(--i) * 45ms); }
+  @keyframes mnav-in { to { opacity: 1; transform: none; } }
+  .mnav > nav > ul > li > a, .mnav summary { display: flex; align-items: center; justify-content: space-between; padding: 1rem 0.2rem; font-family: var(--font-display); font-size: 1.45rem; font-weight: 600; color: var(--color-forest); text-decoration: none; list-style: none; cursor: pointer; }
+  .mnav summary::-webkit-details-marker { display: none; }
+  .mnav summary :global(svg) { transition: transform 0.3s var(--ease); color: var(--color-field); }
+  .mnav details[open] summary :global(svg) { transform: rotate(180deg); }
+  .mnav details ul { list-style: none; margin: 0 0 0.9rem; padding: 0 0 0 0.9rem; border-left: 4px solid var(--color-stripe-b); }
+  .mnav details a { display: block; padding: 0.55rem 0.5rem; text-decoration: none; color: var(--color-body); font-size: 1rem; }
+  .mnav a[aria-current] { color: var(--color-field-deep); }
+  .mnav__cta { display: grid; gap: 0.75rem; margin-top: 1.75rem; }
+  .mnav__hours { text-align: center; margin-top: 1.25rem; color: var(--color-muted); font-size: 0.92rem; }
+</style>

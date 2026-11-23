@@ -1,0 +1,38 @@
+---
+import { business, img } from "../data/site";
+import Icon from "./Icon.astro";
+interface Props { title?: string; text?: string; image?: string }
+const {
+  title = "Ready to Transform Your Lawn?",
+  text = "Contact our friendly team today for expert advice, an obligation free quote or help choosing the perfect turf for your home or project.",
+  image = "2026/05/home-banner-sunrise.jpg",
+} = Astro.props;
+---
+<section class="cta">
+  <div class="wrap">
+    <div class="cta__box">
+      <img class="cta__bg" src={img(image)} alt="" width="1600" height="700" loading="lazy" decoding="async" />
+      <div class="cta__stripes" aria-hidden="true"></div>
+      <div class="cta__copy">
+        <h2>{title}</h2>
+        <p>{text}</p>
+      </div>
+      <div class="btn-row cta__btns">
+        <a class="btn btn--light" href="#quote">Get a Free Quote</a>
+        <a class="btn btn--outline-light" href={business.phoneHref}><Icon name="phone" size={18} />{business.phone}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta { padding-block: clamp(2rem, 4vw, 3rem); }
+  .cta__box { position: relative; isolation: isolate; overflow: hidden; border-radius: var(--radius-lg); padding: clamp(2.25rem, 5vw, 4.25rem); display: grid; grid-template-columns: minmax(0, 1.2fr) auto; gap: 2rem; align-items: center; color: #e2eee5; background: var(--color-forest); }
+  .cta__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; opacity: 0.38; }
+  .cta__stripes { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(12, 36, 25, 0.96) 25%, rgba(12, 36, 25, 0.55)), repeating-linear-gradient(90deg, transparent 0 60px, rgba(255, 255, 255, 0.04) 60px 120px); }
+  .cta h2 { color: #fff; margin-bottom: 0.4em; max-width: 20ch; }
+  .cta p { margin: 0; max-width: 56ch; }
+  .cta__btns { flex-direction: column; }
+  @media (max-width: 900px) { .cta__box { grid-template-columns: minmax(0, 1fr); text-align: center; } .cta h2, .cta p { margin-inline: auto; } .cta__btns { flex-direction: row; justify-content: center; } }
+  @media (max-width: 560px) { .cta__btns { flex-direction: column; } }
+</style>

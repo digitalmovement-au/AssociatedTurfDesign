@@ -1,0 +1,25 @@
+---
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import { business } from "../data/site";
+---
+<Base title="Thank You | Associated Turf" description="Thanks for getting in touch with Associated Turf." noindex>
+  <section class="ty section lawn" data-drift>
+    <div class="wrap-narrow ty__box">
+      <span class="ty__ic"><Icon name="check" size={34} /></span>
+      <h1 class="h2">Thank You!</h1>
+      <p class="lede">Thanks for getting in touch with Associated Turf. We’ve received your enquiry and one of our team will get back to you as soon as possible, usually within one business day.</p>
+      <p>Need an answer sooner? Call us on <a href={business.phoneHref}><strong>{business.phone}</strong></a>.</p>
+      <p>In the meantime, take a look at our <a href="/turf-varieties/">turf varieties</a> or read our <a href="/turf-preparation/">turf preparation</a> and <a href="/turf-care/">turf care</a> guides.</p>
+      <div class="btn-row"><a class="btn" href="/">Back to Home</a><a class="btn btn--ghost" href="/turf-preparation/">Prepare Your Soil</a></div>
+    </div>
+  </section>
+</Base>
+<style>
+  .ty { min-height: 70vh; display: grid; align-items: center; }
+  .ty__box { background: #fff; border-radius: var(--radius-lg); padding: clamp(2rem, 5vw, 3.5rem); text-align: center; box-shadow: var(--shadow); }
+  .ty__ic { width: 78px; height: 78px; border-radius: 50%; background: var(--color-field); color: #fff; display: grid; place-items: center; margin: 0 auto 1.25rem; }
+  .ty__box .lede { margin-inline: auto; }
+  .ty__box a:not(.btn) { color: var(--color-field-deep); }
+  .ty__box .btn-row { justify-content: center; margin-top: 1.5rem; }
+</style>

@@ -1,0 +1,54 @@
+---
+import { md } from "../lib/md";
+import type { Faq } from "../lib/content";
+import Icon from "./Icon.astro";
+import { business } from "../data/site";
+interface Props { title?: string; intro?: string; items: Faq[]; label?: string; aside?: boolean }
+const { title = "Expert Answers to Common Turf Questions", intro, items, label = "Questions and answers", aside = true } = Astro.props;
+---
+<section class="faq section">
+  <div class:list={["wrap", aside ? "faq__in" : "faq__solo"]}>
+    <div class="faq__side">
+      <p class="label">{label}</p>
+      <h2>{title}</h2>
+      {intro && <p class="lede">{intro}</p>}
+      {aside && (
+        <div class="faq__help">
+          <p class="faq__help-t">Still have questions?</p>
+          <p>Our turf specialists are happy to help.</p>
+          <a class="btn" href={business.phoneHref}><Icon name="phone" size={18} />Call {business.phone}</a>
+        </div>
+      )}
+    </div>
+    <div class="faq__list">
+      {items.map((f, i) => (
+        <details class="faq__item" open={i === 0}>
+          <summary><span>{f.q}</span><span class="faq__ic" aria-hidden="true"><Icon name="plus" size={20} /></span></summary>
+          <div class="faq__a" set:html={md(f.a)} />
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq__in { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+  .faq__solo { max-width: 920px; }
+  .faq__solo .faq__side { text-align: center; margin-bottom: 2rem; }
+  .faq__side { position: sticky; top: calc(var(--header-h) + 2rem); }
+  .faq__solo .faq__side { position: static; }
+  .faq__help { margin-top: 2rem; padding: 1.5rem; border-radius: var(--radius-md); background: var(--color-stripe-a); border: 1px solid var(--color-line); }
+  .faq__help-t { font-family: var(--font-display); font-weight: 650; font-size: 1.3rem; color: var(--color-forest); margin: 0 0 0.2rem; }
+  .faq__help .btn { margin-top: 0.9rem; }
+  .faq__list { display: grid; gap: 0.75rem; }
+  .faq__item { background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-md); transition: border-color 0.3s, box-shadow 0.3s; }
+  .faq__item[open] { border-color: var(--color-field); box-shadow: 0 18px 40px -30px rgba(0, 120, 40, 0.6); }
+  .faq__item summary { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.15rem 1.35rem; cursor: pointer; list-style: none; font-weight: 600; color: var(--color-forest); font-size: 1.05rem; line-height: 1.4; }
+  .faq__item summary::-webkit-details-marker { display: none; }
+  .faq__ic { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--color-stripe-a); color: var(--color-field-deep); transition: transform 0.35s var(--ease), background 0.3s, color 0.3s; }
+  .faq__item[open] .faq__ic { transform: rotate(45deg); background: var(--color-field); color: #fff; }
+  .faq__a { padding: 0 1.35rem 1.25rem; }
+  .faq__a :global(ul) { padding-left: 1.1rem; }
+  @media (max-width: 900px) { .faq__in { grid-template-columns: minmax(0, 1fr); } .faq__side { position: static; } }
+  @media (max-width: 720px) { .faq__side { text-align: center; } .faq__side .lede { margin-inline: auto; } }
+</style>

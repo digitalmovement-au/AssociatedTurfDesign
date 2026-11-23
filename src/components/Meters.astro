@@ -1,0 +1,32 @@
+---
+import type { Variety } from "../data/site";
+interface Props { v: Variety; dark?: boolean }
+const { v, dark = false } = Astro.props;
+---
+<div class:list={["meters", dark && "meters--dark"]} data-fade>
+  <p class="meters__t">Turf Overview</p>
+  <ul>
+    {v.ratings.map((r) => (
+      <li>
+        <span class="meters__l">{r.label}</span>
+        <span class="meters__bar" role="img" aria-label={`${r.label}: ${r.text}`}><i style={`--v:${r.score / 5}`}></i></span>
+        <span class="meters__v">{r.label === "Easy care" ? `${r.text} upkeep` : r.text}</span>
+      </li>
+    ))}
+  </ul>
+  <p class="meters__sun">Needs {v.sun.toLowerCase()}. Leaf: {v.texture.toLowerCase()}.</p>
+</div>
+<style>
+  .meters { background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-md); padding: 1.25rem 1.35rem; }
+  .meters__t { font-family: var(--font-display); font-weight: 650; font-size: 1.2rem; color: var(--color-forest); margin: 0 0 0.85rem; }
+  .meters ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.7rem; }
+  .meters li { display: grid; grid-template-columns: 84px 1fr auto; gap: 0.75rem; align-items: center; font-size: 0.9rem; }
+  .meters__l { font-weight: 600; color: var(--color-forest); }
+  .meters__bar { height: 10px; border-radius: 6px; background: var(--color-stripe-b); overflow: hidden; }
+  .meters__bar i { display: block; height: 100%; width: calc(var(--v) * 100%); background: repeating-linear-gradient(90deg, var(--color-field) 0 12px, #34c25e 12px 24px); border-radius: 6px; transform-origin: left; }
+  :global(html.js-motion) .meters__bar i { transform: scaleX(0); transition: transform 1.1s var(--ease) 0.2s; }
+  :global(html.js-motion) .meters.is-in .meters__bar i { transform: none; }
+  .meters__v { color: var(--color-muted); font-size: 0.84rem; min-width: 7.5rem; text-align: right; }
+  .meters__sun { margin: 0.9rem 0 0; font-size: 0.88rem; color: var(--color-muted); }
+  @media (max-width: 420px) { .meters li { grid-template-columns: 72px 1fr; } .meters__v { grid-column: 2; text-align: left; min-width: 0; margin-top: -0.4rem; } }
+</style>

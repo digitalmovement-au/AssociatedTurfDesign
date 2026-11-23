@@ -1,0 +1,82 @@
+---
+import Mow from "./Mow.astro";
+import Icon from "./Icon.astro";
+import { business } from "../data/site";
+import { mdi } from "../lib/md";
+interface Props {
+  title: string;
+  label?: string;
+  lede?: string;
+  chips?: string[];
+  image?: string;
+  imageAlt?: string;
+  crumbs?: { name: string; path: string }[];
+  meta?: string;
+  ctas?: boolean;
+  badge?: boolean;
+}
+const { title, label, lede, chips = [], image = "2018/10/Turf-pics-048.jpg", imageAlt = "", crumbs = [], meta, ctas = true, badge = true } = Astro.props;
+const short = (n: string) => (n.length > 42 ? n.slice(0, n.lastIndexOf(" ", 40)) + "…" : n);
+const long = title.length > 58;
+---
+<section class="ph">
+  <div class="wrap ph__in">
+    <div class="ph__copy">
+      {crumbs.length > 0 && (
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="/">Home</a></li>
+            {crumbs.map((c, i) => <li>{i === crumbs.length - 1 ? <span aria-current="page">{short(c.name)}</span> : <a href={c.path}>{c.name}</a>}</li>)}
+          </ol>
+        </nav>
+      )}
+      {label && <p class="label">{label}</p>}
+      <h1 class:list={[long && "ph__h1--long"]}>{title}</h1>
+      {meta && <p class="ph__meta">{meta}</p>}
+      {lede && <p class="lede" set:html={mdi(lede)} />}
+      {chips.length > 0 && <ul class="chips ph__chips">{chips.map((c) => <li><Icon name="check" size={16} />{c}</li>)}</ul>}
+      {ctas && (
+        <div class="btn-row ph__btns">
+          <a class="btn" href="#quote">Get a Free Quote</a>
+          <a class="btn btn--ghost" href={business.phoneHref}><Icon name="phone" size={18} />{business.phone}</a>
+        </div>
+      )}
+    </div>
+    <div class="ph__media">
+      <Mow src={image} alt={imageAlt || title} eager class="ph__img" width={1100} height={900} />
+      {badge && <div class="ph__badge"><span class="display">45+</span><small>years growing Sydney turf</small></div>}
+    </div>
+  </div>
+</section>
+
+<style>
+  .ph { padding: clamp(2rem, 4vw, 3.5rem) 0 clamp(3rem, 6vw, 5rem); position: relative; }
+  .ph::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: clamp(70px, 12vw, 150px); z-index: -1; background: repeating-linear-gradient(90deg, var(--color-stripe-a) 0 var(--stripe-w), var(--color-stripe-b) var(--stripe-w) calc(var(--stripe-w) * 2)); }
+  .ph__in { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+  .ph h1 { font-size: clamp(2.3rem, 4.6vw, 4.4rem); margin-bottom: 0.35em; }
+  .ph h1.ph__h1--long { font-size: clamp(2rem, 3.6vw, 3.4rem); }
+  .ph__meta { color: var(--color-muted); font-weight: 500; margin-bottom: 1rem; }
+  .ph .lede { margin-bottom: 1.5rem; }
+  .ph__chips { margin-bottom: 1.75rem; }
+  .ph__media { position: relative; }
+  .ph__media :global(.ph__img) { aspect-ratio: 5 / 4; box-shadow: var(--shadow); }
+  .ph__badge { position: absolute; left: clamp(-1.5rem, -2vw, -0.75rem); bottom: 1.5rem; background: #fff; border-radius: var(--radius-md); padding: 0.9rem 1.15rem; display: flex; align-items: center; gap: 0.75rem; box-shadow: var(--shadow); z-index: 3; }
+  .ph__badge span { font-size: 2.1rem; color: var(--color-field); line-height: 1; }
+  .ph__badge small { font-size: 0.85rem; line-height: 1.25; max-width: 11ch; color: var(--color-forest); font-weight: 500; }
+  .crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 0.35rem; padding: 0; margin: 0 0 1.25rem; font-size: 0.88rem; color: var(--color-muted); }
+  .crumbs li + li::before { content: "/"; margin-right: 0.35rem; opacity: 0.6; }
+  .crumbs a { color: var(--color-muted); text-decoration: none; }
+  .crumbs a:hover { color: var(--color-field-deep); }
+  .crumbs [aria-current] { color: var(--color-forest); font-weight: 500; }
+  @media (max-width: 960px) {
+    .ph__in { grid-template-columns: minmax(0, 1fr); }
+    .ph__media { max-width: 680px; }
+  }
+  @media (max-width: 720px) {
+    .ph__copy { text-align: center; }
+    .crumbs ol, .ph__chips { justify-content: center; }
+    .ph .lede { margin-inline: auto; }
+    .ph__media { margin-inline: auto; width: 100%; }
+    .ph__badge { left: 50%; transform: translateX(-50%); bottom: -1.25rem; }
+  }
+</style>

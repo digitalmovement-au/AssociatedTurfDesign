@@ -1,0 +1,43 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHero from "../components/PageHero.astro";
+import QuoteForm from "../components/QuoteForm.astro";
+import Icon from "../components/Icon.astro";
+import { business } from "../data/site";
+import { get } from "../lib/content";
+const e = get("/contact/")!;
+---
+<Base title={e.title} description={e.desc} breadcrumb={[{ name: "Contact", path: "/contact/" }]}>
+  <PageHero title="Contact Associated Turf" label="We would love to hear from you" lede="Questions about turf varieties, pricing or delivery? Our friendly team is here to help. Call us, send a message or visit us at our Windsor farm." image="2023/02/gal2023-7.jpg" crumbs={[{ name: "Contact", path: "/contact/" }]} ctas={false} />
+  <section class="ct section" id="quote">
+    <div class="wrap ct__in">
+      <div class="ct__info">
+        <p class="label">Send us a message</p>
+        <h2>Talk to the Farm</h2>
+        <ul class="ct__list">
+          <li><span class="ct__ic"><Icon name="phone" /></span><div><p class="ct__k">Free call</p><a href={business.phoneHref}>{business.phone}</a></div></li>
+          <li><span class="ct__ic"><Icon name="mail" /></span><div><p class="ct__k">Email</p><a href={`mailto:${business.email}`}>{business.email}</a></div></li>
+          <li><span class="ct__ic"><Icon name="pin" /></span><div><p class="ct__k">Farm and pick-up</p><a href={business.mapUrl} target="_blank" rel="noopener">{business.address}</a></div></li>
+          <li><span class="ct__ic"><Icon name="clock" /></span><div><p class="ct__k">Trading hours</p>{business.hours.map((h) => <p class="ct__h"><span>{h.days}</span><span>{h.time}</span></p>)}</div></li>
+        </ul>
+        <div class="ct__map">
+          <iframe title="Map to Associated Turf, Cornwallis Road, Windsor" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Cornwallis+Road+Windsor+NSW+2756&output=embed"></iframe>
+        </div>
+      </div>
+      <div class="ct__form"><QuoteForm id="contact-form" title="Send Us a Message" sub="We usually reply within one business day." /></div>
+    </div>
+  </section>
+</Base>
+<style>
+  .ct__in { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+  .ct__list { list-style: none; padding: 0; margin: 1.5rem 0 2rem; display: grid; gap: 1.25rem; }
+  .ct__list li { display: grid; grid-template-columns: 52px 1fr; gap: 1rem; align-items: start; }
+  .ct__ic { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: var(--color-stripe-a); color: var(--color-field-deep); }
+  .ct__k { margin: 0 0 0.1rem; font-size: 0.85rem; color: var(--color-muted); }
+  .ct__list a { color: var(--color-forest); font-weight: 600; text-decoration: none; font-size: 1.08rem; }
+  .ct__h { display: flex; justify-content: space-between; gap: 1rem; max-width: 340px; margin: 0; color: var(--color-ink); }
+  .ct__map { border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 16 / 10; border: 1px solid var(--color-line); background: var(--color-stripe-b); }
+  .ct__map iframe { width: 100%; height: 100%; border: 0; }
+  @media (max-width: 960px) { .ct__in { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 720px) { .ct__info > .label, .ct__info > h2 { text-align: center; display: flex; justify-content: center; } }
+</style>
