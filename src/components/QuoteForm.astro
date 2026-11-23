@@ -74,5 +74,13 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
   .qf--compact .qf__sub { margin-bottom: 1rem; }
   .qf--compact .qf__submit { margin-top: 0.9rem; }
   @media (max-width: 540px) { .qf__grid { grid-template-columns: minmax(0, 1fr); } }
-  @media (max-width: 720px) { .qf__head { text-align: center; } .qf__opts { justify-content: center; } .qf__opts legend { width: 100%; text-align: center; } }
+  @media (max-width: 720px) {
+    .qf__head { text-align: center; }
+    .qf__opts { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.5rem; }
+    .qf__opts legend { width: 100%; text-align: center; }
+    .qf__opts span { display: flex; align-items: center; gap: 0.7rem; width: 100%; padding: 0.85rem 1rem; border-radius: 14px; text-align: left; }
+    .qf__opts span::before { content: ""; flex: none; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--color-line); background: #fff; box-shadow: inset 0 0 0 3px #fff; transition: background 0.2s, border-color 0.2s; }
+    .qf__opts input:checked + span { background: var(--color-stripe-a); border-color: var(--color-field); color: var(--color-forest); }
+    .qf__opts input:checked + span::before { border-color: var(--color-field); background: var(--color-field); }
+  }
 </style>

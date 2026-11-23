@@ -66,7 +66,7 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
 
   <section class="pin pin--statement" data-scrub data-words>
     <div class="pin__stick dots">
-      <div class="wrap-narrow">
+      <div class="wrap-narrow st">
         <p class="st__text display">
           {statement.map((l) => (
             <span class:list={["st__line", l.mark && "st__line--mark"]}>{l.line.split(" ").map((w) => <span class="w" data-w>{w} </span>)}</span>
@@ -87,6 +87,7 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
         {tiles.map((i) => (
           <span class="tl__t" style={`--c:${i % 5};--r:${Math.floor(i / 5)};background-image:url(${img("2018/10/Turf-pics-048.jpg")})`} data-tile={i}></span>
         ))}
+        <span class="tl__full" style={`background-image:url(${img("2018/10/Turf-pics-048.jpg")})`} aria-hidden="true"></span>
         <div class="tl__cap" data-tiles-cap>
           <p class="tl__kicker">Meet</p>
           <p class="tl__name display">Associated Turf</p>
@@ -98,7 +99,7 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
 
   <section class="pin pin--story" data-scrub data-words>
     <div class="pin__stick dots">
-      <div class="wrap">
+      <div class="wrap sy">
         <p class="sy__text display">
           {story.map((s) => s.icon
             ? <span class="sy__ic w" data-w aria-hidden="true"><Icon name={s.icon} size={26} /></span>
@@ -271,11 +272,12 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
   :global(html.js-motion) [data-words] .w { opacity: 0.16; filter: blur(7px); }
   :global(html.js-motion) [data-words] .w.on { opacity: 1; filter: none; }
 
-  .st__text { font-size: clamp(2rem, 4.6vw, 4.1rem); line-height: 1.15; color: var(--color-forest); margin: 0 0 2rem; text-transform: none; }
+  .st { text-align: center; }
+  .st__text { font-size: clamp(2.1rem, 5.2vw, 4.8rem); line-height: 1.12; color: var(--color-forest); margin: 0 auto 2.5rem; text-transform: none; }
   .st__line { display: block; }
-  .st__line--mark { position: relative; width: fit-content; }
-  .st__line--mark::after { content: ""; position: absolute; left: 0; right: 0.25em; bottom: -0.04em; height: 0.11em; background: var(--color-field); border-radius: 50% 40% 60% 45% / 60% 50% 40% 50%; transform-origin: left; transform: scaleX(var(--ul, 1)); }
-  .st__chips { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 1rem; }
+  .st__line--mark { color: var(--color-field); }
+  .st__line--mark .w { background: linear-gradient(var(--color-field), var(--color-field)) no-repeat 0 96% / calc(var(--ul, 1) * 100%) 0.08em; padding-bottom: 0.06em; }
+  .st__chips { list-style: none; padding: 0; margin: 0; display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem; }
   .st__chips li { position: relative; display: inline-flex; align-items: center; background: #fff; border-radius: 10px; padding: 0.7rem 1rem 0.7rem 1.4rem; font-weight: 600; font-size: 0.92rem; color: var(--color-forest-2); box-shadow: 0 10px 24px -18px rgba(12, 36, 25, 0.6); transition: opacity 0.5s, transform 0.5s var(--ease); }
   .st__chips li span { position: absolute; left: -0.65rem; top: -0.65rem; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--color-stripe-b); color: var(--color-field-deep); }
   :global(html.js-motion) .st__chips:not(.on) li { opacity: 0; transform: translateY(12px); }
@@ -289,18 +291,23 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
   .tl.is-whole .tl__t:nth-of-type(5) { border-top-right-radius: var(--radius-lg); }
   .tl.is-whole .tl__t:nth-of-type(11) { border-bottom-left-radius: var(--radius-lg); }
   .tl.is-whole .tl__t:nth-of-type(15) { border-bottom-right-radius: var(--radius-lg); }
-  .tl__cap { position: absolute; left: clamp(1rem, 4vw, 3rem); bottom: clamp(1rem, 4vw, 3rem); z-index: 2; color: #fff; text-shadow: 0 2px 24px rgba(0, 0, 0, 0.5); opacity: var(--cap, 1); transform: translateY(calc((1 - var(--cap, 1)) * 24px)); }
+  .tl__full { position: absolute; inset: 0; z-index: 1; border-radius: var(--radius-lg); background-size: cover; background-position: center; opacity: 0; transition: opacity 0.45s; }
+  .tl__full::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(180deg, rgba(8, 22, 15, 0.15) 0%, rgba(8, 22, 15, 0.35) 45%, rgba(8, 22, 15, 0.85) 100%), linear-gradient(90deg, rgba(8, 22, 15, 0.45), transparent 70%); }
+  .tl.is-whole .tl__full { opacity: 1; }
+  :global(html:not(.js-motion)) .tl__full { opacity: 1; }
+  .tl__cap { position: absolute; left: clamp(1rem, 4vw, 3rem); right: clamp(1rem, 4vw, 3rem); bottom: clamp(1rem, 4vw, 3rem); z-index: 2; color: #fff; text-shadow: 0 2px 24px rgba(0, 0, 0, 0.5); opacity: var(--cap, 1); transform: translateY(calc((1 - var(--cap, 1)) * 24px)); }
   .tl__kicker { font-family: var(--font-display); font-style: italic; font-size: 1.35rem; margin: 0; }
   .tl__name { font-size: clamp(2.3rem, 6vw, 5.5rem); color: #fff; margin: 0; line-height: 1; }
   .tl__sub { margin: 0.4rem 0 0; }
   @media (max-width: 720px) { .tl { aspect-ratio: 4 / 5; } }
 
-  .sy__text { font-size: clamp(1.55rem, 3vw, 2.8rem); line-height: 1.32; color: var(--color-forest); margin: 0 0 1.75rem; max-width: 34ch; text-transform: none; }
+  .sy { text-align: center; }
+  .sy__text { font-size: clamp(1.55rem, 3vw, 2.8rem); line-height: 1.32; color: var(--color-forest); margin: 0 auto 1.75rem; max-width: 34ch; text-transform: none; }
   .w--accent { color: var(--color-field-deep); }
   .sy__ic { display: inline-grid; place-items: center; width: 1.45em; height: 1.1em; vertical-align: -0.14em; margin-right: 0.25em; border-radius: 0.3em; background: var(--color-stripe-b); color: var(--color-field-deep); }
   .sy__ic :global(svg) { width: 0.62em; height: 0.62em; }
-  .sy__more { font-size: 1.08rem; max-width: 60ch; }
-  .sy__btns { margin-top: 1.5rem; }
+  .sy__more { font-size: 1.08rem; max-width: 60ch; margin-inline: auto; }
+  .sy__btns { margin-top: 1.5rem; justify-content: center; }
   @media (max-width: 720px) { .sy__text { font-size: 1.45rem; } .sy__more { font-size: 0.98rem; } .sy__btns .btn--ghost { display: none; } .st__text { font-size: 1.9rem; } }
   :global(html.js-motion) .sy__tail { opacity: var(--tail, 0); transform: translateY(calc((1 - var(--tail, 0)) * 16px)); }
 

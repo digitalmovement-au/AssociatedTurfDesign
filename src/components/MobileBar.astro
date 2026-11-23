@@ -4,17 +4,13 @@ import Icon from "./Icon.astro";
 ---
 <div class="mbar" data-mbar>
   <a class="mbar__call" href={business.phoneHref}><span class="pulse"><Icon name="phone" size={18} /></span>Call Now</a>
-  <a class="mbar__quote btn" href="#quote">Get a Free Quote</a>
 </div>
 <style>
   .mbar { display: none; }
   @media (max-width: 720px) {
-    .mbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 37; display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; padding: 0.65rem var(--gutter) calc(0.65rem + env(safe-area-inset-bottom)); background: rgba(251, 252, 248, 0.97); border-top: 1px solid var(--color-line); backdrop-filter: blur(8px); transition: transform 0.35s var(--ease); }
-    :global(html.mbar-hidden) .mbar { transform: translateY(110%); }
-    .mbar a { min-height: 50px; font-size: 0.93rem; white-space: normal; text-align: center; }
-    .mbar__call { display: inline-flex; align-items: center; justify-content: center; gap: 0.55rem; border-radius: 999px; border: 2px solid var(--color-forest); color: var(--color-forest); font-weight: 600; text-decoration: none; }
-    .mbar__call span { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--color-field); color: #fff; }
-    .mbar__quote { padding-inline: 0.5rem; min-width: 0; }
-    :global(.ftr) { padding-bottom: calc(2rem + 76px + env(safe-area-inset-bottom)) !important; }
+    .mbar { position: fixed; left: 50%; bottom: calc(1rem + env(safe-area-inset-bottom)); z-index: 37; display: block; transform: translateX(-50%); transition: transform 0.35s var(--ease), opacity 0.35s; }
+    :global(html.mbar-hidden) .mbar { transform: translate(-50%, 140%); opacity: 0; pointer-events: none; }
+    .mbar__call { display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; min-height: 54px; padding: 0 1.6rem 0 0.6rem; border-radius: 999px; background: var(--color-field); color: #fff; font-weight: 600; font-size: 1rem; text-decoration: none; white-space: nowrap; box-shadow: 0 14px 30px -10px rgba(12, 36, 25, 0.55); }
+    .mbar__call span { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: var(--color-field); }
   }
 </style>
