@@ -15,6 +15,6 @@ import Icon from "./Icon.astro";
     .mbar__call { display: inline-flex; align-items: center; justify-content: center; gap: 0.55rem; border-radius: 999px; border: 2px solid var(--color-forest); color: var(--color-forest); font-weight: 600; text-decoration: none; }
     .mbar__call span { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--color-field); color: #fff; }
     .mbar__quote { padding-inline: 0.5rem; min-width: 0; }
-    :global(body) { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
+    :global(.ftr) { padding-bottom: calc(2rem + 76px + env(safe-area-inset-bottom)) !important; }
   }
 </style>

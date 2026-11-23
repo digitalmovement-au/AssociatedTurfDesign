@@ -167,15 +167,7 @@ html.js-motion .pulse { animation: pulse-ring 2.4s ease-out infinite; }
 .lawn { background-color: var(--color-stripe-a); }
 .lawn--forest { background-color: var(--color-forest); }
 
-/* Image reveal: six "mower passes" peel back in alternating directions. */
 .mow { position: relative; overflow: hidden; isolation: isolate; }
-.mow__bands { position: absolute; inset: -1px; z-index: 2; display: grid; grid-auto-rows: 1fr; pointer-events: none; }
-.mow__bands i { display: block; background: var(--color-field); transform-origin: right center; transition: transform 0.9s var(--ease); transition-delay: calc(var(--i) * 85ms); }
-.mow__bands i:nth-child(even) { background: #18b24a; transform-origin: left center; }
-.mow.is-cut .mow__bands i { transform: scaleX(0); }
-.mow img { transition: transform 1.6s var(--ease); }
-html.js-motion .mow[data-mow]:not(.is-cut) img { transform: scale(1.08); }
-html:not(.js-motion) .mow__bands { display: none; }
 
 /* Scroll progress: a mower cuts a striped line under the header. */
 .mowline { position: fixed; left: 0; right: 0; top: var(--header-h); height: 5px; z-index: 39; pointer-events: none; transition: top 0.35s var(--ease); }

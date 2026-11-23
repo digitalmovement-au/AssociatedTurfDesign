@@ -96,7 +96,7 @@ const isActive = (item: (typeof nav)[number]) => active(item.href) || !!item.chi
   .hdr__nav > ul > li > a { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.6rem 0.8rem; font-weight: 500; font-size: 0.98rem; color: var(--color-forest); text-decoration: none; border-radius: 999px; position: relative; }
   .hdr__nav > ul > li > a::after { content: ""; position: absolute; left: 0.8rem; right: 0.8rem; bottom: 0.2rem; height: 4px; border-radius: 2px; background: repeating-linear-gradient(90deg, var(--color-field) 0 8px, var(--color-sprout) 8px 16px); transform: scaleX(0); transform-origin: left; transition: transform 0.45s var(--ease); }
   .hdr__nav > ul > li > a:hover::after, .hdr__nav > ul > li > a[aria-current]::after { transform: scaleX(1); }
-  .sub { position: absolute; top: 100%; left: 50%; translate: -50% 0; padding-top: 0.6rem; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity 0.25s, transform 0.3s var(--ease), visibility 0.25s; }
+  .sub { position: absolute; top: 100%; left: -0.55rem; padding-top: 0.6rem; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity 0.25s, transform 0.3s var(--ease), visibility 0.25s; }
   .has-sub:hover .sub, .has-sub:focus-within .sub { opacity: 1; visibility: visible; transform: none; }
   .sub ul { list-style: none; margin: 0; padding: 0.5rem; min-width: 280px; background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-md); box-shadow: var(--shadow); }
   .sub a { display: block; padding: 0.6rem 0.85rem; border-radius: 10px; text-decoration: none; color: var(--color-ink); font-size: 0.95rem; }

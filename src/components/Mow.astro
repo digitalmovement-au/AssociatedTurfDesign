@@ -1,10 +1,9 @@
 ---
-/** Image with the signature mown-stripe reveal. */
+/** Framed image (no reveal animation). */
 import { img } from "../data/site";
 interface Props { src: string; alt?: string; class?: string; eager?: boolean; width?: number; height?: number; sizes?: string; bands?: number; static?: boolean }
-const { src, alt = "", class: cls = "", eager = false, width = 1200, height = 800, bands = 6, static: still = false } = Astro.props;
+const { src, alt = "", class: cls = "", eager = false, width = 1200, height = 800 } = Astro.props;
 ---
-<div class:list={["mow frame", cls]} data-mow={still ? undefined : ""}>
+<div class:list={["mow frame", cls]}>
   <img src={img(src)} alt={alt} width={width} height={height} loading={eager ? "eager" : "lazy"} decoding="async" fetchpriority={eager ? "high" : undefined} />
-  {!still && <span class="mow__bands" aria-hidden="true">{Array.from({ length: bands }, (_, i) => <i style={`--i:${i}`}></i>)}</span>}
 </div>
