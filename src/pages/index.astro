@@ -316,6 +316,14 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
   .sy__btns { margin-top: 1.5rem; justify-content: center; }
   @media (max-width: 720px) { .sy__text { font-size: 1.45rem; } .sy__more { font-size: 0.98rem; } .sy__btns .btn--ghost { display: none; } .st__text { font-size: 1.9rem; } }
   :global(html.js-motion) .sy__tail { opacity: var(--tail, 0); transform: translateY(calc((1 - var(--tail, 0)) * 16px)); }
+  /* Mobile: no pinning on the statement and story; words reveal on their own once in view. */
+  @media (max-width: 720px) {
+    .pin--statement, .pin--story { height: auto; }
+    .pin--statement .pin__stick, .pin--story .pin__stick { position: relative; height: auto; padding-block: 4.5rem; }
+    [data-words] .w { transition: filter 0.45s ease, opacity 0.45s ease; transition-delay: calc(var(--i, 0) * 30ms); }
+    .st__line--mark .w { transition: filter 0.45s ease, opacity 0.45s ease, background-size 0.7s var(--ease) 0.4s; }
+    :global(html.js-motion) .sy__tail { transition: opacity 0.6s ease 0.9s, transform 0.6s var(--ease) 0.9s; }
+  }
 
   .ft { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
   .ft__h { font-size: clamp(2rem, 3.4vw, 3.1rem); margin-bottom: 1.5rem; max-width: 14ch; }

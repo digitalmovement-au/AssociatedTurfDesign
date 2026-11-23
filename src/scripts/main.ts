@@ -289,6 +289,8 @@ const tileSeed = (i: number, k: number) => {
   const x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453;
   return x - Math.floor(x);
 };
+const mobileQ = window.matchMedia("(max-width: 720px)");
+$$("[data-words]").forEach((s) => $$("[data-w]", s).forEach((w, i) => w.style.setProperty("--i", String(i))));
 const story = () => {
   const vh = window.innerHeight;
   for (const s of scrubs) {
@@ -298,6 +300,16 @@ const story = () => {
     const p = motion ? clamp01(-r.top / span) : 1;
 
     if (s.hasAttribute("data-words")) {
+      if (mobileQ.matches && s.classList.contains("pin")) {
+        /* Unpinned on mobile: play the whole reveal once the section is in view. */
+        const done = s.dataset.revealed === "1" || !motion || r.top < vh * 0.7;
+        if (done) s.dataset.revealed = "1";
+        $$("[data-w]", s).forEach((w) => w.classList.toggle("on", done));
+        s.style.setProperty("--ul", done ? "1" : "0");
+        $("[data-chips]", s)?.classList.toggle("on", done);
+        s.style.setProperty("--tail", done ? "1" : "0");
+        continue;
+      }
       const words = $$("[data-w]", s);
       const n = words.length;
       words.forEach((w, i) => w.classList.toggle("on", p >= ((i + 1) / n) * 0.8));
