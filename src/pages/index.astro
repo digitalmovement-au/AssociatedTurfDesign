@@ -6,6 +6,7 @@ import VarietyGrid from "../components/VarietyGrid.astro";
 import Faq from "../components/Faq.astro";
 import PostCards from "../components/PostCards.astro";
 import QuoteSection from "../components/QuoteSection.astro";
+import QuoteForm from "../components/QuoteForm.astro";
 import { business, img, varieties } from "../data/site";
 import { all, firstImage, get, tokenize } from "../lib/content";
 
@@ -49,17 +50,18 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
     <img class="hx__bg" src={img("2026/05/home-banner-sunrise.jpg")} alt="Sunrise over freshly mown turf at the Associated Turf farm" width="1920" height="1080" fetchpriority="high" />
     <div class="hx__shade" aria-hidden="true"></div>
     <div class="wrap hx__in">
-      <p class="tape">Sydney's trusted turf supplier</p>
-      <h1 class="hx__h1">Premium Instant Turf, Harvested Fresh and Delivered Across Sydney</h1>
-      <div class="hx__btns">
-        <a class="btn" href="#quote">Get a Free Quote</a>
-        <a class="btn btn--outline-light" href={business.phoneHref}><Icon name="phone" size={18} />{business.phone}</a>
+      <div class="hx__copy">
+        <p class="tape">Sydney's trusted turf supplier</p>
+        <h1 class="hx__h1">Premium Instant Turf, Harvested Fresh and Delivered Across Sydney</h1>
+        <p class="hx__lede">For over 45 years we have supplied lush, healthy Buffalo, Kikuyu and Couch turf, cut to order and delivered direct from our Windsor farm.</p>
+        <div class="hx__btns">
+          <a class="btn btn--outline-light" href={business.phoneHref}><Icon name="phone" size={18} />{business.phone}</a>
+        </div>
+      </div>
+      <div class="hx__form">
+        <QuoteForm id="hero-form" compact title="Request Your Free Quote" sub="Fast, obligation free pricing from our turf team." />
       </div>
     </div>
-    <a class="hx__card" href="/maxi-turf-laying-service/">
-      <img src={img("2023/01/maxi-4.jpg")} alt="" width="320" height="200" />
-      <span><Icon name="play" size={14} />See Maxi Turf laying in action</span>
-    </a>
   </section>
 
   <section class="pin pin--statement" data-scrub data-words>
@@ -240,22 +242,21 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
   .dots { background-color: var(--color-paper); background-image: radial-gradient(rgba(12, 36, 25, 0.07) 1px, transparent 1.2px); background-size: 14px 14px; }
 
   /* Hero */
-  .hx { position: relative; min-height: calc(100svh - var(--header-h) - 38px); display: flex; align-items: flex-end; color: #fff; overflow: hidden; isolation: isolate; }
+  .hx { position: relative; min-height: calc(100svh - var(--header-h) - 38px); display: flex; align-items: center; color: #fff; overflow: hidden; isolation: isolate; }
   .hx__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
   :global(html.js-motion) .hx__bg { animation: hx-in 2.4s var(--ease) both; }
   @keyframes hx-in { from { transform: scale(1.08); } }
   .hx__shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(8, 22, 15, 0.1) 0%, rgba(8, 22, 15, 0.25) 45%, rgba(8, 22, 15, 0.8) 100%), linear-gradient(90deg, rgba(8, 22, 15, 0.55), transparent 65%); }
-  .hx__in { padding-block: clamp(3rem, 8vw, 6rem); }
+  .hx__in { padding-block: clamp(2.5rem, 6vw, 4.5rem); display: grid; grid-template-columns: minmax(0, 1fr) minmax(360px, 480px); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
   .tape { display: inline-block; background: var(--color-field); color: #fff; font-family: var(--font-display); font-style: italic; font-weight: 600; font-size: 1.05rem; padding: 0.3rem 0.95rem; transform: rotate(-3deg); clip-path: polygon(2% 0, 100% 5%, 98% 100%, 0 94%); margin-bottom: 1.25rem; }
-  .hx__h1 { color: #fff; font-size: clamp(2.6rem, 6.2vw, 6rem); max-width: 15ch; margin-bottom: 0.45em; letter-spacing: -0.025em; }
-  .hx__btns { display: flex; flex-wrap: wrap; gap: 0.85rem; }
+  .hx__h1 { color: #fff; font-size: clamp(2.5rem, 5.2vw, 5.2rem); max-width: 14ch; margin-bottom: 0.35em; letter-spacing: -0.025em; }
+  .hx__lede { font-size: clamp(1.02rem, 1.2vw, 1.15rem); max-width: 48ch; color: rgba(255, 255, 255, 0.9); margin-bottom: 1.5rem; }
+  .hx__btns { display: flex; flex-wrap: wrap; align-items: center; gap: 1.25rem; }
   .hx__btns .btn { min-width: 230px; }
-  .hx__card { position: absolute; right: clamp(1rem, 3vw, 2.5rem); bottom: clamp(1rem, 3vw, 2.5rem); width: clamp(220px, 20vw, 300px); border-radius: var(--radius-md); overflow: hidden; text-decoration: none; color: #fff; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45); border: 3px solid rgba(255, 255, 255, 0.85); transition: transform 0.4s var(--ease); }
-  .hx__card:hover { transform: translateY(-4px) rotate(-1deg); }
-  .hx__card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
-  .hx__card span { position: absolute; left: 0.6rem; bottom: 0.6rem; display: inline-flex; align-items: center; gap: 0.45rem; background: rgba(12, 36, 25, 0.85); padding: 0.4rem 0.75rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
-  @media (max-width: 900px) { .hx__card { display: none; } }
-  @media (max-width: 720px) { .hx { min-height: 80svh; text-align: center; } .hx__h1 { margin-inline: auto; } .hx__btns { flex-direction: column; } .hx__btns .btn { min-width: 0; width: 100%; } }
+  .hx__form :global(.qf) { box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.55); }
+  @media (max-width: 1100px) { .hx__in { grid-template-columns: minmax(0, 1fr) minmax(320px, 420px); } }
+  @media (max-width: 900px) { .hx { min-height: 0; } .hx__in { grid-template-columns: minmax(0, 1fr); padding-top: 4rem; } }
+  @media (max-width: 720px) { .hx { text-align: center; } .hx__h1, .hx__lede { margin-inline: auto; } .hx__btns { flex-direction: column; } .hx__btns .btn { min-width: 0; width: 100%; } .hx__form { text-align: left; } }
 
   /* Pinned scenes */
   .pin { position: relative; }

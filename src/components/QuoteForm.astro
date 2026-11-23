@@ -1,11 +1,11 @@
 ---
 import { varieties, business } from "../data/site";
-interface Props { id?: string; title?: string; sub?: string }
-const { id = "quote-form", title = "Request Your Free Quote", sub = "Fast, obligation free pricing from our turf team." } = Astro.props;
+interface Props { id?: string; title?: string; sub?: string; compact?: boolean }
+const { id = "quote-form", title = "Request Your Free Quote", sub = "Fast, obligation free pricing from our turf team.", compact = false } = Astro.props;
 const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
 ---
 <form
-  class="qf"
+  class:list={["qf", compact && "qf--compact"]}
   id={id}
   name="quote"
   method="POST"
@@ -26,19 +26,19 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
     <div class="field"><label for={`${id}-phone`}>Phone</label><input id={`${id}-phone`} name="phone" type="tel" autocomplete="tel" placeholder="0400 000 000" required /><span class="err" aria-live="polite"></span></div>
     <div class="field"><label for={`${id}-email`}>Email</label><input id={`${id}-email`} name="email" type="email" autocomplete="email" placeholder="you@email.com" required /><span class="err" aria-live="polite"></span></div>
     <div class="field"><label for={`${id}-suburb`}>Delivery suburb</label><input id={`${id}-suburb`} name="suburb" autocomplete="address-level2" placeholder="Windsor" /><span class="err"></span></div>
-    <div class="field"><label for={`${id}-variety`}>Turf variety</label>
+    <div class:list={["field", compact && "qf__full"]}><label for={`${id}-variety`}>Turf variety</label>
       <select id={`${id}-variety`} name="variety" data-variety>
         <option>Not sure, please advise</option>
         {varieties.map((v) => <option>{v.name}</option>)}
       </select>
     </div>
-    <div class="field"><label for={`${id}-area`}>Area (m²)</label><input id={`${id}-area`} name="area" inputmode="decimal" placeholder="120" data-area /><span class="err"></span></div>
-    <fieldset class="qf__full qf__opts">
+    {!compact && <div class="field"><label for={`${id}-area`}>Area (m²)</label><input id={`${id}-area`} name="area" inputmode="decimal" placeholder="120" data-area /><span class="err"></span></div>}
+    {!compact && <fieldset class="qf__full qf__opts">
       <legend>I need</legend>
       <label><input type="radio" name="service" value="Supply and delivery" checked /> <span>Supply and delivery</span></label>
       <label><input type="radio" name="service" value="Supply and laying" /> <span>Supply and laying</span></label>
       <label><input type="radio" name="service" value="Farm pick-up" /> <span>Farm pick-up</span></label>
-    </fieldset>
+    </fieldset>}
     <div class="field qf__full"><label for={`${id}-msg`}>Anything else?</label><textarea id={`${id}-msg`} name="message" placeholder="Backyard gets afternoon shade. We'd like delivery on a Saturday in early March." data-msg></textarea></div>
     <p class="hp" aria-hidden="true"><label>Leave this empty <input name="company_website" tabindex="-1" autocomplete="off" /></label></p>
   </div>
@@ -69,6 +69,10 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
   .qf__alt { text-align: center; font-size: 0.9rem; color: var(--color-muted); margin: 0.9rem 0 0; }
   .qf__alt a { color: var(--color-field-deep); font-weight: 600; text-decoration: none; }
   .hp { position: absolute; left: -9999px; }
+  .qf--compact .qf__grid { gap: 0.65rem; }
+  .qf--compact textarea { min-height: 70px; }
+  .qf--compact .qf__sub { margin-bottom: 1rem; }
+  .qf--compact .qf__submit { margin-top: 0.9rem; }
   @media (max-width: 540px) { .qf__grid { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 720px) { .qf__head { text-align: center; } .qf__opts { justify-content: center; } .qf__opts legend { width: 100%; text-align: center; } }
 </style>
