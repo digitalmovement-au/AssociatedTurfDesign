@@ -62,7 +62,7 @@ const ld = JSON.stringify({ "@context": "https://schema.org", "@graph": graph })
 const gtm = import.meta.env.PUBLIC_GTM_ID as string | undefined;
 ---
 <!doctype html>
-<html lang="en-AU" id="top">
+<html lang="en-AU" id="top" class:list={[{ "is-inner": path !== "/" }]}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

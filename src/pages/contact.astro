@@ -40,4 +40,9 @@ const e = get("/contact/")!;
   .ct__map iframe { width: 100%; height: 100%; border: 0; }
   @media (max-width: 960px) { .ct__in { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 720px) { .ct__info > .label, .ct__info > h2 { text-align: center; display: flex; justify-content: center; } }
+  @media (max-width: 720px) {
+    .ct__list li { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 0.6rem; }
+    .ct__h { justify-content: center; gap: 0.5rem; max-width: none; }
+    .ct__h span:first-child::after { content: ":"; }
+  }
 </style>

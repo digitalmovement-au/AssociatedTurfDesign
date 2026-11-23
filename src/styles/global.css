@@ -237,6 +237,13 @@ html.js-motion [data-fade].is-in { opacity: 1; transform: none; }
   .btn-row { justify-content: center; }
 }
 
+/* Mobile inner pages: centre everything except form fields and data tables. */
+@media (max-width: 720px) {
+  html.is-inner main :is(.ticks, ul.ticks) { justify-items: center; text-align: center; margin-inline: auto; }
+  html.is-inner main .ticks li { padding-left: 0; }
+  html.is-inner main .ticks li::before { position: relative; top: 0.22em; display: inline-block; margin-right: 0.55rem; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
