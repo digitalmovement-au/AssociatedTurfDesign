@@ -164,15 +164,8 @@ html.js-motion .pulse { animation: pulse-ring 2.4s ease-out infinite; }
    ============================================================ */
 
 /* A lawn seen from above: wide alternating bands that drift slightly with scroll. */
-.lawn {
-  background-color: var(--color-stripe-a);
-  background-image: repeating-linear-gradient(90deg, var(--color-stripe-a) 0 var(--stripe-w), var(--color-stripe-b) var(--stripe-w) calc(var(--stripe-w) * 2));
-  background-position: calc(var(--drift, 0) * 1px) 0;
-}
-.lawn--forest {
-  background-color: var(--color-forest);
-  background-image: repeating-linear-gradient(90deg, #0c2419 0 var(--stripe-w), #10301f var(--stripe-w) calc(var(--stripe-w) * 2));
-}
+.lawn { background-color: var(--color-stripe-a); }
+.lawn--forest { background-color: var(--color-forest); }
 
 /* Image reveal: six "mower passes" peel back in alternating directions. */
 .mow { position: relative; overflow: hidden; isolation: isolate; }
