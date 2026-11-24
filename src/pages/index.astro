@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import Icon from "../components/Icon.astro";
-import Reviews from "../components/Reviews.astro";
+import ReviewsWall from "../components/ReviewsWall.astro";
 import VarietyGrid from "../components/VarietyGrid.astro";
 import Faq from "../components/Faq.astro";
 import PostCards from "../components/PostCards.astro";
@@ -63,6 +63,8 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
       </div>
     </div>
   </section>
+
+  <ReviewsWall />
 
   <section class="pin pin--statement" data-scrub data-words>
     <div class="pin__stick dots">
@@ -201,7 +203,6 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
     </div>
   </section>
 
-  <Reviews />
 
   <section class="sp section">
     <div class="wrap">

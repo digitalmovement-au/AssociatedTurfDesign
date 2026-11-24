@@ -1,0 +1,96 @@
+---
+import { googleReviews, business } from "../data/site";
+import Icon from "./Icon.astro";
+const hues = [148, 28, 205, 340, 262, 95, 12, 180, 48];
+const withHue = googleReviews.map((r, i) => ({ ...r, h: hues[i % hues.length] }));
+const rows = [withHue.filter((_, i) => i % 2 === 0), withHue.filter((_, i) => i % 2 === 1)];
+const G = `<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.9 6.1C12.4 13.7 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.8c4.3-4 6.9-9.9 6.9-17.2z"/><path fill="#FBBC05" d="M10.5 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C.9 16.6 0 20.2 0 24s.9 7.4 2.6 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.8c-2.1 1.4-4.8 2.3-8.5 2.3-6.3 0-11.6-4.2-13.5-10l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>`;
+---
+<section class="rw" aria-labelledby="rw-h">
+  <div class="rw__in">
+    <div class="rw__panel">
+      <div class="rw__badge"><span class="rw__g" set:html={G} />Google Reviews</div>
+      <p class="rw__stars" aria-label="5 out of 5 stars">{Array.from({ length: 5 }, () => <Icon name="star" size={30} />)}</p>
+      <h2 id="rw-h" class="rw__h">Five-star reviews from Sydney homeowners and landscapers</h2>
+      <p class="rw__sub">Fresh turf, honest advice and on-time delivery, in our customers' own words.</p>
+      <a class="btn rw__btn" href={business.reviewsUrl} target="_blank" rel="noopener"><span class="rw__g rw__g--btn" set:html={G} />Read Our Reviews on Google</a>
+    </div>
+
+    <div class="rw__wall">
+      {rows.map((row, ri) => (
+        <div class:list={["rw__row", ri === 1 && "rw__row--rev"]}>
+          <ul class="rw__track">
+            {[0, 1].map((copy) => row.map((r) => (
+              <li class="rw__card" tabindex={copy === 1 ? undefined : 0} aria-hidden={copy === 1 ? "true" : undefined}>
+                <div class="rw__top">
+                  <span class="rw__av" style={`--h:${r.h}`} aria-hidden="true">{r.name.trim().charAt(0).toUpperCase()}</span>
+                  <div class="rw__meta"><strong>{r.name}</strong><span>{r.date}</span></div>
+                  <span class="rw__g rw__g--sm" set:html={G} />
+                </div>
+                <p class="rw__cstars" aria-label={`${r.rating} out of 5 stars`}>{Array.from({ length: r.rating }, () => <Icon name="star" size={15} />)}</p>
+                <p class="rw__text">{r.text}</p>
+              </li>
+            )))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+<style>
+  .rw { position: relative; padding-block: clamp(3.5rem, 7vw, 6rem); background: linear-gradient(180deg, var(--color-stripe-a), #fff 70%); overflow: hidden; }
+  .rw__in { width: min(100% - var(--gutter) * 2, var(--max)); margin-inline: auto; display: grid; grid-template-columns: minmax(300px, 400px) minmax(0, 1fr); gap: clamp(1.5rem, 3vw, 2.5rem); align-items: stretch; }
+
+  .rw__panel { position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; padding: clamp(2rem, 3.5vw, 3rem); border-radius: var(--radius-lg); background: var(--color-forest); color: #cfe0d4; box-shadow: var(--shadow); overflow: hidden; isolation: isolate; }
+  .rw__panel::before { content: ""; position: absolute; inset: auto -30% -45% auto; width: 90%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(143, 214, 148, 0.22), transparent 65%); z-index: -1; }
+  .rw__badge { align-self: flex-start; display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.45rem 0.95rem 0.45rem 0.5rem; border-radius: 999px; background: #fff; color: var(--color-forest); font-weight: 600; font-size: 0.92rem; }
+  .rw__g { display: inline-grid; width: 22px; height: 22px; flex: none; }
+  .rw__g :global(svg) { width: 100%; height: 100%; }
+  .rw__stars { display: flex; gap: 4px; margin: 1.5rem 0 1rem; color: var(--color-sun); filter: drop-shadow(0 4px 10px rgba(242, 193, 78, 0.35)); }
+  .rw__h { color: #fff; font-size: clamp(1.75rem, 2.6vw, 2.4rem); line-height: 1.12; margin: 0 0 0.9rem; }
+  .rw__sub { margin: 0 0 1.75rem; line-height: 1.6; }
+  .rw__btn { align-self: flex-start; gap: 0.6rem; background: #fff; color: var(--color-forest); }
+  .rw__btn:hover { background: var(--color-sprout); color: var(--color-forest); }
+  .rw__g--btn { width: 20px; height: 20px; }
+
+  .rw__wall { min-width: 0; display: grid; gap: 1rem; align-content: center; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+  .rw__row { overflow: hidden; }
+  .rw__track { list-style: none; margin: 0; padding: 0.4rem 0; display: flex; align-items: flex-start; gap: 1rem; width: max-content; animation: rw-scroll var(--dur, 70s) linear infinite; }
+  .rw__row--rev .rw__track { animation-direction: reverse; --dur: 62s; }
+  .rw__wall:hover .rw__track, .rw__wall:focus-within .rw__track { animation-play-state: paused; }
+  @keyframes rw-scroll { to { transform: translateX(calc(-50% - 0.5rem)); } }
+
+  .rw__card { width: 340px; min-height: 212px; flex: none; display: flex; flex-direction: column; padding: 1.3rem 1.4rem; border-radius: var(--radius-md); background: #fff; border: 1px solid var(--color-line); box-shadow: 0 18px 40px -28px rgba(12, 36, 25, 0.45); }
+  .rw__top { display: flex; align-items: center; gap: 0.7rem; }
+  .rw__av { width: 40px; height: 40px; border-radius: 50%; flex: none; display: grid; place-items: center; background: hsl(var(--h) 45% 38%); color: #fff; font-weight: 600; }
+  .rw__meta { display: grid; line-height: 1.3; min-width: 0; }
+  .rw__meta strong { color: var(--color-forest); text-transform: capitalize; font-size: 0.98rem; }
+  .rw__meta span { font-size: 0.8rem; color: var(--color-muted); }
+  .rw__g--sm { width: 18px; height: 18px; margin-left: auto; }
+  .rw__cstars { display: flex; gap: 2px; color: var(--color-sun); margin: 0.8rem 0 0.5rem; }
+  .rw__text { margin: 0; color: var(--color-ink); font-size: 0.95rem; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+  .rw__card:hover .rw__text, .rw__card:focus .rw__text { -webkit-line-clamp: unset; }
+  .rw__card { outline: none; }
+  .rw__card:focus-visible { box-shadow: 0 0 0 3px var(--color-field); }
+
+  @media (max-width: 980px) {
+    .rw__in { grid-template-columns: minmax(0, 1fr); }
+    .rw__panel { text-align: center; align-items: center; }
+    .rw__badge, .rw__btn { align-self: center; }
+    .rw__stars { justify-content: center; }
+    .rw__sub { max-width: 46ch; }
+    .rw__wall { width: 100vw; margin-inline: calc(var(--gutter) * -1); }
+  }
+  @media (max-width: 720px) {
+    .rw__card { width: 280px; min-height: 0; text-align: center; padding: 1.1rem 1.15rem; }
+    .rw__wall { gap: 0.75rem; }
+    .rw__cstars { justify-content: center; }
+    .rw__btn { width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rw__track { animation: none; }
+    .rw__row { overflow-x: auto; scroll-snap-type: x mandatory; }
+    .rw__card { scroll-snap-align: start; }
+    .rw__card[aria-hidden="true"] { display: none; }
+  }
+</style>
