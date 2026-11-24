@@ -36,7 +36,7 @@ const {
   .steps__cut { width: calc(var(--sp) * 100%); background: repeating-linear-gradient(90deg, var(--color-field) 0 34px, #34c25e 34px 68px); }
   .steps__mower { position: absolute; top: -1px; left: calc(var(--sp) * 100%); width: 30px; height: 26px; transform: translateX(-70%); color: var(--color-forest); }
   .steps__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(1rem, 2.5vw, 2rem); }
-  .steps__list li { position: relative; padding-top: 0.25rem; }
+  .steps__list li { position: relative; padding-top: 0.25rem; text-align: center; }
   .steps__n { display: inline-grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; font-family: var(--font-display); font-weight: 650; font-size: 1.15rem; color: var(--color-forest); background: #fff; border: 2px solid var(--color-line); margin-bottom: 1rem; transition: background 0.4s, color 0.4s, border-color 0.4s; }
   .steps__list li.is-done .steps__n { background: var(--color-field); border-color: var(--color-field); color: #fff; }
   .steps__list h3 { margin-bottom: 0.4rem; }

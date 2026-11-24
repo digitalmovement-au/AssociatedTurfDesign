@@ -170,11 +170,6 @@ html.js-motion .pulse { animation: pulse-ring 2.4s ease-out infinite; }
 .mow { position: relative; overflow: hidden; isolation: isolate; }
 
 /* Scroll progress: a mower cuts a striped line under the header. */
-.mowline { position: fixed; left: 0; right: 0; top: var(--header-h); height: 5px; z-index: 39; pointer-events: none; transition: top 0.35s var(--ease); }
-.mowline__cut { position: absolute; inset: 0; width: calc(var(--p, 0) * 100%); background: repeating-linear-gradient(90deg, var(--color-field) 0 22px, #34c25e 22px 44px); }
-.mowline__mower { position: absolute; top: -9px; left: min(calc(var(--p, 0) * 100%), calc(100% - 18px)); width: 26px; height: 22px; transform: translateX(-60%); color: var(--color-forest); opacity: var(--show, 0); transition: opacity 0.3s; }
-html.hdr-hidden .mowline { top: 0; }
-@media (max-width: 720px) { .mowline__mower { display: none; } }
 
 /* Fade-in for text blocks (one quiet entrance, no slide). */
 html.js-motion [data-fade] { opacity: 0; transform: translateY(14px); transition: opacity 0.8s var(--ease), transform 0.8s var(--ease); }

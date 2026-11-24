@@ -387,25 +387,6 @@ $$("[data-sunshade]").forEach((sec) => {
   btn.addEventListener("click", () => set(btn.getAttribute("aria-checked") !== "true"));
 });
 
-/* ───────────── How it works: quick fill as soon as it is in view, then replay ───────────── */
-$$("[data-steps-hw]").forEach((sec) => {
-  const items = $$("[data-hw]", sec);
-  const set = (k: number) => items.forEach((it, i) => { it.classList.toggle("is-on", i === k); it.classList.toggle("is-done", i < k); });
-  if (!motion || !("IntersectionObserver" in window)) return set(items.length - 1);
-  let timers: number[] = [], loop = 0;
-  const play = () => {
-    timers.forEach(clearTimeout); timers = [];
-    set(0);
-    items.forEach((_, i) => { if (i) timers.push(window.setTimeout(() => set(i), i * 380)); });
-  };
-  new IntersectionObserver(([en]) => {
-    clearInterval(loop); timers.forEach(clearTimeout);
-    if (!en.isIntersecting) return;
-    play();
-    loop = window.setInterval(play, items.length * 380 + 2600);
-  }, { threshold: 0.2 }).observe(sec);
-});
-
 /* ───────────── Growing grass: none on load, grows evenly with page scroll ───────────── */
 const grass = $<HTMLElement>("[data-grass]");
 if (grass) {
