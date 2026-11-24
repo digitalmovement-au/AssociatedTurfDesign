@@ -14,6 +14,19 @@ const isActive = (item: (typeof nav)[number]) => active(item.href) || !!item.chi
     <p class="topbar__msg"><Icon name="truck" size={16} />{business.topline}</p>
     <p class="topbar__hours"><Icon name="clock" size={15} />Mon to Fri 8am to 4.30pm, Sat 7am to 12pm</p>
   </div>
+  <div class="tick" aria-label="Associated Turf highlights">
+    <div class="tick__track">
+      {[0, 1].map((copy) => (
+        <ul class="tick__set" aria-hidden={copy === 1 ? "true" : undefined}>
+          <li><Icon name="truck" size={14} />Fresh turf delivered Sydney wide</li>
+          <li><Icon name="star" size={14} /><span class="tick__hi">5-star</span> Google reviews</li>
+          <li><Icon name="scissors" size={14} />Cut fresh to order</li>
+          <li><Icon name="clock" size={14} />Mon to Fri 8 to 4.30, Sat 7 to 12</li>
+          <li><a href={business.phoneHref} tabindex={copy === 1 ? -1 : undefined}><Icon name="phone" size={14} />Free call <span class="tick__hi">{business.phone}</span></a></li>
+        </ul>
+      ))}
+    </div>
+  </div>
 </div>
 
 <header class="hdr" data-header>
@@ -81,8 +94,20 @@ const isActive = (item: (typeof nav)[number]) => active(item.href) || !!item.chi
   .topbar__in { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 38px; }
   .topbar p { margin: 0; display: inline-flex; align-items: center; gap: 0.5rem; }
   .topbar :global(svg) { color: var(--color-sprout); }
-  @media (max-width: 760px) { .topbar .topbar__hours { display: none; } .topbar__in { justify-content: center; min-height: 34px; padding-block: 0.35rem; } .topbar__msg { font-size: 0.78rem; line-height: 1.35; text-align: center; text-wrap: balance; } }
-  @media (max-width: 400px) { .topbar__msg :global(svg) { display: none; } .topbar__msg { font-size: 0.74rem; } }
+  .tick { display: none; }
+  @media (max-width: 760px) {
+    .topbar__in { display: none; }
+    .tick { display: block; overflow: hidden; height: 30px; background: linear-gradient(90deg, var(--color-forest), #133d27 50%, var(--color-forest)); -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+    .tick__track { display: flex; width: max-content; height: 100%; animation: tick 26s linear infinite; }
+    .tick__set { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; }
+    .tick__set li { display: inline-flex; align-items: center; gap: 0.4rem; padding-inline: 0.9rem; font-size: 0.74rem; font-weight: 500; color: #e3efe6; white-space: nowrap; }
+    .tick__set li::after { content: ""; width: 4px; height: 4px; border-radius: 50%; background: var(--color-sprout); margin-left: 1.8rem; opacity: 0.7; }
+    .tick__set a { display: inline-flex; align-items: center; gap: 0.4rem; color: inherit; text-decoration: none; }
+    .tick__hi { color: var(--color-sun); font-weight: 600; }
+    .tick :global(svg) { color: var(--color-sprout); flex: none; }
+    @keyframes tick { to { transform: translateX(-50%); } }
+  }
+  @media (max-width: 760px) and (prefers-reduced-motion: reduce) { .tick__track { animation: none; } .tick { overflow-x: auto; } }
 
   .hdr { position: sticky; top: 0; z-index: 40; background: rgba(251, 252, 248, 0.96); backdrop-filter: blur(10px); border-bottom: 1px solid transparent; transition: transform 0.35s var(--ease), border-color 0.3s, box-shadow 0.3s; }
   :global(html.hdr-solid) .hdr { border-color: var(--color-line); box-shadow: 0 10px 30px -24px rgba(12, 36, 25, 0.5); }
