@@ -406,22 +406,18 @@ $$("[data-steps-hw]").forEach((sec) => {
   }, { threshold: 0.2 }).observe(sec);
 });
 
-/* ───────────── Growing grass: sprouts on load, then grows with page scroll ───────────── */
+/* ───────────── Growing grass: none on load, grows as you scroll (fastest early on) ───────────── */
 const grass = $<HTMLElement>("[data-grass]");
 if (grass) {
-  const BASE = 0.6;               // height reached on load, before any scrolling
-  let intro = motion ? 0 : 1, q = false;
+  let q = false;
   const grow = () => {
     const max = document.documentElement.scrollHeight - window.innerHeight;
-    const sc = max > 0 ? Math.min(1, window.scrollY / max) : 1;
-    grass.style.setProperty("--g", (BASE * intro + (1 - BASE) * sc).toFixed(3));
+    const p = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+    const g = 1 - Math.pow(1 - p, 3);
+    grass.style.setProperty("--g", g.toFixed(3));
+    grass.classList.toggle("is-empty", g <= 0.001);
     q = false;
   };
-  if (motion) {
-    const t0 = performance.now(), dur = 1500;
-    const tick = (now: number) => { const t = Math.min(1, (now - t0) / dur); intro = 1 - Math.pow(1 - t, 3); grow(); if (t < 1) requestAnimationFrame(tick); };
-    setTimeout(() => requestAnimationFrame(tick), 300);
-  }
   window.addEventListener("scroll", () => { if (!q) { q = true; requestAnimationFrame(grow); } }, { passive: true });
   window.addEventListener("resize", grow);
   grow();
