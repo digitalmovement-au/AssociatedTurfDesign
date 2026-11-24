@@ -41,12 +41,12 @@ const features = [
   { icon: "truck", title: "Delivered Monday to Saturday", body: "On time delivery across Sydney and Regional NSW, with pallets for building sites and machine-laid Maxi Turf rolls for large open areas.", image: "2023/01/maxi-4.jpg" },
 ];
 const works = [
-  { image: "2024/03/sir-walter-1.jpg", title: "Sir Walter Buffalo lawn", tag: "Residential", size: "big" },
+  { image: "2024/03/sir-walter-1.jpg", title: "Sir Walter Buffalo lawn", tag: "Residential" },
   { image: "2026/10/kikuyu-backyard-lawn.jpg", title: "Kikuyu backyard", tag: "Residential" },
   { image: "2026/10/greenlees-park-couch-home-lawn.jpg", title: "Greenlees Park Couch lawn", tag: "Residential" },
   { image: "2023/01/maxi-7.jpg", title: "Maxi Turf installation", tag: "Commercial" },
   { image: "2024/03/sir-walter-2.jpg", title: "Sir Walter Buffalo lawn", tag: "Residential" },
-  { image: "2026/10/greenlees-park-couch-playing-field.jpg", title: "Greenlees Park Couch playing field", tag: "Sports field", size: "wide" },
+  { image: "2026/10/greenlees-park-couch-playing-field.jpg", title: "Greenlees Park Couch playing field", tag: "Sports field" },
   { image: "2026/10/kikuyu-park-lawn.jpg", title: "Kikuyu park lawn", tag: "Public space" },
   { image: "2024/03/wintergreen-3.jpg", title: "Wintergreen Couch lawn", tag: "Residential" },
 ];
@@ -78,33 +78,29 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
 
   <section class="pin pin--about" data-scrub data-words>
     <div class="pin__stick dots">
-      <div class="wrap mg">
-        <div class="mg__lead st">
-          <p class="st__text display">
+      <div class="wrap-narrow mg st sy">
+        <p class="st__text display">
           {statement.map((l) => (
             <span class:list={["st__line", l.mark && "st__line--mark"]}>{l.line.split(" ").map((w) => <span class="w" data-w>{w} </span>)}</span>
           ))}
         </p>
-          <ul class="st__chips" data-chips>
-          <li><span><Icon name="scissors" size={17} /></span>Cut fresh to order</li>
-          <li><span><Icon name="truck" size={17} /></span>Sydney wide delivery</li>
-          <li><span><Icon name="chat" size={17} /></span>Expert lawn advice</li>
-        </ul>
-        </div>
-        <div class="mg__story sy">
-          <p class="sy__text display">
+        <p class="sy__text display">
           {story.map((s) => s.icon
             ? <span class="sy__ic w" data-w aria-hidden="true"><Icon name={s.icon} size={26} /></span>
             : s.t!.split(" ").map((w) => <span class:list={["w", s.accent && "w--accent"]} data-w>{w} </span>)
           )}
         </p>
-          <div class="sy__tail">
+        <div class="sy__tail">
           <p class="sy__more">Our range includes Sir Walter Buffalo, Matilda Soft Leaf Buffalo, Kikuyu, Wintergreen Couch and Greenlees Park Couch, harvested fresh to order and grown to the highest standards for long lasting results.</p>
+          <ul class="st__chips" data-chips>
+          <li><span><Icon name="scissors" size={17} /></span>Cut fresh to order</li>
+          <li><span><Icon name="truck" size={17} /></span>Sydney wide delivery</li>
+          <li><span><Icon name="chat" size={17} /></span>Expert lawn advice</li>
+        </ul>
           <div class="btn-row sy__btns">
             <a class="btn" href="/turf-varieties/">Explore Our Turf</a>
             <a class="btn btn--ghost" href="/turf-farms/">About Our Farm</a>
           </div>
-        </div>
         </div>
       </div>
     </div>
@@ -118,11 +114,10 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
           <h2 class="wk__h">Lawns We Have Grown and Laid</h2>
           <p class="wk__sub">Grown at Windsor. Laid across Sydney, from family backyards to parks and playing fields.</p>
         </div>
-        <a class="link" href="/turf-gallery/">View Full Gallery <Icon name="arrow" size={18} /></a>
       </div>
       <ul class="wk__grid">
         {works.map((w, i) => (
-          <li class:list={["wk__item", w.size && `wk__item--${w.size}`]} data-fade>
+          <li class="wk__item" data-fade>
             <a href={img(w.image)} data-lightbox data-index={i} aria-label={`View larger photo: ${w.title}`}>
               <img src={img(w.image)} alt={w.title} width="800" height="600" loading="lazy" decoding="async" />
               <span class="wk__cap"><strong>{w.title}</strong><span>{w.tag}</span></span>
@@ -130,6 +125,7 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
           </li>
         ))}
       </ul>
+      <div class="wk__cta"><a class="btn" href="/turf-gallery/">View Full Gallery <Icon name="arrow" size={18} /></a></div>
     </div>
   </section>
 
@@ -313,21 +309,14 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
   .st__line--mark .w { transition: filter 0.45s ease, opacity 0.45s ease, background-size 0.7s var(--ease) 0.4s; }
   :global(html.js-motion) .sy__tail { transition: opacity 0.6s ease 1.6s, transform 0.6s var(--ease) 1.6s; }
 
-  /* Merged statement + story */
-  .mg { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
-  .mg .st, .mg .sy { text-align: left; }
-  .mg .st__text { font-size: clamp(2.1rem, 4vw, 3.9rem); margin: 0 0 2rem; }
-  .mg .sy__text { font-size: clamp(1.35rem, 2vw, 1.9rem); margin: 0 0 1.25rem; max-width: none; }
-  .mg .sy__more { margin-inline: 0; }
-  @media (min-width: 721px) { .mg .st__chips li { white-space: nowrap; font-size: 0.9rem; padding-right: 1rem; } }
-  .mg .sy__btns { justify-content: flex-start; }
-  @media (max-width: 900px) {
-    .mg { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
-    .mg .st, .mg .sy { text-align: center; }
-    .mg .st__chips { margin-inline: auto; }
-    .mg .sy__more { margin-inline: auto; }
-    .mg .sy__btns { justify-content: center; }
-  }
+  /* Merged statement + story: one centred column */
+  .mg { text-align: center; }
+  .mg .st__text { font-size: clamp(2.1rem, 4.6vw, 4.2rem); margin: 0 auto 1.5rem; }
+  .mg .sy__text { font-size: clamp(1.3rem, 2.2vw, 1.9rem); margin: 0 auto 1.25rem; max-width: 40ch; }
+  .mg .sy__more { margin: 0 auto 1.75rem; }
+  .mg .st__chips { margin: 0 auto; }
+  .mg .sy__btns { justify-content: center; margin-top: 1.75rem; }
+  .mg .st__chips li { white-space: nowrap; }
 
   @media (max-width: 900px) {
   }
@@ -410,25 +399,22 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
   .end .btn-row { justify-content: center; }
 
   /* Sample works gallery */
-  .wk__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; margin-bottom: clamp(1.5rem, 3vw, 2.25rem); }
+  .wk__head { text-align: center; margin-bottom: clamp(1.5rem, 3vw, 2.25rem); }
+  .wk__head .label { justify-content: center; }
+  .wk__cta { display: flex; justify-content: center; margin-top: clamp(1.75rem, 3vw, 2.5rem); }
   .wk__h { font-size: clamp(2rem, 3.6vw, 3.2rem); margin: 0 0 0.6rem; }
-  .wk__sub { margin: 0; max-width: 52ch; color: var(--color-muted); font-size: 1.05rem; }
-  .wk__grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: clamp(170px, 17vw, 250px); gap: clamp(0.6rem, 1.2vw, 1rem); grid-auto-flow: dense; }
-  .wk__item--big { grid-column: span 2; grid-row: span 2; }
-  .wk__item--wide { grid-column: span 2; }
+  .wk__sub { margin: 0 auto; max-width: 52ch; color: var(--color-muted); font-size: 1.05rem; }
+  .wk__grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(0.6rem, 1.2vw, 1rem); }
+  .wk__item { aspect-ratio: 4 / 3; }
   .wk__item a { position: relative; display: block; height: 100%; border-radius: var(--radius-md); overflow: hidden; background: var(--color-stripe-b); }
   .wk__item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.9s var(--ease); }
   .wk__item a::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(8, 22, 15, 0.72)); transition: opacity 0.4s; }
   .wk__item a:hover img { transform: scale(1.05); }
   .wk__cap { position: absolute; left: 1rem; right: 1rem; bottom: 0.9rem; z-index: 1; display: grid; gap: 0.1rem; color: #fff; text-shadow: 0 1px 12px rgba(0, 0, 0, 0.4); }
   .wk__cap strong { font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; line-height: 1.2; }
-  .wk__item--big .wk__cap strong { font-size: clamp(1.3rem, 2vw, 1.75rem); }
   .wk__cap span { font-size: 0.8rem; color: var(--color-sprout); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
   @media (max-width: 720px) {
-    .wk__head { flex-direction: column; align-items: center; text-align: center; }
-    .wk__head .label { justify-content: center; }
-    .wk__sub { margin-inline: auto; }
-    .wk__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 150px; }
+    .wk__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .wk__cap { left: 0.7rem; right: 0.7rem; bottom: 0.6rem; }
     .wk__cap strong { font-size: 0.92rem; }
     .wk__cap span { font-size: 0.68rem; }
