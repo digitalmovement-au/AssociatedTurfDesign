@@ -1,4 +1,5 @@
 ---
+import PageHero from "../components/PageHero.astro";
 import Base from "../layouts/Base.astro";
 import Icon from "../components/Icon.astro";
 import QuoteSection from "../components/QuoteSection.astro";
@@ -9,14 +10,7 @@ const [lead, ...rest] = posts;
 const fmt = (d?: string) => (d ? new Date(d).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" }) : "");
 ---
 <Base title="Latest News | Associated Turf" description="Lawn news, seasonal tips and turf advice from Associated Turf, growing premium turf at Windsor for over 45 years." breadcrumb={[{ name: "News", path: "/blog/" }]}>
-  <section class="bl-hero">
-    <div class="wrap">
-      <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><span aria-current="page">News</span></li></ol></nav>
-      <p class="label">Lawn news and tips</p>
-      <h1>Latest News</h1>
-      <p class="lede">Seasonal advice on choosing, laying, watering and caring for your lawn, straight from the people who grow it.</p>
-    </div>
-  </section>
+  <PageHero title="Latest News" label="Lawn news and tips" lede="Seasonal advice on choosing, laying, watering and caring for your lawn, straight from the people who grow it." image="2023/02/gal2023-5.jpg" crumbs={[{ name: "News", path: "/blog/" }]} />
   <section class="section bl">
     <div class="wrap">
       <a class="bl-lead" href={lead.path}>
