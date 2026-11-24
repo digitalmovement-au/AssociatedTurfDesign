@@ -13,7 +13,6 @@ const G = `<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M
       <p class="rw__stars" aria-label="5 out of 5 stars">{Array.from({ length: 5 }, () => <Icon name="star" size={30} />)}</p>
       <h2 id="rw-h" class="rw__h">Five-star reviews from Sydney homeowners and landscapers</h2>
       <p class="rw__sub">Fresh turf, honest advice and on-time delivery, in our customers' own words.</p>
-      <a class="btn rw__btn" href={business.reviewsUrl} target="_blank" rel="noopener"><span class="rw__g rw__g--btn" set:html={G} />Read Our Reviews on Google</a>
     </div>
 
     <div class="rw__wall">
@@ -21,22 +20,47 @@ const G = `<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M
         <div class:list={["rw__row", ri === 1 && "rw__row--rev"]}>
           <ul class="rw__track">
             {[0, 1].map((copy) => row.map((r) => (
-              <li class="rw__card" tabindex={copy === 1 ? undefined : 0} aria-hidden={copy === 1 ? "true" : undefined}>
+              <li class="rw__card" aria-hidden={copy === 1 ? "true" : undefined}>
                 <div class="rw__top">
                   <span class="rw__av" style={`--h:${r.h}`} aria-hidden="true">{r.name.trim().charAt(0).toUpperCase()}</span>
                   <div class="rw__meta"><strong>{r.name}</strong><span>{r.date}</span></div>
                   <span class="rw__g rw__g--sm" set:html={G} />
                 </div>
                 <p class="rw__cstars" aria-label={`${r.rating} out of 5 stars`}>{Array.from({ length: r.rating }, () => <Icon name="star" size={15} />)}</p>
-                <p class="rw__text">{r.text}</p>
+                <p class="rw__text" data-rw-text>{r.text}</p>
+                <button class="rw__more" type="button" data-rw-more tabindex={copy === 1 ? -1 : undefined} aria-expanded="false" hidden>Read more</button>
               </li>
             )))}
           </ul>
         </div>
       ))}
     </div>
+
+    <div class="rw__cta">
+      <a class="btn rw__btn" href={business.reviewsUrl} target="_blank" rel="noopener"><span class="rw__g rw__g--btn" set:html={G} />Read Our Reviews on Google</a>
+    </div>
   </div>
 </section>
+<script>
+  document.querySelectorAll<HTMLElement>(".rw").forEach((sec) => {
+    const texts = sec.querySelectorAll<HTMLElement>("[data-rw-text]");
+    const check = () => texts.forEach((t) => {
+      const b = t.nextElementSibling as HTMLButtonElement;
+      if (!t.classList.contains("is-open")) b.hidden = t.scrollHeight <= t.clientHeight + 2;
+    });
+    sec.querySelectorAll<HTMLButtonElement>("[data-rw-more]").forEach((b) => b.addEventListener("click", () => {
+      const t = b.previousElementSibling as HTMLElement;
+      const open = t.classList.toggle("is-open");
+      b.textContent = open ? "Read less" : "Read more";
+      b.setAttribute("aria-expanded", String(open));
+      const row = b.closest(".rw__row")!;
+      row.classList.toggle("is-paused", !!row.querySelector(".rw__text.is-open"));
+    }));
+    check();
+    document.fonts?.ready.then(check);
+    window.addEventListener("resize", check);
+  });
+</script>
 <style>
   .rw { position: relative; padding-block: clamp(3.5rem, 7vw, 6rem); background: linear-gradient(180deg, var(--color-stripe-a), #fff 70%); overflow: hidden; }
   .rw__in { display: grid; gap: clamp(2rem, 4vw, 3rem); }
@@ -47,7 +71,7 @@ const G = `<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M
   .rw__g :global(svg) { width: 100%; height: 100%; }
   .rw__stars { display: flex; justify-content: center; gap: 4px; margin: 1.25rem 0 0.9rem; color: var(--color-sun); filter: drop-shadow(0 4px 10px rgba(242, 193, 78, 0.35)); }
   .rw__h { font-size: clamp(1.9rem, 3.6vw, 3.1rem); line-height: 1.1; margin: 0 0 0.8rem; max-width: 22ch; }
-  .rw__sub { margin: 0 0 1.6rem; color: var(--color-muted); font-size: 1.08rem; line-height: 1.6; max-width: 48ch; }
+  .rw__sub { margin: 0; color: var(--color-muted); font-size: 1.08rem; line-height: 1.6; max-width: 48ch; }
   .rw__btn { gap: 0.6rem; }
   .rw__g--btn { width: 20px; height: 20px; background: #fff; border-radius: 50%; padding: 2px; box-sizing: content-box; }
 
@@ -67,14 +91,17 @@ const G = `<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M
   .rw__g--sm { width: 18px; height: 18px; margin-left: auto; }
   .rw__cstars { display: flex; gap: 2px; color: var(--color-sun); margin: 0.8rem 0 0.5rem; }
   .rw__text { margin: 0; color: var(--color-ink); font-size: 0.95rem; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
-  .rw__card:hover .rw__text, .rw__card:focus .rw__text { -webkit-line-clamp: unset; }
-  .rw__card { outline: none; }
-  .rw__card:focus-visible { box-shadow: 0 0 0 3px var(--color-field); }
+  .rw__text.is-open { -webkit-line-clamp: unset; display: block; }
+  .rw__more { align-self: flex-start; margin-top: 0.55rem; padding: 0; border: 0; background: none; color: var(--color-field-deep); font: inherit; font-weight: 600; font-size: 0.88rem; cursor: pointer; }
+  .rw__more:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .rw__row.is-paused .rw__track { animation-play-state: paused; }
+  .rw__cta { display: flex; justify-content: center; padding-inline: var(--gutter); }
 
   @media (max-width: 720px) {
     .rw__card { width: 280px; min-height: 0; text-align: center; padding: 1.1rem 1.15rem; }
     .rw__wall { gap: 0.75rem; }
     .rw__cstars { justify-content: center; }
+    .rw__more { align-self: center; }
     .rw__btn { width: 100%; max-width: 360px; }
   }
   @media (prefers-reduced-motion: reduce) {

@@ -289,66 +289,89 @@ const tileSeed = (i: number, k: number) => {
   const x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453;
   return x - Math.floor(x);
 };
-const mobileQ = window.matchMedia("(max-width: 720px)");
 $$("[data-words]").forEach((s) => $$("[data-w]", s).forEach((w, i) => w.style.setProperty("--i", String(i))));
-const story = () => {
-  const vh = window.innerHeight;
-  for (const s of scrubs) {
-    const r = s.getBoundingClientRect();
-    if (r.bottom < -vh || r.top > vh * 2) continue;
-    const span = Math.max(1, r.height - vh);
-    const p = motion ? clamp01(-r.top / span) : 1;
+/* Tiles assemble over a fixed time once in view (no scroll pinning). */
+const playTiles = (s: HTMLElement) => {
+  const grid = $(".tl", s)!;
+  const tiles = $$("[data-tile]", s);
+  const frame = (p: number) => {
+    tiles.forEach((t, i) => {
+      const d = tileSeed(i, 1) * 0.3;
+      const e = ease(clamp01((p * 0.9 + 0.12 - d) / 0.45));
+      const dx = (tileSeed(i, 2) - 0.5) * 70, dy = (tileSeed(i, 3) - 0.5) * 60 + 30, rot = (tileSeed(i, 4) - 0.5) * 40;
+      t.style.transform = e >= 1 ? "" : `translate(${dx * (1 - e)}vw, ${dy * (1 - e)}vh) rotate(${rot * (1 - e)}deg)`;
+      t.style.opacity = String(Math.min(1, e * 1.6));
+    });
+    grid.classList.toggle("is-whole", p > 0.88);
+    grid.style.setProperty("--cap", clamp01((p - 0.88) / 0.1).toFixed(3));
+  };
+  if (!motion) return frame(1);
+  frame(0);
+  const io = new IntersectionObserver(([en]) => {
+    if (!en.isIntersecting) return;
+    io.disconnect();
+    const t0 = performance.now(), dur = 1600;
+    const tick = (now: number) => { const p = clamp01((now - t0) / dur); frame(p); if (p < 1) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  }, { threshold: 0.35 });
+  io.observe(s);
+};
 
-    if (s.hasAttribute("data-words")) {
-      if (mobileQ.matches && s.classList.contains("pin")) {
-        /* Unpinned on mobile: play the whole reveal once the section is in view. */
-        const done = s.dataset.revealed === "1" || !motion || r.top < vh * 0.7;
-        if (done) s.dataset.revealed = "1";
-        $$("[data-w]", s).forEach((w) => w.classList.toggle("on", done));
-        s.style.setProperty("--ul", done ? "1" : "0");
-        $("[data-chips]", s)?.classList.toggle("on", done);
-        s.style.setProperty("--tail", done ? "1" : "0");
-        continue;
-      }
-      const words = $$("[data-w]", s);
-      const n = words.length;
-      words.forEach((w, i) => w.classList.toggle("on", p >= ((i + 1) / n) * 0.8));
-      s.style.setProperty("--ul", clamp01(p * 2.5).toFixed(3));
-      $("[data-chips]", s)?.classList.toggle("on", p > 0.82);
-      s.style.setProperty("--tail", clamp01((p - 0.82) / 0.12).toFixed(3));
-    }
-    if (s.hasAttribute("data-tiles")) {
-      const grid = $(".tl", s)!;
-      $$("[data-tile]", s).forEach((t, i) => {
-        const d = tileSeed(i, 1) * 0.3;
-        const e = ease(clamp01((p * 0.9 + 0.12 - d) / 0.45));
-        const dx = (tileSeed(i, 2) - 0.5) * 70, dy = (tileSeed(i, 3) - 0.5) * 60 + 30, rot = (tileSeed(i, 4) - 0.5) * 40;
-        t.style.transform = e >= 1 ? "" : `translate(${dx * (1 - e)}vw, ${dy * (1 - e)}vh) rotate(${rot * (1 - e)}deg)`;
-        t.style.opacity = String(Math.min(1, e * 1.6));
-      });
-      grid.classList.toggle("is-whole", p > 0.88);
-      grid.style.setProperty("--cap", clamp01((p - 0.88) / 0.1).toFixed(3));
-    }
-    if (s.hasAttribute("data-feats")) {
-      const items = $$("[data-feat]", s);
-      const imgs = $$("[data-feat-img]", s);
-      const k = Math.min(items.length - 1, Math.floor(p * items.length));
-      items.forEach((it, i) => it.classList.toggle("is-on", i === k));
-      imgs.forEach((im, i) => im.classList.toggle("is-on", i === k));
-      s.style.setProperty("--fp", p.toFixed(3));
-    }
-  }
+/* Words reveal as a quick staggered fade once in view. */
+const playWords = (s: HTMLElement) => {
+  const show = () => {
+    $$("[data-w]", s).forEach((w) => w.classList.add("on"));
+    s.style.setProperty("--ul", "1");
+    $("[data-chips]", s)?.classList.add("on");
+    s.style.setProperty("--tail", "1");
+  };
+  if (!motion) return show();
+  s.style.setProperty("--ul", "0");
+  const io = new IntersectionObserver(([en]) => { if (en.isIntersecting) { io.disconnect(); show(); } }, { threshold: 0.3 });
+  io.observe(s);
+};
+
+/* Features: auto-advance while in view; click or Enter to pick one. */
+const playFeats = (s: HTMLElement) => {
+  const items = $$("[data-feat]", s);
+  const imgs = $$("[data-feat-img]", s);
+  let k = 0, timer = 0, visible = false;
+  const set = (n: number) => {
+    k = (n + items.length) % items.length;
+    items.forEach((it, i) => it.classList.toggle("is-on", i === k));
+    imgs.forEach((im, i) => im.classList.toggle("is-on", i === k));
+    s.style.setProperty("--fp", ((k + 1) / items.length).toFixed(3));
+  };
+  const run = () => { clearInterval(timer); if (visible && motion) timer = window.setInterval(() => set(k + 1), 4500); };
+  items.forEach((it, i) => {
+    it.addEventListener("click", () => { set(i); run(); });
+    it.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); set(i); run(); } });
+  });
+  set(0);
+  new IntersectionObserver(([en]) => { visible = en.isIntersecting; run(); }, { threshold: 0.3 }).observe(s);
+};
+
+if ("IntersectionObserver" in window) {
+  scrubs.forEach((s) => {
+    if (s.hasAttribute("data-words")) playWords(s);
+    if (s.hasAttribute("data-tiles")) playTiles(s);
+    if (s.hasAttribute("data-feats")) playFeats(s);
+  });
+}
+
+const collageFrame = () => {
+  const vh = window.innerHeight;
   for (const c of collages) {
     const r = c.getBoundingClientRect();
     c.style.setProperty("--cp", (motion ? ease(clamp01((vh - r.top) / (vh * 0.9))) : 1).toFixed(3));
   }
 };
-if (scrubs.length || collages.length) {
+if (collages.length) {
   let queued = false;
-  const q = () => { if (!queued) { queued = true; requestAnimationFrame(() => { story(); queued = false; }); } };
+  const q = () => { if (!queued) { queued = true; requestAnimationFrame(() => { collageFrame(); queued = false; }); } };
   window.addEventListener("scroll", q, { passive: true });
   window.addEventListener("resize", q);
-  story();
+  collageFrame();
 }
 
 /* Sun / shade switch */

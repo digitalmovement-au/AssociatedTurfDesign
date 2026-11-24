@@ -1,0 +1,28 @@
+---
+import { varieties } from "../data/site";
+import Icon from "./Icon.astro";
+---
+<div class="vm" aria-label="Turf varieties we grow">
+  <div class="vm__track">
+    {[0, 1].map((copy) => varieties.map((v, i) => (
+      <>
+        <a class:list={["vm__item", i % 2 === 1 && "vm__item--outline"]} href={v.href} tabindex={copy === 1 ? -1 : undefined} aria-hidden={copy === 1 ? "true" : undefined}>{v.name}</a>
+        <span class="vm__leaf" aria-hidden="true"><Icon name="leaf" size={22} /></span>
+      </>
+    )))}
+  </div>
+</div>
+<style>
+  .vm { background: var(--color-forest); overflow: hidden; padding-block: clamp(0.9rem, 1.8vw, 1.4rem); }
+  .vm__track { display: flex; align-items: center; gap: clamp(1.25rem, 2.6vw, 2.25rem); width: max-content; animation: vm-scroll 55s linear infinite; }
+  .vm:hover .vm__track, .vm:focus-within .vm__track { animation-play-state: paused; }
+  @keyframes vm-scroll { to { transform: translateX(calc(-50% - clamp(1.25rem, 2.6vw, 2.25rem) / 2)); } }
+  .vm__item { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.6rem, 3.2vw, 2.6rem); line-height: 1.15; color: #fff; text-decoration: none; white-space: nowrap; transition: color 0.25s; }
+  .vm__item--outline { color: transparent; -webkit-text-stroke: 1.2px rgba(255, 255, 255, 0.55); }
+  .vm__item:hover { color: var(--color-sprout); -webkit-text-stroke: 0; }
+  .vm__leaf { display: inline-grid; color: var(--color-sprout); flex: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .vm { overflow-x: auto; }
+    .vm__track { animation: none; padding-inline: var(--gutter); }
+  }
+</style>

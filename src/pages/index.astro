@@ -2,6 +2,7 @@
 import Base from "../layouts/Base.astro";
 import Icon from "../components/Icon.astro";
 import ReviewsWall from "../components/ReviewsWall.astro";
+import VarietyMarquee from "../components/VarietyMarquee.astro";
 import VarietyGrid from "../components/VarietyGrid.astro";
 import Faq from "../components/Faq.astro";
 import PostCards from "../components/PostCards.astro";
@@ -119,6 +120,8 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
     </div>
   </section>
 
+  <VarietyMarquee />
+
   <section class="pin pin--feat" data-scrub data-feats>
     <div class="pin__stick dots">
       <div class="wrap ft">
@@ -127,7 +130,7 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
           <div class="ft__list">
             <span class="ft__rail" aria-hidden="true"><i></i></span>
             {features.map((f, i) => (
-              <div class:list={["ft__item", i === 0 && "is-on"]} data-feat>
+              <div class:list={["ft__item", i === 0 && "is-on"]} data-feat tabindex="0" role="button" aria-label={`Show: ${f.title}`}>
                 <h3 class="ft__t"><Icon name={f.icon} size={20} />{f.title}</h3>
                 <p class="ft__b">{f.body}</p>
               </div>
@@ -259,15 +262,10 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
   @media (max-width: 900px) { .hx { min-height: 0; } .hx__in { grid-template-columns: minmax(0, 1fr); padding-top: 4rem; } }
   @media (max-width: 720px) { .hx { text-align: center; } .hx__h1, .hx__lede { margin-inline: auto; } .hx__btns { flex-direction: column; } .hx__btns .btn { min-width: 0; width: 100%; } .hx__form { text-align: left; } }
 
-  /* Pinned scenes */
+  /* Scenes: no scroll pinning; each plays its reveal once it comes into view. */
   .pin { position: relative; }
-  .pin--statement { height: 220vh; }
-  .pin--tiles { height: 230vh; }
-  .pin--story { height: 250vh; }
-  .pin--feat { height: 420vh; }
-  .pin__stick { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; overflow: hidden; padding-top: calc(var(--header-h) * 0.5); }
-  :global(html:not(.js-motion)) .pin { height: auto; }
-  :global(html:not(.js-motion)) .pin__stick { position: relative; height: auto; padding-block: 6rem; }
+  .pin__stick { position: relative; display: flex; align-items: center; overflow: hidden; padding-block: clamp(4.5rem, 9vw, 7.5rem); }
+  .pin--tiles .pin__stick { padding-block: clamp(2rem, 5vw, 4rem); }
 
   .w { transition: filter 0.3s linear, opacity 0.3s linear; }
   :global(html.js-motion) [data-words] .w { opacity: 0.16; filter: blur(7px); }
@@ -317,21 +315,19 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
   .sy__btns { margin-top: 1.5rem; justify-content: center; }
   @media (max-width: 720px) { .sy__text { font-size: 1.45rem; } .sy__more { font-size: 0.98rem; } .sy__btns .btn--ghost { display: none; } .st__text { font-size: 1.9rem; } }
   :global(html.js-motion) .sy__tail { opacity: var(--tail, 0); transform: translateY(calc((1 - var(--tail, 0)) * 16px)); }
-  /* Mobile: no pinning on the statement and story; words reveal on their own once in view. */
-  @media (max-width: 720px) {
-    .pin--statement, .pin--story { height: auto; }
-    .pin--statement .pin__stick, .pin--story .pin__stick { position: relative; height: auto; padding-block: 4.5rem; }
-    [data-words] .w { transition: filter 0.45s ease, opacity 0.45s ease; transition-delay: calc(var(--i, 0) * 30ms); }
-    .st__line--mark .w { transition: filter 0.45s ease, opacity 0.45s ease, background-size 0.7s var(--ease) 0.4s; }
-    :global(html.js-motion) .sy__tail { transition: opacity 0.6s ease 0.9s, transform 0.6s var(--ease) 0.9s; }
-  }
+  [data-words] .w { transition: filter 0.45s ease, opacity 0.45s ease; transition-delay: calc(var(--i, 0) * 28ms); }
+  .st__line--mark .w { transition: filter 0.45s ease, opacity 0.45s ease, background-size 0.7s var(--ease) 0.4s; }
+  :global(html.js-motion) .sy__tail { transition: opacity 0.6s ease 0.9s, transform 0.6s var(--ease) 0.9s; }
 
   .ft { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
   .ft__h { font-size: clamp(2rem, 3.4vw, 3.1rem); margin-bottom: 1.5rem; max-width: 14ch; }
   .ft__list { position: relative; padding-left: 1.75rem; display: grid; gap: 0.25rem; }
   .ft__rail { position: absolute; left: 0; top: 0.4rem; bottom: 0.4rem; width: 5px; border-radius: 3px; background: var(--color-line); overflow: hidden; }
   .ft__rail i { display: block; width: 100%; height: calc(var(--fp, 0) * 100%); background: repeating-linear-gradient(180deg, var(--color-field) 0 18px, #34c25e 18px 36px); }
-  .ft__item { padding: 0.7rem 0; }
+  .ft__item { padding: 0.7rem 0; cursor: pointer; outline: none; }
+  .ft__item:focus-visible .ft__t { text-decoration: underline; text-underline-offset: 4px; }
+  .ft__item:not(.is-on):hover .ft__t { color: var(--color-forest); }
+  .ft__rail i { transition: height 0.6s var(--ease); }
   .ft__t { display: flex; align-items: center; gap: 0.6rem; margin: 0; font-family: var(--font-sans); font-weight: 600; font-size: 1.05rem; letter-spacing: 0; color: var(--color-muted); transition: color 0.3s, font-size 0.3s; }
   .ft__t :global(svg) { flex: none; }
   .ft__b { margin: 0; max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.5s var(--ease), opacity 0.4s, margin 0.4s; }
@@ -340,7 +336,7 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
   .ft__item.is-on .ft__b { max-height: 9em; opacity: 1; margin-top: 0.4rem; }
   :global(html:not(.js-motion)) .ft__b { max-height: none; opacity: 1; margin-top: 0.4rem; }
   .ft__btns { margin-top: 1.75rem; }
-  .ft__media { position: relative; aspect-ratio: 1 / 1; max-height: 78svh; width: 100%; border-radius: var(--radius-lg); overflow: hidden; background: var(--color-stripe-b); box-shadow: var(--shadow); }
+  .ft__media { position: relative; aspect-ratio: 1 / 1; max-height: 620px; width: 100%; border-radius: var(--radius-lg); overflow: hidden; background: var(--color-stripe-b); box-shadow: var(--shadow); }
   .ft__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.06); transition: opacity 0.7s var(--ease), transform 1.2s var(--ease); }
   .ft__img.is-on { opacity: 1; transform: none; }
   @media (max-width: 900px) {
