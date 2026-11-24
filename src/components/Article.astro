@@ -68,7 +68,7 @@ const endsPage = (bi: number) => blocks.slice(bi + 1).every((b) => b.b === "faq"
           <div class="art__faq">
             <h2>{b.title}</h2>
             {b.items.map((f, i) => (
-              <details class="art__q" open={i === 0}>
+              <details class="art__q">
                 <summary><span>{f.q}</span><span class="art__qi" aria-hidden="true"><Icon name="plus" size={18} /></span></summary>
                 <div class="prose" set:html={md(f.a)} />
               </details>

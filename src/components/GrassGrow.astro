@@ -1,34 +1,35 @@
 ---
-/* Decorative grass patch, fixed bottom-left, grows with page scroll (main.ts sets --g from 0 to 1). */
+/* Decorative grass strip along the bottom of the screen. main.ts sets --g (0 to 1): sprouts on load, grows with scroll. */
 const rand = (i: number, k: number) => { const x = Math.sin(i * 91.17 + k * 13.73) * 43758.5453; return x - Math.floor(x); };
-const N = 22;
+const W = 1600, H = 140, N = 230;
+const shades = ["#00a335", "#008a2d", "#34c25e", "#1f7a3a", "#5cc46e"];
 const blades = Array.from({ length: N }, (_, i) => {
-  const x = 6 + (i / (N - 1)) * 128 + (rand(i, 1) - 0.5) * 6;
-  const h = 55 + rand(i, 2) * 75;          // full height
-  const lean = (rand(i, 3) - 0.5) * 34;     // tip offset
-  const w = 3.2 + rand(i, 4) * 3;           // base half-width
-  const shade = ["#00a335", "#008a2d", "#34c25e", "#1f7a3a", "#8fd694"][Math.floor(rand(i, 5) * 5)];
-  const delay = rand(i, 6) * 0.25;          // stagger: some blades start later
-  const d = `M${(x - w).toFixed(1)} 140 Q${(x - w * 0.4 + lean * 0.35).toFixed(1)} ${(140 - h * 0.55).toFixed(1)} ${(x + lean).toFixed(1)} ${(140 - h).toFixed(1)} Q${(x + w * 0.5 + lean * 0.3).toFixed(1)} ${(140 - h * 0.5).toFixed(1)} ${(x + w).toFixed(1)} 140Z`;
-  return { d, shade, delay: delay.toFixed(2), sway: (2.6 + rand(i, 7) * 1.8).toFixed(2), x: x.toFixed(1) };
+  const x = (i / (N - 1)) * W + (rand(i, 1) - 0.5) * 8;
+  const h = 60 + rand(i, 2) * 78;
+  const lean = (rand(i, 3) - 0.5) * 30;
+  const w = 3 + rand(i, 4) * 3.2;
+  const d = `M${(x - w).toFixed(1)} ${H} Q${(x - w * 0.4 + lean * 0.35).toFixed(1)} ${(H - h * 0.55).toFixed(1)} ${(x + lean).toFixed(1)} ${(H - h).toFixed(1)} Q${(x + w * 0.5 + lean * 0.3).toFixed(1)} ${(H - h * 0.5).toFixed(1)} ${(x + w).toFixed(1)} ${H}Z`;
+  return { d, fill: shades[Math.floor(rand(i, 5) * shades.length)], delay: (rand(i, 6) * 0.25).toFixed(2), x: x.toFixed(1), group: i % 4 };
 });
+const groups = [0, 1, 2, 3].map((g) => blades.filter((b) => b.group === g));
 ---
 <div class="gg" aria-hidden="true" data-grass>
-  <svg viewBox="0 0 140 140" preserveAspectRatio="xMidYMax meet">
-    {blades.map((b) => (
-      <g class="gg__b" style={`--d:${b.delay};--s:${b.sway}s;transform-origin:${b.x}px 140px`}>
-        <path d={b.d} fill={b.shade} />
+  <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMax slice">
+    {groups.map((list, gi) => (
+      <g class={`gg__sway gg__sway--${gi}`}>
+        {list.map((b) => <path class="gg__b" d={b.d} fill={b.fill} style={`--d:${b.delay};transform-origin:${b.x}px ${H}px`} />)}
       </g>
     ))}
-    <rect x="0" y="136" width="140" height="4" rx="2" fill="#1f7a3a" />
   </svg>
 </div>
 <style>
-  .gg { position: fixed; left: clamp(0.25rem, 1.2vw, 1rem); bottom: 0; z-index: 30; width: clamp(90px, 9vw, 150px); height: clamp(90px, 9vw, 150px); pointer-events: none; --g: 0; }
-  .gg svg { width: 100%; height: 100%; overflow: visible; display: block; }
-  .gg__b { transform: scaleY(clamp(0.04, calc((var(--g) - var(--d)) / (1 - var(--d))), 1)); transition: transform 0.25s linear; }
-  .gg__b path { transform-origin: inherit; transform-box: view-box; animation: gg-sway var(--s) ease-in-out infinite alternate; }
-  @keyframes gg-sway { from { transform: skewX(-3deg); } to { transform: skewX(3deg); } }
-  @media (max-width: 720px) { .gg { width: 74px; height: 74px; left: 0.2rem; } }
-  @media (prefers-reduced-motion: reduce) { .gg__b path { animation: none; } .gg__b { transition: none; } }
+  .gg { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; height: clamp(48px, 5.5vw, 78px); pointer-events: none; --g: 0; }
+  .gg svg { width: 100%; height: 100%; display: block; }
+  .gg__b { transform: scaleY(clamp(0.03, calc((var(--g) - var(--d)) / (1 - var(--d))), 1)); transition: transform 0.25s linear; }
+  .gg__sway { transform-box: fill-box; transform-origin: 50% 100%; animation: gg-sway 3.2s ease-in-out infinite alternate; }
+  .gg__sway--1 { animation-duration: 3.9s; animation-delay: -1s; }
+  .gg__sway--2 { animation-duration: 2.8s; animation-delay: -2s; }
+  .gg__sway--3 { animation-duration: 4.4s; animation-delay: -0.5s; }
+  @keyframes gg-sway { from { transform: skewX(-2.5deg); } to { transform: skewX(2.5deg); } }
+  @media (prefers-reduced-motion: reduce) { .gg__sway { animation: none; } .gg__b { transition: none; } }
 </style>

@@ -78,7 +78,7 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
 
   <section class="pin pin--about" data-scrub data-words>
     <div class="pin__stick dots">
-      <div class="wrap-narrow mg st sy">
+      <div class="wrap mg st sy">
         <p class="st__text display">
           {statement.map((l) => (
             <span class:list={["st__line", l.mark && "st__line--mark"]}>{l.line.split(" ").map((w) => <span class="w" data-w>{w} </span>)}</span>
@@ -320,9 +320,9 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
 
   /* Merged statement + story: one centred column */
   .mg { text-align: center; }
-  .mg .st__text { font-size: clamp(2.1rem, 4.6vw, 4.2rem); margin: 0 auto 1.5rem; }
-  .mg .sy__text { font-size: clamp(1.3rem, 2.2vw, 1.9rem); margin: 0 auto 1.25rem; max-width: 40ch; }
-  .mg .sy__more { margin: 0 auto 1.75rem; }
+  .mg .st__text { font-size: clamp(2.1rem, 4.2vw, 4rem); margin: 0 auto 1.5rem; max-width: none; }
+  .mg .sy__text { font-size: clamp(1.3rem, 2.2vw, 1.9rem); margin: 0 auto 1.25rem; max-width: none; }
+  .mg .sy__more { margin: 0 auto 1.75rem; max-width: none; }
   .mg .st__chips { margin: 0 auto; }
   .mg .sy__btns { justify-content: center; margin-top: 1.75rem; }
   .mg .st__chips li { white-space: nowrap; }

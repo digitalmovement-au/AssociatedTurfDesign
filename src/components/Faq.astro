@@ -22,7 +22,7 @@ const { title = "Expert Answers to Common Turf Questions", intro, items, label =
     </div>
     <div class="faq__list">
       {items.map((f, i) => (
-        <details class="faq__item" open={i === 0}>
+        <details class="faq__item">
           <summary><span>{f.q}</span><span class="faq__ic" aria-hidden="true"><Icon name="plus" size={20} /></span></summary>
           <div class="faq__a" set:html={md(f.a)} />
         </details>
