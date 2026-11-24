@@ -406,14 +406,14 @@ $$("[data-steps-hw]").forEach((sec) => {
   }, { threshold: 0.2 }).observe(sec);
 });
 
-/* ───────────── Growing grass: none on load, grows as you scroll (fastest early on) ───────────── */
+/* ───────────── Growing grass: none on load, grows evenly with page scroll ───────────── */
 const grass = $<HTMLElement>("[data-grass]");
 if (grass) {
   let q = false;
   const grow = () => {
     const max = document.documentElement.scrollHeight - window.innerHeight;
     const p = max > 0 ? Math.min(1, window.scrollY / max) : 0;
-    const g = 1 - Math.pow(1 - p, 3);
+    const g = p;
     grass.style.setProperty("--g", g.toFixed(3));
     grass.classList.toggle("is-empty", g <= 0.001);
     q = false;
