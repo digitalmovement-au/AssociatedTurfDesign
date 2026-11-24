@@ -319,6 +319,7 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
   .mg .st__text { font-size: clamp(2.1rem, 4vw, 3.9rem); margin: 0 0 2rem; }
   .mg .sy__text { font-size: clamp(1.35rem, 2vw, 1.9rem); margin: 0 0 1.25rem; max-width: none; }
   .mg .sy__more { margin-inline: 0; }
+  @media (min-width: 721px) { .mg .st__chips li { white-space: nowrap; font-size: 0.9rem; padding-right: 1rem; } }
   .mg .sy__btns { justify-content: flex-start; }
   @media (max-width: 900px) {
     .mg { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
