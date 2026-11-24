@@ -1,37 +1,98 @@
 ---
-import { testimonials, business } from "../data/site";
+import { googleReviews, business } from "../data/site";
 import Icon from "./Icon.astro";
 interface Props { title?: string }
 const { title = "Loved by Sydney Homeowners and Landscapers" } = Astro.props;
+const initial = (n: string) => n.trim().charAt(0).toUpperCase();
+const hues = [148, 28, 205, 340, 262, 95, 12, 180, 48];
 ---
-<section class="rev section--tight">
-  <div class="wrap rev__in">
+<section class="rev section--tight" data-rev>
+  <div class="wrap">
     <div class="rev__head">
-      <p class="label">Customer reviews</p>
-      <h2 class="h3">{title}</h2>
-      <a class="link" href={business.reviewsUrl} target="_blank" rel="noopener">Read our Google reviews <Icon name="arrow" size={16} /></a>
+      <div>
+        <p class="label">Customer reviews</p>
+        <h2 class="h3">{title}</h2>
+        <p class="rev__sum">
+          <svg class="rev__g" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.9 6.1C12.4 13.7 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.8c4.3-4 6.9-9.9 6.9-17.2z"/><path fill="#FBBC05" d="M10.5 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C.9 16.6 0 20.2 0 24s.9 7.4 2.6 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.8c-2.1 1.4-4.8 2.3-8.5 2.3-6.3 0-11.6-4.2-13.5-10l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>
+          <span class="rev__sum-stars" aria-hidden="true">{Array.from({ length: 5 }, () => <Icon name="star" size={16} />)}</span>
+          <span>Real reviews from our Google customers</span>
+        </p>
+      </div>
+      <div class="rev__ctrl">
+        <button class="rev__nav" type="button" data-rev-prev aria-label="Previous reviews"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button class="rev__nav" type="button" data-rev-next aria-label="Next reviews"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+      </div>
     </div>
-    <ul class="rev__list">
-      {testimonials.map((t) => (
-        <li>
-          <p class="rev__stars" aria-label="5 out of 5 stars">{Array.from({ length: 5 }, () => <Icon name="star" size={16} />)}</p>
-          <blockquote><p>{t.quote}</p></blockquote>
-          <p class="rev__who"><strong>{t.name}</strong> {t.place}</p>
+    <ul class="rev__track" data-rev-track>
+      {googleReviews.map((r, i) => (
+        <li class="rev__card">
+          <div class="rev__top">
+            <span class="rev__av" style={`--h:${hues[i % hues.length]}`} aria-hidden="true">{initial(r.name)}</span>
+            <div class="rev__meta"><strong>{r.name}</strong><span>{r.date}</span></div>
+            <svg class="rev__g rev__g--sm" viewBox="0 0 48 48" aria-label="Google review"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.6 13.3l7.9 6.1C12.4 13.7 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.8c4.3-4 6.9-9.9 6.9-17.2z"/><path fill="#FBBC05" d="M10.5 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C.9 16.6 0 20.2 0 24s.9 7.4 2.6 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.8c-2.1 1.4-4.8 2.3-8.5 2.3-6.3 0-11.6-4.2-13.5-10l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>
+          </div>
+          <p class="rev__stars" aria-label={`${r.rating} out of 5 stars`}>{Array.from({ length: r.rating }, () => <Icon name="star" size={16} />)}</p>
+          <p class="rev__text" data-rev-text>{r.text}</p>
+          <button class="rev__more" type="button" data-rev-more hidden>Read more</button>
         </li>
       ))}
     </ul>
+    <p class="rev__all"><a class="link" href={business.reviewsUrl} target="_blank" rel="noopener">See all our reviews on Google <Icon name="arrow" size={16} /></a></p>
   </div>
 </section>
+<script>
+  document.querySelectorAll<HTMLElement>("[data-rev]").forEach((sec) => {
+    const track = sec.querySelector<HTMLElement>("[data-rev-track]")!;
+    const step = () => (track.querySelector<HTMLElement>(".rev__card")?.offsetWidth ?? 300) + 16;
+    sec.querySelector("[data-rev-prev]")?.addEventListener("click", () => track.scrollBy({ left: -step(), behavior: "smooth" }));
+    sec.querySelector("[data-rev-next]")?.addEventListener("click", () => track.scrollBy({ left: step(), behavior: "smooth" }));
+    const check = () => sec.querySelectorAll<HTMLElement>("[data-rev-text]").forEach((t) => {
+      const btn = t.nextElementSibling as HTMLButtonElement;
+      if (t.classList.contains("is-open")) return;
+      btn.hidden = t.scrollHeight <= t.clientHeight + 2;
+    });
+    sec.querySelectorAll<HTMLButtonElement>("[data-rev-more]").forEach((b) => b.addEventListener("click", () => {
+      const t = b.previousElementSibling as HTMLElement;
+      const open = t.classList.toggle("is-open");
+      b.textContent = open ? "Show less" : "Read more";
+    }));
+    check();
+    window.addEventListener("resize", check);
+  });
+</script>
 <style>
   .rev { border-block: 1px solid var(--color-line); background: #fff; }
-  .rev__in { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr); gap: clamp(1.5rem, 4vw, 4rem); align-items: center; }
+  .rev__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; margin-bottom: 1.75rem; }
   .rev__head h2 { margin-bottom: 0.6rem; }
-  .rev__list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  .rev__list li { padding: 1.4rem 1.5rem; border-radius: var(--radius-md); background: var(--color-stripe-a); }
-  .rev__stars { display: flex; gap: 2px; color: var(--color-sun); margin: 0 0 0.6rem; }
-  blockquote { margin: 0; font-family: var(--font-display); font-size: 1.2rem; line-height: 1.4; color: var(--color-forest); font-variation-settings: "SOFT" 100; }
-  .rev__who { margin: 0.75rem 0 0; font-size: 0.92rem; color: var(--color-muted); }
-  .rev__who strong { color: var(--color-forest); }
-  @media (max-width: 900px) { .rev__in { grid-template-columns: minmax(0, 1fr); text-align: center; } .rev__head .label { justify-content: center; } }
-  @media (max-width: 620px) { .rev__list { grid-template-columns: minmax(0, 1fr); } .rev__stars { justify-content: center; } }
+  .rev__sum { display: flex; align-items: center; flex-wrap: wrap; gap: 0.6rem; margin: 0; color: var(--color-muted); font-size: 0.95rem; }
+  .rev__sum-stars { display: inline-flex; gap: 2px; color: var(--color-sun); }
+  .rev__g { width: 22px; height: 22px; flex: none; }
+  .rev__g--sm { width: 18px; height: 18px; margin-left: auto; }
+  .rev__ctrl { display: flex; gap: 0.5rem; flex: none; }
+  .rev__nav { width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--color-line); background: #fff; color: var(--color-forest); display: grid; place-items: center; cursor: pointer; transition: background 0.25s, color 0.25s, border-color 0.25s; }
+  .rev__nav:hover { background: var(--color-forest); border-color: var(--color-forest); color: #fff; }
+  .rev__track { list-style: none; margin: 0; padding: 0.25rem 0 1rem; display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 2rem) / 3); gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .rev__track::-webkit-scrollbar { display: none; }
+  .rev__card { scroll-snap-align: start; display: flex; flex-direction: column; padding: 1.4rem 1.5rem; border-radius: var(--radius-md); background: var(--color-stripe-a); border: 1px solid var(--color-line); }
+  .rev__top { display: flex; align-items: center; gap: 0.75rem; }
+  .rev__av { width: 42px; height: 42px; border-radius: 50%; flex: none; display: grid; place-items: center; background: hsl(var(--h) 45% 38%); color: #fff; font-weight: 600; font-size: 1.05rem; }
+  .rev__meta { display: grid; line-height: 1.3; text-align: left; }
+  .rev__meta strong { color: var(--color-forest); text-transform: capitalize; }
+  .rev__meta span { font-size: 0.82rem; color: var(--color-muted); }
+  .rev__stars { display: flex; gap: 2px; color: var(--color-sun); margin: 0.9rem 0 0.55rem; }
+  .rev__text { margin: 0; color: var(--color-ink); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+  .rev__text.is-open { -webkit-line-clamp: unset; display: block; }
+  .rev__more { align-self: flex-start; margin-top: 0.5rem; padding: 0; border: 0; background: none; color: var(--color-field-deep); font-weight: 600; font-size: 0.9rem; cursor: pointer; }
+  .rev__all { margin: 0.75rem 0 0; text-align: center; }
+  @media (max-width: 980px) { .rev__track { grid-auto-columns: calc((100% - 1rem) / 2); } }
+  @media (max-width: 720px) {
+    .rev__head { flex-direction: column; align-items: center; text-align: center; }
+    .rev__head .label { justify-content: center; }
+    .rev__sum { justify-content: center; }
+    .rev__ctrl { display: none; }
+    .rev__track { grid-auto-columns: 86%; }
+    .rev__card { text-align: center; }
+    .rev__stars { justify-content: center; }
+    .rev__more { align-self: center; }
+  }
 </style>

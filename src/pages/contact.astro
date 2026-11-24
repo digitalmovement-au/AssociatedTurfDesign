@@ -21,7 +21,7 @@ const e = get("/contact/")!;
           <li><span class="ct__ic"><Icon name="clock" /></span><div><p class="ct__k">Trading hours</p>{business.hours.map((h) => <p class="ct__h"><span>{h.days}</span><span>{h.time}</span></p>)}</div></li>
         </ul>
         <div class="ct__map">
-          <iframe title="Map to Associated Turf, Cornwallis Road, Windsor" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Cornwallis+Road+Windsor+NSW+2756&output=embed"></iframe>
+          <iframe title="Map to Associated Turf, Cornwallis Road, Windsor" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src={business.mapEmbed}></iframe>
         </div>
       </div>
       <div class="ct__form"><QuoteForm id="contact-form" title="Send Us a Message" sub="We usually reply within one business day." /></div>

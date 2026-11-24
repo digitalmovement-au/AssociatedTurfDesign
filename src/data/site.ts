@@ -20,6 +20,7 @@ export const business = {
   region: "NSW",
   postcode: "2756",
   address: "Cornwallis Road, Windsor NSW 2756",
+  mapEmbed: "https://maps.google.com/maps?q=Associated+Turf,+Cornwallis+Road,+Windsor+NSW+2756&z=14&output=embed",
   mapUrl: "https://www.google.com/maps/search/?api=1&query=Associated+Turf+Cornwallis+Road+Windsor+NSW",
   reviewsUrl: "https://www.google.com/search?q=Associated+Turf+Windsor+NSW+reviews",
   hours: [
@@ -140,10 +141,17 @@ export const steps = [
   { title: "Delivered and laid", body: "We deliver on time, with optional Maxi Turf laying service." },
 ];
 
-/** Two testimonials published on the live residential page. */
-export const testimonials = [
-  { quote: "Our backyard has never looked better! The turf was delivered on time, and the team gave excellent advice.", name: "Sarah M.", place: "North Shore" },
-  { quote: "Professional service and top-quality turf. Our new lawn is the envy of the street!", name: "James L.", place: "Inner West" },
+/** Google reviews, as shown by the Trustindex widget on the live site (associatedturf.com.au). */
+export const googleReviews = [
+  { name: "Sean Lee", date: "23 January 2025", rating: 5, text: "Professional and friendly service for last 5 years down the track thank you April." },
+  { name: "Eren Salahi", date: "19 December 2024", rating: 5, text: "Very helpful and pleasant." },
+  { name: "Vijay Visweswaran", date: "11 October 2024", rating: 5, text: "Our landscaper ordered Sir Walter Buffalo turf. Delivered fresh and green early today. Looks amazing after it was put down. Recommended." },
+  { name: "haylee gibson", date: "15 September 2024", rating: 5, text: "Your turf from Associated Turf is absolutely amazing. It has transformed my outdoor space into a lush and beautiful area. Thank you for providing such high-quality turf and for the smooth installation process. Highly recommend Associated Turf to anyone looking for top-notch turf! Your advice on how to keep my turf well looked after was very helpful, amazing what a little bit of water can do to keep the lush green grass looking good 👌🏽" },
+  { name: "Michael Fenton", date: "17 May 2024", rating: 5, text: "That was our job MG Hire & Southern Higher Landscaping Plus. We could not have been more pleased with the way April looked after us on the phone and Zak for our delivery. Because of the gradient of the job we needed delivery on pallets so they could be taken up to the actual job site by bobcat. This was no issue for the team from Associated Turf." },
+  { name: "Stacey Hunt", date: "12 March 2024", rating: 5, text: "If you want your lawn to be the envy of your neighbours then these guys are where to find it. We are constantly getting compliments from passes by on our Matilda lawn" },
+  { name: "Zak MacDonald", date: "31 January 2024", rating: 5, text: "Great quality turf at a competitive price, highly recommend" },
+  { name: "Ben Chapman", date: "16 February 2023", rating: 5, text: "Very professional operation. First company to get back to me and were very helpful with all aspects from service to quality of there turf." },
+  { name: "Kristy Kramer", date: "20 October 2021", rating: 5, text: "Great quality and nice service" },
 ];
 
 export const nav = [

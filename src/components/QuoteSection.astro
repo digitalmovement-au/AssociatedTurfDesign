@@ -46,6 +46,11 @@ const {
         <li><Icon name="mail" size={18} /><a href={`mailto:${business.email}`}>{business.email}</a></li>
         <li><Icon name="truck" size={18} /><span>Delivery Monday to Saturday across Sydney and Regional NSW</span></li>
       </ul>
+
+      <div class="qs__map">
+        <iframe title="Google Map: Associated Turf, Cornwallis Road, Windsor NSW" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src={business.mapEmbed}></iframe>
+        <a class="qs__map-link" href={business.mapUrl} target="_blank" rel="noopener"><Icon name="pin" size={16} />{business.address} <span>Get directions</span></a>
+      </div>
     </div>
     <div class="qs__form">
       <QuoteForm id={`${id}-form`} title={formTitle} sub={formSub} />
@@ -79,6 +84,12 @@ const {
   .qs__contact :global(svg) { color: var(--color-field); flex: none; }
   .qs__contact a { color: var(--color-forest); font-weight: 600; text-decoration: none; }
   .qs__contact small { color: var(--color-muted); }
+  .qs__map { margin-top: 1.75rem; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--color-line); background: #fff; box-shadow: var(--shadow); }
+  .qs__map iframe { display: block; width: 100%; aspect-ratio: 16 / 10; border: 0; background: var(--color-stripe-b); }
+  .qs__map-link { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; padding: 0.85rem 1.1rem; color: var(--color-forest); font-weight: 600; font-size: 0.92rem; text-decoration: none; }
+  .qs__map-link :global(svg) { color: var(--color-field); flex: none; }
+  .qs__map-link span { margin-left: auto; color: var(--color-field-deep); }
+  @media (max-width: 720px) { .qs__map-link { justify-content: center; text-align: center; } .qs__map-link span { margin-left: 0; width: 100%; } }
   @media (max-width: 980px) { .qs__in { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 720px) {
     .qs__copy { text-align: center; }
