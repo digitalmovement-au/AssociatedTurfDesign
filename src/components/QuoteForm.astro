@@ -57,7 +57,9 @@ const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
   .qf__opts { border: 0; padding: 0; margin: 0.15rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .qf__opts legend { font-size: 0.88rem; font-weight: 600; color: var(--color-forest); margin-bottom: 0.45rem; padding: 0; }
   .qf__opts label { position: relative; cursor: pointer; }
-  .qf__opts input { position: absolute; opacity: 0; inset: 0; }
+  .qf__opts input { position: absolute; opacity: 0; inset: 0; cursor: pointer; margin: 0; }
+  .qf__opts span { cursor: pointer; }
+  .qf__opts label:hover input:not(:checked) + span { border-color: var(--color-field); color: var(--color-forest); }
   .qf__opts span { display: inline-block; padding: 0.55rem 0.95rem; border-radius: 999px; border: 1.5px solid var(--color-line); font-size: 0.92rem; font-weight: 500; transition: background 0.2s, border-color 0.2s, color 0.2s; }
   .qf__opts input:checked + span { background: var(--color-forest); border-color: var(--color-forest); color: #fff; }
   .qf__opts input:focus-visible + span { outline: 3px solid var(--color-field); outline-offset: 2px; }
