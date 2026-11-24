@@ -59,7 +59,13 @@ const {
 
 <style>
   .qs__in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
-  .qs__copy .lede { margin-bottom: 1.75rem; }
+  .qs__copy { text-align: center; }
+  .qs__copy .label { justify-content: center; }
+  .qs__copy .lede { margin-bottom: 1.75rem; margin-inline: auto; }
+  .qs__contact { justify-items: center; }
+  .qs__contact li { justify-content: center; }
+  .calc__title { justify-content: center; }
+  .calc__hint { text-align: center; }
   .calc { background: #fff; border-radius: var(--radius-md); border: 1px solid var(--color-line); padding: 1.25rem; }
   .calc__title { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-display); font-weight: 650; font-size: 1.25rem; color: var(--color-forest); margin: 0; }
   .calc__title :global(svg) { color: var(--color-field); }

@@ -45,7 +45,8 @@ const list = varieties.filter((v) => v.slug !== exclude);
 </section>
 
 <style>
-  .vg__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1rem, 2vw, 1.6rem); }
+  .vg__grid { --gap: clamp(1rem, 2vw, 1.6rem); list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--gap); }
+  .vg__grid > li { flex: 0 1 calc((100% - var(--gap) * 2) / 3); min-width: 0; }
   .vcard__link { display: flex; flex-direction: column; height: 100%; background: #fff; border-radius: var(--radius-lg); overflow: hidden; text-decoration: none; color: inherit; border: 1px solid var(--color-line); transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease); }
   .vcard__link:hover { transform: translateY(-6px); box-shadow: var(--shadow); }
   .vcard__img { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--color-stripe-b); }
@@ -63,9 +64,9 @@ const list = varieties.filter((v) => v.slug !== exclude);
   .vcard__more { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 600; color: var(--color-field-deep); }
   .vcard__more :global(svg) { transition: transform 0.35s var(--ease); }
   .vcard__link:hover .vcard__more :global(svg) { transform: translateX(4px); }
-  @media (max-width: 1024px) { .vg__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 1024px) { .vg__grid > li { flex-basis: calc((100% - var(--gap)) / 2); } }
   @media (max-width: 620px) {
-    .vg__grid { grid-template-columns: minmax(0, 1fr); }
+    .vg__grid > li { flex-basis: 100%; }
     .vcard__body { text-align: center; align-items: center; }
     .vcard__meta { justify-content: center; }
   }

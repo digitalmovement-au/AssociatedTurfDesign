@@ -140,4 +140,13 @@ const endsPage = (bi: number) => blocks.slice(bi + 1).every((b) => b.b === "faq"
     .art__h { text-align: center; }
   }
   @media (max-width: 720px) { .art__q summary { text-align: center; } }
+  /* Consistent centred layout: every row is a single centred column */
+  .art__row, .art__intro--meters { grid-template-columns: minmax(0, 1fr); max-width: 860px; margin-inline: auto; gap: 1rem; text-align: center; }
+  .art__row--cont .art__body { grid-column: 1; }
+  .art__h { position: static; text-align: center; }
+  .art__body, .art__intro-t { max-width: none; text-align: center; }
+  .art__intro { text-align: center; }
+  .art__intro-m, .art__meters { max-width: 720px; width: 100%; margin-inline: auto; }
+  .art__intro--meters .art__intro-t { max-width: none; }
+  .art__lead { text-align: center; }
 </style>
