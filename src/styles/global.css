@@ -131,8 +131,8 @@ h4 { font-size: 1.15rem; line-height: 1.25; }
 .btn--ghost { --bg: transparent; --fg: var(--color-forest); border-color: var(--color-forest); }
 .btn--ghost:hover { --bg: var(--color-forest); --fg: #fff; box-shadow: none; }
 .btn--light { --bg: #fff; --fg: var(--color-forest); border-color: #fff; }
-.btn--outline-light { --bg: #1b4630; --fg: #fff; border-color: rgba(255, 255, 255, 0.28); }
-.btn--outline-light:hover { --bg: #fff; --fg: var(--color-forest); border-color: #fff; }
+.btn--outline-light { --bg: var(--color-field); --fg: #fff; border-color: var(--color-field); }
+.btn--outline-light:hover { --bg: var(--color-field-deep); --fg: #fff; border-color: var(--color-field-deep); }
 .btn svg { flex: none; }
 .btn-row { display: flex; flex-wrap: wrap; gap: 0.85rem; }
 .btn-row > .btn { min-width: 240px; }
