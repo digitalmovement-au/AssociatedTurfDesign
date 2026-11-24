@@ -386,3 +386,17 @@ $$("[data-sunshade]").forEach((sec) => {
   };
   btn.addEventListener("click", () => set(btn.getAttribute("aria-checked") !== "true"));
 });
+
+/* ───────────── How it works: light the steps one after another ───────────── */
+$$("[data-steps-hw]").forEach((sec) => {
+  const items = $$("[data-hw]", sec);
+  const set = (k: number) => items.forEach((it, i) => { it.classList.toggle("is-on", i === k); it.classList.toggle("is-done", i < k); });
+  if (!motion || !("IntersectionObserver" in window)) return set(items.length - 1);
+  let k = -1, timer = 0;
+  new IntersectionObserver(([en]) => {
+    clearInterval(timer);
+    if (!en.isIntersecting) return;
+    if (k < 0) set((k = 0));
+    timer = window.setInterval(() => { k = (k + 1) % items.length; set(k); }, 1800);
+  }, { threshold: 0.35 }).observe(sec);
+});

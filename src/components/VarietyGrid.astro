@@ -14,9 +14,9 @@ const list = varieties.filter((v) => v.slug !== exclude);
 ---
 <section class:list={["vg section", striped && "lawn"]} data-drift={striped ? "" : undefined} id={id}>
   <div class="wrap">
-    <div class="head head--split">
-      <div><p class="label">{label}</p><h2>{title}</h2></div>
-      <div><p class="lede">{text}</p><a class="link" href="/turf-varieties/">Compare All Turf Varieties <Icon name="arrow" size={18} /></a></div>
+    <div class="head head--center">
+      <p class="label">{label}</p><h2>{title}</h2>
+      <p class="lede">{text}</p>
     </div>
     <ul class="vg__grid">
       {list.map((v, i) => (
@@ -40,6 +40,7 @@ const list = varieties.filter((v) => v.slug !== exclude);
         </li>
       ))}
     </ul>
+    <div class="sec-cta"><a class="btn" href="/turf-varieties/">Compare All Turf Varieties <Icon name="arrow" size={18} /></a></div>
   </div>
 </section>
 

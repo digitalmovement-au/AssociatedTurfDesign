@@ -8,7 +8,7 @@ import Faq from "../components/Faq.astro";
 import PostCards from "../components/PostCards.astro";
 import QuoteSection from "../components/QuoteSection.astro";
 import QuoteForm from "../components/QuoteForm.astro";
-import { business, img, varieties } from "../data/site";
+import { business, img, varieties, steps } from "../data/site";
 import { all, firstImage, get, tokenize } from "../lib/content";
 
 const faqs = [
@@ -133,9 +133,10 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
 
   <section class="bl section dots">
     <div class="wrap">
-      <div class="bl__head">
+      <div class="head head--center bl__head">
+        <p class="label">Why Associated Turf</p>
         <h2 class="bl__h">Better Lawns Start at the Farm</h2>
-        <div class="btn-row bl__btns"><a class="btn" href="#quote">Get a Free Quote</a><a class="btn btn--ghost" href="/turf-supply/">How We Supply</a></div>
+        <p class="lede">We grow, harvest and deliver every roll ourselves, so you get fresher turf, consistent quality and advice from the people who know it best.</p>
       </div>
       <ul class="bl__grid">
         {features.map((f) => (
@@ -149,6 +150,7 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
           </li>
         ))}
       </ul>
+      <div class="btn-row bl__btns sec-cta"><a class="btn" href="#quote">Get a Free Quote</a><a class="btn btn--ghost" href="/turf-supply/">How We Supply</a></div>
     </div>
   </section>
 
@@ -180,16 +182,23 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
     </div>
   </section>
 
-  <section class="ho section dots">
+  <section class="ho section dots" data-steps-hw>
     <div class="wrap">
-      <h2 class="ho__h">How to order:</h2>
-      <ol class="ho__list">
-        <li data-fade><span class="ho__n">1</span><h3>Choose your turf</h3><p>Compare varieties or ask our team to recommend the best fit for your yard.</p></li>
-        <li data-fade><span class="ho__n">2</span><h3>Request a quote</h3><p>Send your measurements and receive a fast, obligation free quote.</p></li>
-        <li data-fade><span class="ho__n">3</span><h3>We harvest fresh</h3><p>Your turf is cut to order on our farm for peak health and colour.</p></li>
-        <li data-fade><span class="ho__n">4</span><h3>Delivered and laid</h3><p>We deliver on time, with optional Maxi Turf laying service.</p></li>
+      <div class="head head--center">
+        <p class="label">How it works</p>
+        <h2 class="ho__h">From Our Farm to Your Lawn in Four Simple Steps</h2>
+        <p class="lede">Ordering premium turf has never been easier. Our team guides you through every stage.</p>
+      </div>
+      <ol class="hw">
+        {steps.map((st, i) => (
+          <li class="hw__step" data-hw>
+            <span class="hw__n">{String(i + 1).padStart(2, "0")}</span>
+            <h3 class="hw__t">{st.title}</h3>
+            <p class="hw__b">{st.body}</p>
+          </li>
+        ))}
       </ol>
-      <div class="ho__cta"><a class="btn" href="#quote">Get a Free Quote</a></div>
+      <div class="sec-cta"><a class="btn" href="#quote">Get a Free Quote</a></div>
     </div>
   </section>
 
@@ -216,9 +225,8 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
 
   <section class="sp section">
     <div class="wrap">
-      <div class="sp__head">
+      <div class="head head--center sp__head">
         <h2>Turf at a Glance</h2>
-        <a class="link" href="/turf-varieties/">Full Variety Guide <Icon name="arrow" size={18} /></a>
       </div>
       <div class="sp__grid">
         {cmp.rows.map((r) => {
@@ -231,6 +239,7 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
           );
         })}
       </div>
+      <div class="sec-cta"><a class="btn" href="/turf-varieties/">Full Variety Guide <Icon name="arrow" size={18} /></a></div>
     </div>
   </section>
 
@@ -344,20 +353,7 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
   @media (max-width: 900px) { .sw__in { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 720px) { .sw__copy { text-align: center; } .sw__copy .label { justify-content: center; } .sw__picks a { text-align: left; } }
 
-  .ho__h { font-size: clamp(2rem, 3.6vw, 3.2rem); margin-bottom: clamp(2rem, 5vw, 4rem); }
-  .ho__list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(1.25rem, 3vw, 3rem); }
-  .ho__list li { position: relative; padding-left: 1.75rem; }
-  .ho__list li::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 4px; background: repeating-linear-gradient(180deg, var(--color-field) 0 16px, var(--color-sprout) 16px 32px); transform: rotate(1.5deg); }
-  .ho__n { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fff; color: var(--color-forest); font-weight: 700; font-size: 0.9rem; box-shadow: 0 6px 16px -10px rgba(12, 36, 25, 0.6); margin-bottom: 0.9rem; }
-  .ho__list h3 { font-size: 1.45rem; margin-bottom: 0.4rem; }
-  .ho__list p { margin: 0; }
-  .ho__cta { display: flex; justify-content: center; margin-top: clamp(2rem, 4vw, 3rem); }
-  @media (max-width: 960px) { .ho__list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 560px) { .ho__h { text-align: center; } .ho__list { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 720px) {
-    .ho__h { text-align: center; }
-    .ho__list li { padding-left: 0; padding-top: 1.1rem; text-align: center; }
-    .ho__list li::before { top: 0; bottom: auto; left: 50%; width: 64px; height: 4px; transform: translateX(-50%); background: repeating-linear-gradient(90deg, var(--color-field) 0 16px, var(--color-sprout) 16px 32px); }
   }
 
   .cl { overflow-x: clip; }
@@ -377,7 +373,7 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
   @media (max-width: 720px) { .cl__copy { text-align: center; } .cl__copy .lede { margin-inline: auto; } .cl__tags { justify-content: center; } }
 
   .sp { background: #fff; border-block: 1px solid var(--color-line); }
-  .sp__head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .sp__head { margin-bottom: 2rem; }
   .sp__head h2 { margin: 0; }
   .sp__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
   .sp__card { border: 1px solid var(--color-line); border-radius: var(--radius-md); padding: 1.25rem 1.35rem; background: var(--color-paper); }
@@ -389,7 +385,7 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
   .sp__card dt { color: var(--color-muted); font-size: 0.85rem; font-weight: 500; }
   .sp__card dd { margin: 0; color: var(--color-forest); font-weight: 600; text-align: right; }
   @media (max-width: 1000px) { .sp__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 620px) { .sp__grid { grid-template-columns: minmax(0, 1fr); } .sp__head { justify-content: center; text-align: center; } }
+  @media (max-width: 620px) { .sp__grid { grid-template-columns: minmax(0, 1fr); } }
 
   .end { position: relative; isolation: isolate; overflow: hidden; padding-block: clamp(5rem, 12vw, 9rem); color: #e2eee5; text-align: center; }
   .end__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
@@ -421,8 +417,10 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
   }
 
   /* Better lawns: all four features visible */
-  .bl__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
-  .bl__h { font-size: clamp(2rem, 3.6vw, 3.2rem); margin: 0; max-width: 16ch; }
+  .bl__head { margin-bottom: clamp(2rem, 4vw, 3rem); }
+  .bl__h { font-size: clamp(2rem, 3.6vw, 3.2rem); }
+  .bl__body { text-align: center; }
+  .bl__ic { left: 50% !important; transform: translateX(-50%); }
   .bl__grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(0.9rem, 1.6vw, 1.5rem); }
   .bl__card { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--color-line); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 24px 50px -36px rgba(12, 36, 25, 0.5); }
   .bl__img { aspect-ratio: 4 / 3; overflow: hidden; background: var(--color-stripe-b); }
@@ -434,13 +432,32 @@ const cmp = tokenize(get("/turf-varieties/")!.lines).find((t) => t.t === "table"
   .bl__b { margin: 0; font-size: 0.95rem; line-height: 1.6; }
   @media (max-width: 1100px) { .bl__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 720px) {
-    .bl__head { flex-direction: column; align-items: center; text-align: center; }
-    .bl__h { max-width: none; }
     .bl__btns .btn--ghost { display: none; }
     .bl__grid { grid-template-columns: minmax(0, 1fr); }
     .bl__body { text-align: center; }
     .bl__ic { left: 50%; transform: translateX(-50%); }
     .bl__img { aspect-ratio: 16 / 8; }
     .bl__body { padding: 1.9rem 1.2rem 1.3rem; }
+  }
+
+  /* How it works (matches live site) */
+  .ho__h { font-size: clamp(2rem, 3.6vw, 3.2rem); }
+  .hw { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem; counter-reset: none; }
+  .hw__step { position: relative; text-align: center; }
+  .hw__step + .hw__step::before { content: ""; position: absolute; top: 40px; right: calc(50% + 52px); width: calc(100% - 104px + 1.5rem); height: 4px; border-radius: 4px; background: var(--color-line); }
+  .hw__step + .hw__step::after { content: ""; position: absolute; top: 40px; right: calc(50% + 52px); width: calc(100% - 104px + 1.5rem); height: 4px; border-radius: 4px; background: linear-gradient(90deg, var(--color-field-deep), var(--color-sprout)); transform: scaleX(0); transform-origin: left; transition: transform 0.6s var(--ease); }
+  .hw__step.is-done + .hw__step::after, .hw__step + .hw__step.is-done::after, .hw__step + .hw__step.is-on::after { transform: scaleX(1); }
+  .hw__n { position: relative; z-index: 1; display: inline-grid; place-items: center; width: 84px; height: 84px; border-radius: 50%; background: var(--color-forest); color: var(--color-sprout); font-family: var(--font-display); font-weight: 500; font-size: 1.9rem; margin-bottom: 1.25rem; transition: box-shadow 0.4s, transform 0.4s var(--ease); }
+  .hw__step.is-on .hw__n { box-shadow: 0 0 0 7px var(--color-paper), 0 0 0 9px var(--color-sprout); transform: scale(1.06); }
+  .hw__t { font-size: 1.4rem; margin: 0 0 0.5rem; }
+  .hw__b { margin: 0 auto; max-width: 30ch; color: var(--color-muted); }
+  @media (max-width: 900px) {
+    .hw { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); row-gap: 2.5rem; }
+    .hw__step:nth-child(3)::before, .hw__step:nth-child(3)::after { display: none; }
+  }
+  @media (max-width: 560px) {
+    .hw { grid-template-columns: minmax(0, 1fr); row-gap: 2rem; }
+    .hw__step + .hw__step::before, .hw__step + .hw__step::after { display: none; }
+    .hw__n { width: 68px; height: 68px; font-size: 1.5rem; margin-bottom: 0.9rem; }
   }
 </style>

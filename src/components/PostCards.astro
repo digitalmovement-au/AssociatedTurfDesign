@@ -8,9 +8,9 @@ const fmt = (d?: string) => (d ? new Date(d).toLocaleDateString("en-AU", { day: 
 ---
 <section class="pc section">
   <div class="wrap">
-    <div class="head head--split">
-      <div><p class="label">{label}</p><h2>{title}</h2></div>
-      {link && <div><p class="lede">Seasonal advice on laying, watering and caring for your lawn, straight from the people who grow it.</p><a class="link" href="/blog/">View All Articles <Icon name="arrow" size={18} /></a></div>}
+    <div class="head head--center">
+      <p class="label">{label}</p><h2>{title}</h2>
+      {link && <p class="lede">Seasonal advice on laying, watering and caring for your lawn, straight from the people who grow it.</p>}
     </div>
     <ul class="pc__grid">
       {posts.map((p) => (
@@ -27,6 +27,7 @@ const fmt = (d?: string) => (d ? new Date(d).toLocaleDateString("en-AU", { day: 
         </li>
       ))}
     </ul>
+    {link && <div class="sec-cta"><a class="btn" href="/blog/">View All Articles <Icon name="arrow" size={18} /></a></div>}
   </div>
 </section>
 <style>
