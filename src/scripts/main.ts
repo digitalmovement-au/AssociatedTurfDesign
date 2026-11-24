@@ -387,16 +387,35 @@ $$("[data-sunshade]").forEach((sec) => {
   btn.addEventListener("click", () => set(btn.getAttribute("aria-checked") !== "true"));
 });
 
-/* ───────────── How it works: light the steps one after another ───────────── */
+/* ───────────── How it works: quick fill as soon as it is in view, then replay ───────────── */
 $$("[data-steps-hw]").forEach((sec) => {
   const items = $$("[data-hw]", sec);
   const set = (k: number) => items.forEach((it, i) => { it.classList.toggle("is-on", i === k); it.classList.toggle("is-done", i < k); });
   if (!motion || !("IntersectionObserver" in window)) return set(items.length - 1);
-  let k = -1, timer = 0;
+  let timers: number[] = [], loop = 0;
+  const play = () => {
+    timers.forEach(clearTimeout); timers = [];
+    set(0);
+    items.forEach((_, i) => { if (i) timers.push(window.setTimeout(() => set(i), i * 380)); });
+  };
   new IntersectionObserver(([en]) => {
-    clearInterval(timer);
+    clearInterval(loop); timers.forEach(clearTimeout);
     if (!en.isIntersecting) return;
-    if (k < 0) set((k = 0));
-    timer = window.setInterval(() => { k = (k + 1) % items.length; set(k); }, 1800);
-  }, { threshold: 0.35 }).observe(sec);
+    play();
+    loop = window.setInterval(play, items.length * 380 + 2600);
+  }, { threshold: 0.2 }).observe(sec);
 });
+
+/* ───────────── Growing grass: height follows page scroll ───────────── */
+const grass = $<HTMLElement>("[data-grass]");
+if (grass) {
+  let q = false;
+  const grow = () => {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    grass.style.setProperty("--g", (max > 0 ? Math.min(1, window.scrollY / max) : 1).toFixed(3));
+    q = false;
+  };
+  window.addEventListener("scroll", () => { if (!q) { q = true; requestAnimationFrame(grow); } }, { passive: true });
+  window.addEventListener("resize", grow);
+  grow();
+}
