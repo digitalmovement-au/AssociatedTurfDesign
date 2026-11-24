@@ -91,7 +91,7 @@ const split = (s: string) => {
   .vr--flip .vr__media { order: 2; }
   .vr__media { position: sticky; top: calc(var(--header-h) + 2rem); }
   .vr__media :global(.mow) { aspect-ratio: 5 / 4; }
-  .vr__tag { position: absolute; left: 1.25rem; top: 1.25rem; z-index: 3; background: rgba(12, 36, 25, 0.85); color: #fff; font-size: 0.85rem; font-weight: 600; padding: 0.4rem 0.85rem; border-radius: 999px; }
+  .vr__tag { position: absolute; left: 50%; top: 1.25rem; transform: translateX(-50%); white-space: nowrap; text-align: center; z-index: 3; background: rgba(12, 36, 25, 0.85); color: #fff; font-size: 0.85rem; font-weight: 600; padding: 0.4rem 0.85rem; border-radius: 999px; }
   .vr__meters { margin: 1.75rem 0; }
   .vr + .vr { padding-top: 0; }
   @media (max-width: 900px) { .vr__in { grid-template-columns: minmax(0, 1fr); } .vr--flip .vr__media { order: 0; } .vr__media { position: relative; top: 0; } }

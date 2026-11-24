@@ -51,7 +51,7 @@ const list = varieties.filter((v) => v.slug !== exclude);
   .vcard__img { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--color-stripe-b); }
   .vcard__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.9s var(--ease); }
   .vcard__link:hover .vcard__img img { transform: scale(1.06); }
-  .vcard__tag { position: absolute; left: 1rem; top: 1rem; background: rgba(12, 36, 25, 0.82); color: #fff; font-size: 0.8rem; font-weight: 600; padding: 0.35rem 0.75rem; border-radius: 999px; backdrop-filter: blur(4px); }
+  .vcard__tag { position: absolute; left: 50%; top: 1rem; transform: translateX(-50%); white-space: nowrap; text-align: center; background: rgba(12, 36, 25, 0.82); color: #fff; font-size: 0.8rem; font-weight: 600; padding: 0.35rem 0.75rem; border-radius: 999px; backdrop-filter: blur(4px); }
   .vcard__body { padding: 1.35rem 1.4rem 1.5rem; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; }
   .vcard__num { font-family: var(--font-display); font-weight: 650; color: var(--color-field); margin: 0 0 0.4rem; font-size: 1rem; display: flex; justify-content: center; gap: 0.6rem; align-items: center; }
   .vcard__num span { font-family: var(--font-sans); font-weight: 500; font-size: 0.8rem; color: var(--color-muted); padding: 0.15rem 0.55rem; border: 1px solid var(--color-line); border-radius: 999px; }
