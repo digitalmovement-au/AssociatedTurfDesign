@@ -1,39 +1,36 @@
 ---
-/* Decorative grass strip along the bottom of the screen. main.ts sets --g (0 to 1) from page scroll.
-   Built from tiles scaled to the strip height, so every blade shows in full at its own height. */
+/* Decorative grass strip along the bottom of the screen. main.ts scales [data-grass-grow] (0 to 1) with page scroll.
+   Growth and sway are single GPU transforms on whole tiles, so scrolling stays smooth. */
 const rand = (i: number, k: number) => { const x = Math.sin(i * 91.17 + k * 13.73) * 43758.5453; return x - Math.floor(x); };
 const W = 600, H = 140, N = 64, TILES = 7;
 const shades = ["#00a335", "#008a2d", "#34c25e", "#1f7a3a", "#5cc46e"];
 const tile = (t: number) => Array.from({ length: N }, (_, j) => {
   const i = t * 997 + j;
   const x = (j / N) * W + rand(i, 1) * (W / N);
-  const h = 38 + rand(i, 2) * 100;            // 27% to 98% of the strip: clearly different heights
+  const h = 38 + rand(i, 2) * 100;
   const lean = (rand(i, 3) - 0.5) * 34;
   const w = 4.5 + rand(i, 4) * 4;
   const d = `M${(x - w).toFixed(1)} ${H} Q${(x - w * 0.4 + lean * 0.35).toFixed(1)} ${(H - h * 0.55).toFixed(1)} ${(x + lean).toFixed(1)} ${(H - h).toFixed(1)} Q${(x + w * 0.5 + lean * 0.3).toFixed(1)} ${(H - h * 0.5).toFixed(1)} ${(x + w).toFixed(1)} ${H}Z`;
-  return { d, fill: shades[Math.floor(rand(i, 5) * shades.length)], delay: (rand(i, 6) * 0.25).toFixed(2), x: x.toFixed(1), group: j % 3 };
+  return { d, fill: shades[Math.floor(rand(i, 5) * shades.length)] };
 });
-const tiles = Array.from({ length: TILES }, (_, t) => [0, 1, 2].map((g) => tile(t).filter((b) => b.group === g)));
+const tiles = Array.from({ length: TILES }, (_, t) => tile(t));
 ---
-<div class="gg" aria-hidden="true" data-grass>
-  {tiles.map((groups) => (
-    <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMinYMax meet">
-      {groups.map((list, gi) => (
-        <g class={`gg__sway gg__sway--${gi}`}>
-          {list.map((b) => <path class="gg__b" d={b.d} fill={b.fill} style={`--d:${b.delay};transform-origin:${b.x}px ${H}px`} />)}
-        </g>
-      ))}
-    </svg>
-  ))}
+<div class="gg is-empty" aria-hidden="true" data-grass>
+  <div class="gg__grow" data-grass-grow>
+    {tiles.map((blades, t) => (
+      <svg class={`gg__tile gg__tile--${t % 3}`} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMinYMax meet">
+        {blades.map((b) => <path d={b.d} fill={b.fill} />)}
+      </svg>
+    ))}
+  </div>
 </div>
 <style>
-  .gg { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; height: clamp(29px, 3.3vw, 47px); display: flex; overflow: hidden; pointer-events: none; --g: 0; }
+  .gg { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; height: clamp(29px, 3.3vw, 47px); overflow: hidden; pointer-events: none; contain: strict; }
   .gg.is-empty { visibility: hidden; }
-  .gg svg { height: 100%; width: auto; aspect-ratio: 600 / 140; flex: none; display: block; overflow: visible; }
-  .gg__b { transform: scaleY(clamp(0, calc((var(--g) - var(--d)) / (1 - var(--d))), 1)); transition: transform 0.25s linear; }
-  .gg__sway { transform-box: fill-box; transform-origin: 50% 100%; animation: gg-sway 3.2s ease-in-out infinite alternate; }
-  .gg__sway--1 { animation-duration: 3.9s; animation-delay: -1s; }
-  .gg__sway--2 { animation-duration: 2.8s; animation-delay: -2s; }
-  @keyframes gg-sway { from { transform: skewX(-2.5deg); } to { transform: skewX(2.5deg); } }
-  @media (prefers-reduced-motion: reduce) { .gg__sway { animation: none; } .gg__b { transition: none; } }
+  .gg__grow { display: flex; height: 100%; transform: scaleY(0); transform-origin: 50% 100%; will-change: transform; transition: transform 0.15s linear; }
+  .gg__tile { height: 100%; width: auto; aspect-ratio: 600 / 140; flex: none; display: block; overflow: visible; transform-origin: 50% 100%; will-change: transform; animation: gg-sway 3.4s ease-in-out infinite alternate; }
+  .gg__tile--1 { animation-duration: 4.1s; animation-delay: -1.2s; }
+  .gg__tile--2 { animation-duration: 3s; animation-delay: -2.1s; }
+  @keyframes gg-sway { from { transform: skewX(-2deg); } to { transform: skewX(2deg); } }
+  @media (prefers-reduced-motion: reduce) { .gg__tile { animation: none; } .gg__grow { transition: none; } }
 </style>

@@ -1,4 +1,3 @@
-import Lenis from "lenis";
 
 const $ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => r.querySelector<T>(s);
 const $$ = <T extends Element = HTMLElement>(s: string, r: ParentNode = document) => Array.from(r.querySelectorAll<T>(s));
@@ -7,23 +6,18 @@ const motion = root.classList.contains("js-motion");
 const BASE = (import.meta.env.BASE_URL || "/").replace(/\/$/, "");
 
 /* ───────────── Smooth scroll ───────────── */
-let lenis: Lenis | null = null;
-if (motion) {
-  lenis = new Lenis({ lerp: 0.12, smoothWheel: true });
-  const raf = (t: number) => { lenis!.raf(t); requestAnimationFrame(raf); };
-  requestAnimationFrame(raf);
-}
+/* Native scrolling (no smooth-scroll library): follows the wheel and finger exactly. */
+const lenis: { stop(): void; start(): void; scrollTo(t: number | HTMLElement, o?: object): void } | null = null;
 const headerOffset = () => -(($("[data-header]")?.offsetHeight ?? 80) + 16);
 const scrollToEl = (el: Element) => {
   if (lenis) lenis.scrollTo(el as HTMLElement, { offset: headerOffset(), duration: 1.15 });
-  else window.scrollTo({ top: (el as HTMLElement).getBoundingClientRect().top + window.scrollY + headerOffset() });
+  else window.scrollTo({ top: (el as HTMLElement).getBoundingClientRect().top + window.scrollY + headerOffset(), behavior: motion ? "smooth" : "auto" });
 };
 
 /* ───────────── Header, menu, progress ───────────── */
 const header = $("[data-header]");
 const burger = $<HTMLButtonElement>("[data-burger]");
 const mnav = $("[data-mnav]");
-const mowline = $(".mowline");
 const totop = $("[data-totop]");
 const mbar = $("[data-mbar]");
 let lastY = window.scrollY;
@@ -46,7 +40,6 @@ mnav?.addEventListener("click", (e) => { if ((e.target as HTMLElement).closest("
 document.addEventListener("keydown", (e) => { if (e.key === "Escape" && mnav && !mnav.hidden) { setMenu(false); burger?.focus(); } });
 matchMedia("(min-width: 1181px)").addEventListener("change", (m) => { if (m.matches) setMenu(false); });
 
-const drifters = $$("[data-drift]");
 const stepsEls = $$("[data-steps]");
 
 const frame = () => {
@@ -63,22 +56,9 @@ const frame = () => {
   }
   lastY = y;
 
-  if (mowline) {
-    const hb = header ? header.getBoundingClientRect().bottom : 0;
-    mowline.style.top = `${Math.max(0, hb)}px`;
-    mowline.style.setProperty("--p", p.toFixed(4));
-    mowline.style.setProperty("--show", y > 60 ? "1" : "0");
-  }
   if (totop) {
     totop.classList.toggle("is-on", y > 700);
     totop.style.setProperty("--p", p.toFixed(4));
-  }
-  if (motion) {
-    for (const el of drifters) {
-      const r = el.getBoundingClientRect();
-      if (r.bottom < -100 || r.top > vh + 100) continue;
-      el.style.setProperty("--drift", (r.top * -0.12).toFixed(1));
-    }
   }
   for (const s of stepsEls) {
     const r = s.getBoundingClientRect();
@@ -107,7 +87,7 @@ document.addEventListener("click", (e) => {
     scrollToEl(target);
     return;
   }
-  if (href === "#top") { e.preventDefault(); lenis ? lenis.scrollTo(0, { duration: 1.2 }) : window.scrollTo({ top: 0 }); return; }
+  if (href === "#top") { e.preventDefault(); lenis ? lenis.scrollTo(0, { duration: 1.2 }) : window.scrollTo({ top: 0, behavior: motion ? "smooth" : "auto" }); return; }
   if (href.startsWith("#") && href.length > 1) {
     const t = document.getElementById(href.slice(1));
     if (t) { e.preventDefault(); scrollToEl(t); }
@@ -387,16 +367,16 @@ $$("[data-sunshade]").forEach((sec) => {
   btn.addEventListener("click", () => set(btn.getAttribute("aria-checked") !== "true"));
 });
 
-/* ───────────── Growing grass: none on load, grows evenly with page scroll ───────────── */
-const grass = $<HTMLElement>("[data-grass]");
-if (grass) {
+/* ───────────── Growing grass: none on load, grows evenly with page scroll (one composited transform) ───────────── */
+const grassGrow = $<HTMLElement>("[data-grass-grow]");
+if (grassGrow) {
+  const wrap = grassGrow.parentElement!;
   let q = false;
   const grow = () => {
     const max = document.documentElement.scrollHeight - window.innerHeight;
-    const p = max > 0 ? Math.min(1, window.scrollY / max) : 0;
-    const g = p;
-    grass.style.setProperty("--g", g.toFixed(3));
-    grass.classList.toggle("is-empty", g <= 0.001);
+    const g = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+    grassGrow.style.transform = `scaleY(${g.toFixed(3)})`;
+    wrap.classList.toggle("is-empty", g <= 0.001);
     q = false;
   };
   window.addEventListener("scroll", () => { if (!q) { q = true; requestAnimationFrame(grow); } }, { passive: true });
