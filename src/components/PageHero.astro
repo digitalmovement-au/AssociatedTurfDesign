@@ -1,7 +1,7 @@
 ---
-import Mow from "./Mow.astro";
 import Icon from "./Icon.astro";
-import { business } from "../data/site";
+import QuoteForm from "./QuoteForm.astro";
+import { business, img } from "../data/site";
 import { mdi } from "../lib/md";
 interface Props {
   title: string;
@@ -14,12 +14,15 @@ interface Props {
   meta?: string;
   ctas?: boolean;
   badge?: boolean;
+  form?: boolean;
 }
-const { title, label, lede, chips = [], image = "2018/10/Turf-pics-048.jpg", imageAlt = "", crumbs = [], meta, ctas = true, badge = true } = Astro.props;
+const { title, label, lede, chips = [], image = "2018/10/Turf-pics-048.jpg", imageAlt = "", crumbs = [], meta, ctas = true, form = true } = Astro.props;
 const short = (n: string) => (n.length > 42 ? n.slice(0, n.lastIndexOf(" ", 40)) + "…" : n);
 const long = title.length > 58;
 ---
-<section class="ph">
+<section class:list={["ph", !form && "ph--noform"]}>
+  <img class="ph__bg" src={img(image)} alt={imageAlt || title} width="1920" height="1080" fetchpriority="high" />
+  <div class="ph__shade" aria-hidden="true"></div>
   <div class="wrap ph__in">
     <div class="ph__copy">
       {crumbs.length > 0 && (
@@ -30,52 +33,58 @@ const long = title.length > 58;
           </ol>
         </nav>
       )}
-      {label && <p class="label">{label}</p>}
-      <h1 class:list={[long && "ph__h1--long"]}>{title}</h1>
+      {label && <p class="tape">{label}</p>}
+      <h1 class:list={["ph__h1", long && "ph__h1--long"]}>{title}</h1>
       {meta && <p class="ph__meta">{meta}</p>}
-      {lede && <p class="lede" set:html={mdi(lede)} />}
-      {chips.length > 0 && <ul class="chips ph__chips">{chips.map((c) => <li><Icon name="check" size={16} />{c}</li>)}</ul>}
+      {lede && <p class="ph__lede" set:html={mdi(lede)} />}
+      {chips.length > 0 && <ul class="ph__chips">{chips.map((c) => <li><Icon name="check" size={16} />{c}</li>)}</ul>}
       {ctas && (
-        <div class="btn-row ph__btns">
-          <a class="btn" href="#quote">Get a Free Quote</a>
-          <a class="btn btn--ghost" href={business.phoneHref}><Icon name="phone" size={18} />{business.phone}</a>
+        <div class="ph__btns">
+          <a class="btn btn--outline-light" href={business.phoneHref}><Icon name="phone" size={18} />{business.phone}</a>
         </div>
       )}
     </div>
-    <div class="ph__media">
-      <Mow src={image} alt={imageAlt || title} eager class="ph__img" width={1100} height={900} />
-      {badge && <div class="ph__badge"><span class="display">45+</span><small>years growing Sydney turf</small></div>}
-    </div>
+    {form && (
+      <div class="ph__form">
+        <QuoteForm id="hero-form" compact title="Request Your Free Quote" sub="Fast, obligation free pricing from our turf team." />
+      </div>
+    )}
   </div>
 </section>
 
 <style>
-  .ph { padding: clamp(2rem, 4vw, 3.5rem) 0 clamp(3rem, 6vw, 5rem); position: relative; }
-  .ph__in { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
-  .ph h1 { font-size: clamp(2.3rem, 4.6vw, 4.4rem); margin-bottom: 0.35em; }
-  .ph h1.ph__h1--long { font-size: clamp(2rem, 3.6vw, 3.4rem); }
-  .ph__meta { color: var(--color-muted); font-weight: 500; margin-bottom: 1rem; }
-  .ph .lede { margin-bottom: 1.5rem; }
-  .ph__chips { margin-bottom: 1.75rem; }
-  .ph__media { position: relative; }
-  .ph__media :global(.ph__img) { aspect-ratio: 5 / 4; box-shadow: var(--shadow); }
-  .ph__badge { position: absolute; left: clamp(-1.5rem, -2vw, -0.75rem); bottom: 1.5rem; background: #fff; border-radius: var(--radius-md); padding: 0.9rem 1.15rem; display: flex; align-items: center; gap: 0.75rem; box-shadow: var(--shadow); z-index: 3; }
-  .ph__badge span { font-size: 2.1rem; color: var(--color-field); line-height: 1; }
-  .ph__badge small { font-size: 0.85rem; line-height: 1.25; max-width: 11ch; color: var(--color-forest); font-weight: 500; }
-  .crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 0.35rem; padding: 0; margin: 0 0 1.25rem; font-size: 0.88rem; color: var(--color-muted); }
+  .ph { position: relative; display: flex; align-items: center; min-height: min(720px, calc(100svh - var(--header-h) - 38px)); color: #fff; overflow: hidden; isolation: isolate; }
+  .ph--noform { min-height: 420px; }
+  .ph__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+  :global(html.js-motion) .ph__bg { animation: ph-in 2.4s var(--ease) both; }
+  @keyframes ph-in { from { transform: scale(1.08); } to { transform: none; } }
+  .ph__shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(8, 22, 15, 0.25) 0%, rgba(8, 22, 15, 0.35) 45%, rgba(8, 22, 15, 0.82) 100%), linear-gradient(90deg, rgba(8, 22, 15, 0.6), transparent 70%); }
+  .ph__in { width: min(100% - var(--gutter) * 2, var(--max)); padding-block: clamp(2.5rem, 6vw, 4.5rem); display: grid; grid-template-columns: minmax(0, 1fr) minmax(360px, 480px); gap: clamp(2rem, 5vw, 5rem); align-items: center; }
+  .ph--noform .ph__in { grid-template-columns: minmax(0, 1fr); }
+  .tape { display: inline-block; background: var(--color-field); color: #fff; font-family: var(--font-display); font-style: italic; font-weight: 600; font-size: 1.05rem; padding: 0.3rem 0.95rem; transform: rotate(-3deg); clip-path: polygon(2% 0, 100% 5%, 98% 100%, 0 94%); margin: 0 0 1.25rem; }
+  .ph__h1 { color: #fff; font-size: clamp(2.3rem, 4.6vw, 4.4rem); max-width: 18ch; margin-bottom: 0.35em; letter-spacing: -0.02em; }
+  .ph__h1--long { font-size: clamp(2rem, 3.6vw, 3.4rem); max-width: 24ch; }
+  .ph__meta { color: rgba(255, 255, 255, 0.85); font-weight: 500; margin: 0 0 1rem; }
+  .ph__lede { font-size: clamp(1.02rem, 1.2vw, 1.15rem); max-width: 52ch; color: rgba(255, 255, 255, 0.9); margin: 0 0 1.5rem; }
+  .ph__lede :global(a) { color: #fff; }
+  .ph__chips { list-style: none; padding: 0; margin: 0 0 1.75rem; display: flex; flex-wrap: wrap; gap: 0.55rem; }
+  .ph__chips li { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.45rem 0.9rem; border-radius: 999px; background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25); backdrop-filter: blur(6px); font-size: 0.9rem; font-weight: 500; }
+  .ph__chips :global(svg) { color: var(--color-sprout); }
+  .ph__btns { display: flex; flex-wrap: wrap; gap: 1rem; }
+  .ph__btns .btn { min-width: 230px; }
+  .ph__form :global(.qf) { box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.55); color: var(--color-ink); }
+  .crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 0.35rem; padding: 0; margin: 0 0 1.25rem; font-size: 0.88rem; color: rgba(255, 255, 255, 0.75); }
   .crumbs li + li::before { content: "/"; margin-right: 0.35rem; opacity: 0.6; }
-  .crumbs a { color: var(--color-muted); text-decoration: none; }
-  .crumbs a:hover { color: var(--color-field-deep); }
-  .crumbs [aria-current] { color: var(--color-forest); font-weight: 500; }
-  @media (max-width: 960px) {
-    .ph__in { grid-template-columns: minmax(0, 1fr); }
-    .ph__media { max-width: 680px; }
-  }
+  .crumbs a { color: rgba(255, 255, 255, 0.8); text-decoration: none; }
+  .crumbs a:hover { color: #fff; }
+  .crumbs [aria-current] { color: #fff; font-weight: 500; }
+  @media (max-width: 1100px) { .ph__in { grid-template-columns: minmax(0, 1fr) minmax(320px, 420px); } }
+  @media (max-width: 900px) { .ph { min-height: 0; } .ph__in { grid-template-columns: minmax(0, 1fr); padding-top: 3.5rem; } }
   @media (max-width: 720px) {
     .ph__copy { text-align: center; }
     .crumbs ol, .ph__chips { justify-content: center; }
-    .ph .lede { margin-inline: auto; }
-    .ph__media { margin-inline: auto; width: 100%; }
-    .ph__badge { left: 50%; transform: translateX(-50%); bottom: -1.25rem; }
+    .ph__h1, .ph__lede { margin-inline: auto; }
+    .ph__btns .btn { min-width: 0; width: 100%; }
+    .ph__form { text-align: left; }
   }
 </style>

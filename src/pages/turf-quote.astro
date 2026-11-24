@@ -7,7 +7,7 @@ import { get } from "../lib/content";
 const e = get("/turf-quote/")!;
 ---
 <Base title={e.title} description={e.desc} breadcrumb={[{ name: "Turf Quote", path: "/turf-quote/" }]}>
-  <PageHero title="Request a Turf Quote" label="Direct from the grower" lede="Get all your turf pricing direct from the grower. Tell us about your lawn and we will come back with fast, obligation free pricing and honest advice on the right variety." image="2018/10/IMG_1470.jpg" chips={["Cut fresh to order", "Delivery Monday to Saturday", "Supply or supply and lay"]} crumbs={[{ name: "Turf Quote", path: "/turf-quote/" }]} ctas={false} />
+  <PageHero title="Request a Turf Quote" label="Direct from the grower" lede="Get all your turf pricing direct from the grower. Tell us about your lawn and we will come back with fast, obligation free pricing and honest advice on the right variety." image="2018/10/IMG_1470.jpg" chips={["Cut fresh to order", "Delivery Monday to Saturday", "Supply or supply and lay"]} crumbs={[{ name: "Turf Quote", path: "/turf-quote/" }]} ctas={false} form={false} />
   <QuoteSection title="Work Out How Much Turf You Need" text="Use the calculator to add up each lawn area, then send it through with your quote request. If your lawn has curves or odd shapes, add a note and our team will help." />
   <Steps />
 </Base>
