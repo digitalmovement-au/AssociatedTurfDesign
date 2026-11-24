@@ -1,36 +1,35 @@
 ---
 /* Decorative grass strip along the bottom of the screen. main.ts scales [data-grass-grow] (0 to 1) with page scroll.
-   Growth and sway are single GPU transforms on whole tiles, so scrolling stays smooth. */
+   Two repeating SVG background layers fill any screen width; growth and sway are GPU transforms. */
 const rand = (i: number, k: number) => { const x = Math.sin(i * 91.17 + k * 13.73) * 43758.5453; return x - Math.floor(x); };
-const W = 600, H = 140, N = 64, TILES = 7;
-const shades = ["#00a335", "#008a2d", "#34c25e", "#1f7a3a", "#5cc46e"];
-const tile = (t: number) => Array.from({ length: N }, (_, j) => {
-  const i = t * 997 + j;
-  const x = (j / N) * W + rand(i, 1) * (W / N);
-  const h = 38 + rand(i, 2) * 100;
-  const lean = (rand(i, 3) - 0.5) * 34;
-  const w = 4.5 + rand(i, 4) * 4;
-  const d = `M${(x - w).toFixed(1)} ${H} Q${(x - w * 0.4 + lean * 0.35).toFixed(1)} ${(H - h * 0.55).toFixed(1)} ${(x + lean).toFixed(1)} ${(H - h).toFixed(1)} Q${(x + w * 0.5 + lean * 0.3).toFixed(1)} ${(H - h * 0.5).toFixed(1)} ${(x + w).toFixed(1)} ${H}Z`;
-  return { d, fill: shades[Math.floor(rand(i, 5) * shades.length)] };
-});
-const tiles = Array.from({ length: TILES }, (_, t) => tile(t));
+const W = 1200, H = 140;
+const tileSvg = (seed: number, n: number, shades: string[], minH: number, spread: number) => {
+  const paths = Array.from({ length: n }, (_, j) => {
+    const i = seed * 997 + j;
+    const x = (j / n) * W + rand(i, 1) * (W / n);
+    const h = minH + rand(i, 2) * spread;
+    const lean = (rand(i, 3) - 0.5) * 34;
+    const w = 4.5 + rand(i, 4) * 4;
+    const d = `M${(x - w).toFixed(1)} ${H}Q${(x - w * 0.4 + lean * 0.35).toFixed(1)} ${(H - h * 0.55).toFixed(1)} ${(x + lean).toFixed(1)} ${(H - h).toFixed(1)}Q${(x + w * 0.5 + lean * 0.3).toFixed(1)} ${(H - h * 0.5).toFixed(1)} ${(x + w).toFixed(1)} ${H}Z`;
+    return `<path d="${d}" fill="${shades[Math.floor(rand(i, 5) * shades.length)]}"/>`;
+  }).join("");
+  return `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMinYMax meet">${paths}</svg>`)}")`;
+};
+const back = tileSvg(3, 110, ["#5cc46e", "#34c25e", "#8fd694", "#00a335"], 50, 88);
+const front = tileSvg(7, 120, ["#00a335", "#008a2d", "#1f7a3a", "#34c25e"], 38, 92);
 ---
 <div class="gg is-empty" aria-hidden="true" data-grass>
   <div class="gg__grow" data-grass-grow>
-    {tiles.map((blades, t) => (
-      <svg class={`gg__tile gg__tile--${t % 3}`} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMinYMax meet">
-        {blades.map((b) => <path d={b.d} fill={b.fill} />)}
-      </svg>
-    ))}
+    <div class="gg__layer gg__layer--back" style={`background-image:${back}`}></div>
+    <div class="gg__layer gg__layer--front" style={`background-image:${front}`}></div>
   </div>
 </div>
 <style>
-  .gg { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; height: clamp(29px, 3.3vw, 47px); overflow: hidden; pointer-events: none; contain: strict; }
+  .gg { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; height: clamp(29px, 3.3vw, 47px); overflow: hidden; pointer-events: none; }
   .gg.is-empty { visibility: hidden; }
-  .gg__grow { display: flex; height: 100%; transform: scaleY(0); transform-origin: 50% 100%; will-change: transform; transition: transform 0.15s linear; }
-  .gg__tile { height: 100%; width: auto; aspect-ratio: 600 / 140; flex: none; display: block; overflow: visible; transform-origin: 50% 100%; will-change: transform; animation: gg-sway 3.4s ease-in-out infinite alternate; }
-  .gg__tile--1 { animation-duration: 4.1s; animation-delay: -1.2s; }
-  .gg__tile--2 { animation-duration: 3s; animation-delay: -2.1s; }
+  .gg__grow { position: absolute; inset: 0; transform: scaleY(0); transform-origin: 50% 100%; will-change: transform; transition: transform 0.15s linear; }
+  .gg__layer { position: absolute; left: -40px; right: -40px; bottom: 0; height: 100%; background-repeat: repeat-x; background-position: 0 100%; background-size: auto 100%; transform-origin: 50% 100%; will-change: transform; animation: gg-sway 3.6s ease-in-out infinite alternate; }
+  .gg__layer--back { height: 88%; background-position: -230px 100%; animation-duration: 4.4s; animation-delay: -1.5s; }
   @keyframes gg-sway { from { transform: skewX(-2deg); } to { transform: skewX(2deg); } }
-  @media (prefers-reduced-motion: reduce) { .gg__tile { animation: none; } .gg__grow { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .gg__layer { animation: none; } .gg__grow { transition: none; } }
 </style>
